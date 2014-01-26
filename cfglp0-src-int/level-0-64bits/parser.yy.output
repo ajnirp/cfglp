@@ -1,0 +1,810 @@
+
+Production Rules
+(rule precedences determined from %prec or 1st terminal between parentheses):
+1: program ->  declaration_statement_list procedure_name #0001 procedure_body
+2: #0001 ->  <empty>
+3: program ->  procedure_name #0002 procedure_body
+4: #0002 ->  <empty>
+5: procedure_name (NAME) ->  NAME '(' ')'
+6: procedure_body ('{') ->  '{' declaration_statement_list #0003 basic_block_list '}'
+7: #0003 ->  <empty>
+8: procedure_body ('{') ->  '{' basic_block_list '}'
+9: declaration_statement_list ->  declaration_statement
+10: declaration_statement_list ->  declaration_statement_list declaration_statement
+11: declaration_statement (INTEGER) ->  INTEGER NAME ';'
+12: basic_block_list ->  basic_block_list basic_block
+13: basic_block_list ->  basic_block
+14: basic_block ('<') ->  '<' NAME INTEGER_NUMBER '>' ':' statement_list
+15: statement (';') ->  executable_statement ';'
+16: statement ->  if_statement
+17: statement (';') ->  goto_statement ';'
+18: if_statement ->  if_block
+19: if_statement ->  if_block else_block
+20: if_block (IF) ->  IF '(' executable_statement ')' goto_statement
+21: else_block (ELSE) ->  ELSE goto_statement
+22: goto_statement (GOTO) ->  GOTO '<' NAME INTEGER_NUMBER '>' ';'
+23: statement_list ->  statement statement_list
+24: statement_list (RETURN) ->  statement RETURN ';'
+25: executable_statement ->  <empty>
+26: executable_statement ->  assignment_statement
+27: executable_statement ->  comparison_statement
+28: executable_statement ->  ternary_statement
+29: executable_statement ->  binary_boolean_statement
+30: executable_statement ('!') ->  '!' executable_statement
+31: executable_statement ('(') ->  '(' executable_statement ')'
+32: executable_statement ->  variable
+33: executable_statement ->  constant
+34: comparison_op ('!') ->  '!' '='
+35: comparison_op ('>') ->  '>' '='
+36: comparison_op ('=') ->  '=' '='
+37: comparison_op ('<') ->  '<' '='
+38: comparison_op ('<') ->  '<'
+39: comparison_op ('>') ->  '>'
+40: comparison_statement ->  executable_statement comparison_op executable_statement
+41: ternary_statement ('?') ->  executable_statement '?' executable_statement ':' executable_statement
+42: binary_boolean_statement (BINARY_LOGICAL_OPERATOR) ->  executable_statement BINARY_LOGICAL_OPERATOR executable_statement
+43: assignment_statement_list ->  assignment_statement_list assignment_statement
+44: assignment_statement ('=') ->  variable '=' executable_statement
+45: variable (NAME) ->  NAME
+46: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+47: program_$ ->  program
+
+
+Symbolic Terminal tokens:
+       error
+       EOF
+   257: IF
+   258: ELSE
+   259: GOTO
+   260: FOR
+   261: DO
+   262: WHILE
+   263: INTEGER_NUMBER
+   264: NAME
+   265: RETURN
+   266: INTEGER
+   267: UNARY_LOGICAL_OPERATOR
+   268: BINARY_LOGICAL_OPERATOR
+    40: '('
+    41: ')'
+   123: '{'
+   125: '}'
+    59: ';'
+    60: '<'
+    62: '>'
+    58: ':'
+    33: '!'
+    61: '='
+    63: '?'
+
+
+
+
+Grammar States: 
+State 0:
+47: program_$ ->  . program 
+  0:   On program to state 1
+  1:   On declaration_statement_list to state 2
+  2:   On procedure_name to state 3
+  3:   On declaration_statement to state 4
+  4:   On NAME to state 5
+  5:   On INTEGER to state 6
+
+
+State 1:
+47: program_$ -> program  . 
+
+
+State 2:
+1: program -> declaration_statement_list  . procedure_name #0001 procedure_body 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On procedure_name to state 7
+  1:   On declaration_statement to state 8
+  2:   On NAME to state 5
+  3:   On INTEGER to state 6
+
+
+State 3:
+3: program -> procedure_name  . #0002 procedure_body 
+  0:   On #0002 to state 9
+  Reduce by 4: #0002 ->  . 
+
+
+State 4:
+9: declaration_statement_list -> declaration_statement  . 
+  Reduce by 9: declaration_statement_list -> declaration_statement  . 
+
+
+State 5:
+5: procedure_name -> NAME  . '(' ')' 
+  0:   On '(' to state 10
+
+
+State 6:
+11: declaration_statement -> INTEGER  . NAME ';' 
+  0:   On NAME to state 11
+
+
+State 7:
+1: program -> declaration_statement_list procedure_name  . #0001 procedure_body 
+  0:   On #0001 to state 12
+  Reduce by 2: #0001 ->  . 
+
+
+State 8:
+10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+  Reduce by 10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+
+
+State 9:
+3: program -> procedure_name #0002  . procedure_body 
+  0:   On procedure_body to state 13
+  1:   On '{' to state 14
+
+
+State 10:
+5: procedure_name -> NAME '('  . ')' 
+  0:   On ')' to state 15
+
+
+State 11:
+11: declaration_statement -> INTEGER NAME  . ';' 
+  0:   On ';' to state 16
+
+
+State 12:
+1: program -> declaration_statement_list procedure_name #0001  . procedure_body 
+  0:   On procedure_body to state 17
+  1:   On '{' to state 14
+
+
+State 13:
+3: program -> procedure_name #0002 procedure_body  . 
+  Reduce by 3: program -> procedure_name #0002 procedure_body  . 
+
+
+State 14:
+6: procedure_body -> '{'  . declaration_statement_list #0003 basic_block_list '}' 
+8: procedure_body -> '{'  . basic_block_list '}' 
+  0:   On declaration_statement_list to state 18
+  1:   On basic_block_list to state 19
+  2:   On declaration_statement to state 4
+  3:   On basic_block to state 20
+  4:   On INTEGER to state 6
+  5:   On '<' to state 21
+
+
+State 15:
+5: procedure_name -> NAME '(' ')'  . 
+  Reduce by 5: procedure_name -> NAME '(' ')'  . 
+
+
+State 16:
+11: declaration_statement -> INTEGER NAME ';'  . 
+  Reduce by 11: declaration_statement -> INTEGER NAME ';'  . 
+
+
+State 17:
+1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+  Reduce by 1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+
+
+State 18:
+6: procedure_body -> '{' declaration_statement_list  . #0003 basic_block_list '}' 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On #0003 to state 22
+  1:   On declaration_statement to state 8
+  2:   On INTEGER to state 6
+  Reduce by 7: #0003 ->  . 
+
+
+State 19:
+8: procedure_body -> '{' basic_block_list  . '}' 
+12: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 23
+  1:   On basic_block to state 24
+  2:   On '<' to state 21
+
+
+State 20:
+13: basic_block_list -> basic_block  . 
+  Reduce by 13: basic_block_list -> basic_block  . 
+
+
+State 21:
+14: basic_block -> '<'  . NAME INTEGER_NUMBER '>' ':' statement_list 
+  0:   On NAME to state 25
+
+
+State 22:
+6: procedure_body -> '{' declaration_statement_list #0003  . basic_block_list '}' 
+  0:   On basic_block_list to state 26
+  1:   On basic_block to state 20
+  2:   On '<' to state 21
+
+
+State 23:
+8: procedure_body -> '{' basic_block_list '}'  . 
+  Reduce by 8: procedure_body -> '{' basic_block_list '}'  . 
+
+
+State 24:
+12: basic_block_list -> basic_block_list basic_block  . 
+  Reduce by 12: basic_block_list -> basic_block_list basic_block  . 
+
+
+State 25:
+14: basic_block -> '<' NAME  . INTEGER_NUMBER '>' ':' statement_list 
+  0:   On INTEGER_NUMBER to state 27
+
+
+State 26:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list  . '}' 
+12: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 28
+  1:   On basic_block to state 24
+  2:   On '<' to state 21
+
+
+State 27:
+14: basic_block -> '<' NAME INTEGER_NUMBER  . '>' ':' statement_list 
+  0:   On '>' to state 29
+
+
+State 28:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+  Reduce by 6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+
+
+State 29:
+14: basic_block -> '<' NAME INTEGER_NUMBER '>'  . ':' statement_list 
+  0:   On ':' to state 30
+
+
+State 30:
+14: basic_block -> '<' NAME INTEGER_NUMBER '>' ':'  . statement_list 
+  0:   On statement_list to state 31
+  1:   On statement to state 32
+  2:   On executable_statement to state 33
+  3:   On if_statement to state 34
+  4:   On goto_statement to state 35
+  5:   On assignment_statement to state 36
+  6:   On comparison_statement to state 37
+  7:   On ternary_statement to state 38
+  8:   On binary_boolean_statement to state 39
+  9 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  10:   On '(' to state 41
+  11:   On variable to state 42
+  12:   On constant to state 43
+  13:   On if_block to state 44
+  14:   On GOTO to state 45
+  15:   On NAME to state 46
+  16:   On INTEGER_NUMBER to state 47
+  17:   On IF to state 48
+  Reduce by 25: executable_statement ->  . 
+
+
+State 31:
+14: basic_block -> '<' NAME INTEGER_NUMBER '>' ':' statement_list  . 
+  Reduce by 14: basic_block -> '<' NAME INTEGER_NUMBER '>' ':' statement_list  . 
+
+
+State 32:
+23: statement_list -> statement  . statement_list 
+24: statement_list -> statement  . RETURN ';' 
+  0:   On statement_list to state 49
+  1:   On RETURN to state 50
+  2:   On statement to state 32
+  3:   On executable_statement to state 33
+  4:   On if_statement to state 34
+  5:   On goto_statement to state 35
+  6:   On assignment_statement to state 36
+  7:   On comparison_statement to state 37
+  8:   On ternary_statement to state 38
+  9:   On binary_boolean_statement to state 39
+  10 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  11:   On '(' to state 41
+  12:   On variable to state 42
+  13:   On constant to state 43
+  14:   On if_block to state 44
+  15:   On GOTO to state 45
+  16:   On NAME to state 46
+  17:   On INTEGER_NUMBER to state 47
+  18:   On IF to state 48
+  Reduce by 25: executable_statement ->  . 
+
+
+State 33:
+15: statement -> executable_statement  . ';' 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On ';' to state 51
+  1:   On comparison_op to state 52
+  2:   On '?' to state 53
+  3:   On BINARY_LOGICAL_OPERATOR to state 54
+  4:   On '!' to state 55
+  5:   On '>' to state 56
+  6:   On '=' to state 57
+  7:   On '<' to state 58
+
+
+State 34:
+16: statement -> if_statement  . 
+  Reduce by 16: statement -> if_statement  . 
+
+
+State 35:
+17: statement -> goto_statement  . ';' 
+  0:   On ';' to state 59
+
+
+State 36:
+26: executable_statement -> assignment_statement  . 
+  Reduce by 26: executable_statement -> assignment_statement  . 
+
+
+State 37:
+27: executable_statement -> comparison_statement  . 
+  Reduce by 27: executable_statement -> comparison_statement  . 
+
+
+State 38:
+28: executable_statement -> ternary_statement  . 
+  Reduce by 28: executable_statement -> ternary_statement  . 
+
+
+State 39:
+29: executable_statement -> binary_boolean_statement  . 
+  Reduce by 29: executable_statement -> binary_boolean_statement  . 
+
+
+State 40:
+30: executable_statement -> '!'  . executable_statement 
+  0:   On executable_statement to state 60
+  1:   On assignment_statement to state 36
+  2:   On comparison_statement to state 37
+  3:   On ternary_statement to state 38
+  4:   On binary_boolean_statement to state 39
+  5 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  6:   On '(' to state 41
+  7:   On variable to state 42
+  8:   On constant to state 43
+  9:   On NAME to state 46
+  10:   On INTEGER_NUMBER to state 47
+  Reduce by 25: executable_statement ->  . 
+
+
+State 41:
+31: executable_statement -> '('  . executable_statement ')' 
+  0:   On executable_statement to state 61
+  1:   On assignment_statement to state 36
+  2:   On comparison_statement to state 37
+  3:   On ternary_statement to state 38
+  4:   On binary_boolean_statement to state 39
+  5 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  6:   On '(' to state 41
+  7:   On variable to state 42
+  8:   On constant to state 43
+  9:   On NAME to state 46
+  10:   On INTEGER_NUMBER to state 47
+  Reduce by 25: executable_statement ->  . 
+
+
+State 42:
+32: executable_statement -> variable  . 
+44: assignment_statement -> variable  . '=' executable_statement 
+  0 (AUTO REMOVED by S/R resolution):   On '=' to state 62
+  Reduce by 32: executable_statement -> variable  . 
+
+
+State 43:
+33: executable_statement -> constant  . 
+  Reduce by 33: executable_statement -> constant  . 
+
+
+State 44:
+18: if_statement -> if_block  . 
+19: if_statement -> if_block  . else_block 
+  0:   On else_block to state 63
+  1:   On ELSE to state 64
+  Reduce by 18: if_statement -> if_block  . 
+
+
+State 45:
+22: goto_statement -> GOTO  . '<' NAME INTEGER_NUMBER '>' ';' 
+  0:   On '<' to state 65
+
+
+State 46:
+45: variable -> NAME  . 
+  Reduce by 45: variable -> NAME  . 
+
+
+State 47:
+46: constant -> INTEGER_NUMBER  . 
+  Reduce by 46: constant -> INTEGER_NUMBER  . 
+
+
+State 48:
+20: if_block -> IF  . '(' executable_statement ')' goto_statement 
+  0:   On '(' to state 66
+
+
+State 49:
+23: statement_list -> statement statement_list  . 
+  Reduce by 23: statement_list -> statement statement_list  . 
+
+
+State 50:
+24: statement_list -> statement RETURN  . ';' 
+  0:   On ';' to state 67
+
+
+State 51:
+15: statement -> executable_statement ';'  . 
+  Reduce by 15: statement -> executable_statement ';'  . 
+
+
+State 52:
+40: comparison_statement -> executable_statement comparison_op  . executable_statement 
+  0:   On executable_statement to state 68
+  1:   On assignment_statement to state 36
+  2:   On comparison_statement to state 37
+  3:   On ternary_statement to state 38
+  4:   On binary_boolean_statement to state 39
+  5 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  6:   On '(' to state 41
+  7:   On variable to state 42
+  8:   On constant to state 43
+  9:   On NAME to state 46
+  10:   On INTEGER_NUMBER to state 47
+  Reduce by 25: executable_statement ->  . 
+
+
+State 53:
+41: ternary_statement -> executable_statement '?'  . executable_statement ':' executable_statement 
+  0:   On executable_statement to state 69
+  1:   On assignment_statement to state 36
+  2:   On comparison_statement to state 37
+  3:   On ternary_statement to state 38
+  4:   On binary_boolean_statement to state 39
+  5 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  6:   On '(' to state 41
+  7:   On variable to state 42
+  8:   On constant to state 43
+  9:   On NAME to state 46
+  10:   On INTEGER_NUMBER to state 47
+  Reduce by 25: executable_statement ->  . 
+
+
+State 54:
+42: binary_boolean_statement -> executable_statement BINARY_LOGICAL_OPERATOR  . executable_statement 
+  0:   On executable_statement to state 70
+  1:   On assignment_statement to state 36
+  2:   On comparison_statement to state 37
+  3:   On ternary_statement to state 38
+  4:   On binary_boolean_statement to state 39
+  5 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  6:   On '(' to state 41
+  7:   On variable to state 42
+  8:   On constant to state 43
+  9:   On NAME to state 46
+  10:   On INTEGER_NUMBER to state 47
+  Reduce by 25: executable_statement ->  . 
+
+
+State 55:
+34: comparison_op -> '!'  . '=' 
+  0:   On '=' to state 71
+
+
+State 56:
+35: comparison_op -> '>'  . '=' 
+39: comparison_op -> '>'  . 
+  0:   On '=' to state 72
+  Reduce by 39: comparison_op -> '>'  . 
+Solved SR CONFLICT on '=': shift to state 72, removed '=' from LA-set of rule 39)
+
+
+State 57:
+36: comparison_op -> '='  . '=' 
+  0:   On '=' to state 73
+
+
+State 58:
+37: comparison_op -> '<'  . '=' 
+38: comparison_op -> '<'  . 
+  0:   On '=' to state 74
+  Reduce by 38: comparison_op -> '<'  . 
+Solved SR CONFLICT on '=': shift to state 74, removed '=' from LA-set of rule 38)
+
+
+State 59:
+17: statement -> goto_statement ';'  . 
+  Reduce by 17: statement -> goto_statement ';'  . 
+
+
+State 60:
+30: executable_statement -> '!' executable_statement  . 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On comparison_op to state 52
+  1:   On '?' to state 53
+  2:   On BINARY_LOGICAL_OPERATOR to state 54
+  3:   On '!' to state 55
+  4:   On '>' to state 56
+  5:   On '=' to state 57
+  6:   On '<' to state 58
+  Reduce by 30: executable_statement -> '!' executable_statement  . 
+Solved SR CONFLICT on '?': shift to state 53, removed '?' from LA-set of rule 30)
+Solved SR CONFLICT on BINARY_LOGICAL_OPERATOR: shift to state 54, removed BINARY_LOGICAL_OPERATOR from LA-set of rule 30)
+Solved SR CONFLICT on '!': shift to state 55, removed '!' from LA-set of rule 30)
+Solved SR CONFLICT on '>': shift to state 56, removed '>' from LA-set of rule 30)
+Solved SR CONFLICT on '>': shift to state 56, removed '>' from LA-set of rule 30)
+Solved SR CONFLICT on '=': shift to state 57, removed '=' from LA-set of rule 30)
+Solved SR CONFLICT on '<': shift to state 58, removed '<' from LA-set of rule 30)
+Solved SR CONFLICT on '<': shift to state 58, removed '<' from LA-set of rule 30)
+
+
+State 61:
+31: executable_statement -> '(' executable_statement  . ')' 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On ')' to state 75
+  1:   On comparison_op to state 52
+  2:   On '?' to state 53
+  3:   On BINARY_LOGICAL_OPERATOR to state 54
+  4:   On '!' to state 55
+  5:   On '>' to state 56
+  6:   On '=' to state 57
+  7:   On '<' to state 58
+
+
+State 62:
+44: assignment_statement -> variable '='  . executable_statement 
+  0:   On executable_statement to state 76
+  1:   On assignment_statement to state 36
+  2:   On comparison_statement to state 37
+  3:   On ternary_statement to state 38
+  4:   On binary_boolean_statement to state 39
+  5 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  6:   On '(' to state 41
+  7:   On variable to state 42
+  8:   On constant to state 43
+  9:   On NAME to state 46
+  10:   On INTEGER_NUMBER to state 47
+  Reduce by 25: executable_statement ->  . 
+
+
+State 63:
+19: if_statement -> if_block else_block  . 
+  Reduce by 19: if_statement -> if_block else_block  . 
+
+
+State 64:
+21: else_block -> ELSE  . goto_statement 
+  0:   On goto_statement to state 77
+  1:   On GOTO to state 45
+
+
+State 65:
+22: goto_statement -> GOTO '<'  . NAME INTEGER_NUMBER '>' ';' 
+  0:   On NAME to state 78
+
+
+State 66:
+20: if_block -> IF '('  . executable_statement ')' goto_statement 
+  0:   On executable_statement to state 79
+  1:   On assignment_statement to state 36
+  2:   On comparison_statement to state 37
+  3:   On ternary_statement to state 38
+  4:   On binary_boolean_statement to state 39
+  5 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  6:   On '(' to state 41
+  7:   On variable to state 42
+  8:   On constant to state 43
+  9:   On NAME to state 46
+  10:   On INTEGER_NUMBER to state 47
+  Reduce by 25: executable_statement ->  . 
+
+
+State 67:
+24: statement_list -> statement RETURN ';'  . 
+  Reduce by 24: statement_list -> statement RETURN ';'  . 
+
+
+State 68:
+40: comparison_statement -> executable_statement comparison_op executable_statement  . 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On comparison_op to state 52
+  1 (AUTO REMOVED by S/R resolution):   On '?' to state 53
+  2 (AUTO REMOVED by S/R resolution):   On BINARY_LOGICAL_OPERATOR to state 54
+  3 (AUTO REMOVED by S/R resolution):   On '!' to state 55
+  4 (AUTO REMOVED by S/R resolution):   On '>' to state 56
+  5 (AUTO REMOVED by S/R resolution):   On '=' to state 57
+  6 (AUTO REMOVED by S/R resolution):   On '<' to state 58
+  Reduce by 40: comparison_statement -> executable_statement comparison_op executable_statement  . 
+
+
+State 69:
+41: ternary_statement -> executable_statement '?' executable_statement  . ':' executable_statement 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On ':' to state 80
+  1:   On comparison_op to state 52
+  2:   On '?' to state 53
+  3:   On BINARY_LOGICAL_OPERATOR to state 54
+  4:   On '!' to state 55
+  5:   On '>' to state 56
+  6:   On '=' to state 57
+  7:   On '<' to state 58
+
+
+State 70:
+42: binary_boolean_statement -> executable_statement BINARY_LOGICAL_OPERATOR executable_statement  . 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On comparison_op to state 52
+  1:   On '?' to state 53
+  2:   On BINARY_LOGICAL_OPERATOR to state 54
+  3:   On '!' to state 55
+  4:   On '>' to state 56
+  5:   On '=' to state 57
+  6:   On '<' to state 58
+  Reduce by 42: binary_boolean_statement -> executable_statement BINARY_LOGICAL_OPERATOR executable_statement  . 
+Solved SR CONFLICT on '?': shift to state 53, removed '?' from LA-set of rule 42)
+Solved SR CONFLICT on BINARY_LOGICAL_OPERATOR: shift to state 54, removed BINARY_LOGICAL_OPERATOR from LA-set of rule 42)
+Solved SR CONFLICT on '!': shift to state 55, removed '!' from LA-set of rule 42)
+Solved SR CONFLICT on '>': shift to state 56, removed '>' from LA-set of rule 42)
+Solved SR CONFLICT on '>': shift to state 56, removed '>' from LA-set of rule 42)
+Solved SR CONFLICT on '=': shift to state 57, removed '=' from LA-set of rule 42)
+Solved SR CONFLICT on '<': shift to state 58, removed '<' from LA-set of rule 42)
+Solved SR CONFLICT on '<': shift to state 58, removed '<' from LA-set of rule 42)
+
+
+State 71:
+34: comparison_op -> '!' '='  . 
+  Reduce by 34: comparison_op -> '!' '='  . 
+
+
+State 72:
+35: comparison_op -> '>' '='  . 
+  Reduce by 35: comparison_op -> '>' '='  . 
+
+
+State 73:
+36: comparison_op -> '=' '='  . 
+  Reduce by 36: comparison_op -> '=' '='  . 
+
+
+State 74:
+37: comparison_op -> '<' '='  . 
+  Reduce by 37: comparison_op -> '<' '='  . 
+
+
+State 75:
+31: executable_statement -> '(' executable_statement ')'  . 
+  Reduce by 31: executable_statement -> '(' executable_statement ')'  . 
+
+
+State 76:
+44: assignment_statement -> variable '=' executable_statement  . 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On comparison_op to state 52
+  1:   On '?' to state 53
+  2:   On BINARY_LOGICAL_OPERATOR to state 54
+  3:   On '!' to state 55
+  4:   On '>' to state 56
+  5:   On '=' to state 57
+  6:   On '<' to state 58
+  Reduce by 44: assignment_statement -> variable '=' executable_statement  . 
+Solved SR CONFLICT on '?': shift to state 53, removed '?' from LA-set of rule 44)
+Solved SR CONFLICT on BINARY_LOGICAL_OPERATOR: shift to state 54, removed BINARY_LOGICAL_OPERATOR from LA-set of rule 44)
+Solved SR CONFLICT on '!': shift to state 55, removed '!' from LA-set of rule 44)
+Solved SR CONFLICT on '>': shift to state 56, removed '>' from LA-set of rule 44)
+Solved SR CONFLICT on '>': shift to state 56, removed '>' from LA-set of rule 44)
+Solved SR CONFLICT on '=': shift to state 57, removed '=' from LA-set of rule 44)
+Solved SR CONFLICT on '<': shift to state 58, removed '<' from LA-set of rule 44)
+Solved SR CONFLICT on '<': shift to state 58, removed '<' from LA-set of rule 44)
+
+
+State 77:
+21: else_block -> ELSE goto_statement  . 
+  Reduce by 21: else_block -> ELSE goto_statement  . 
+
+
+State 78:
+22: goto_statement -> GOTO '<' NAME  . INTEGER_NUMBER '>' ';' 
+  0:   On INTEGER_NUMBER to state 81
+
+
+State 79:
+20: if_block -> IF '(' executable_statement  . ')' goto_statement 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On ')' to state 82
+  1:   On comparison_op to state 52
+  2:   On '?' to state 53
+  3:   On BINARY_LOGICAL_OPERATOR to state 54
+  4:   On '!' to state 55
+  5:   On '>' to state 56
+  6:   On '=' to state 57
+  7:   On '<' to state 58
+
+
+State 80:
+41: ternary_statement -> executable_statement '?' executable_statement ':'  . executable_statement 
+  0:   On executable_statement to state 83
+  1:   On assignment_statement to state 36
+  2:   On comparison_statement to state 37
+  3:   On ternary_statement to state 38
+  4:   On binary_boolean_statement to state 39
+  5 (AUTO REMOVED by S/R resolution):   On '!' to state 40
+  6:   On '(' to state 41
+  7:   On variable to state 42
+  8:   On constant to state 43
+  9:   On NAME to state 46
+  10:   On INTEGER_NUMBER to state 47
+  Reduce by 25: executable_statement ->  . 
+
+
+State 81:
+22: goto_statement -> GOTO '<' NAME INTEGER_NUMBER  . '>' ';' 
+  0:   On '>' to state 84
+
+
+State 82:
+20: if_block -> IF '(' executable_statement ')'  . goto_statement 
+  0:   On goto_statement to state 85
+  1:   On GOTO to state 45
+
+
+State 83:
+41: ternary_statement -> executable_statement '?' executable_statement ':' executable_statement  . 
+40: comparison_statement -> executable_statement  . comparison_op executable_statement 
+41: ternary_statement -> executable_statement  . '?' executable_statement ':' executable_statement 
+42: binary_boolean_statement -> executable_statement  . BINARY_LOGICAL_OPERATOR executable_statement 
+  0:   On comparison_op to state 52
+  1:   On '?' to state 53
+  2:   On BINARY_LOGICAL_OPERATOR to state 54
+  3:   On '!' to state 55
+  4:   On '>' to state 56
+  5:   On '=' to state 57
+  6:   On '<' to state 58
+  Reduce by 41: ternary_statement -> executable_statement '?' executable_statement ':' executable_statement  . 
+Solved SR CONFLICT on '?': shift to state 53, removed '?' from LA-set of rule 41)
+Solved SR CONFLICT on BINARY_LOGICAL_OPERATOR: shift to state 54, removed BINARY_LOGICAL_OPERATOR from LA-set of rule 41)
+Solved SR CONFLICT on '!': shift to state 55, removed '!' from LA-set of rule 41)
+Solved SR CONFLICT on '>': shift to state 56, removed '>' from LA-set of rule 41)
+Solved SR CONFLICT on '>': shift to state 56, removed '>' from LA-set of rule 41)
+Solved SR CONFLICT on '=': shift to state 57, removed '=' from LA-set of rule 41)
+Solved SR CONFLICT on '<': shift to state 58, removed '<' from LA-set of rule 41)
+Solved SR CONFLICT on '<': shift to state 58, removed '<' from LA-set of rule 41)
+
+
+State 84:
+22: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>'  . ';' 
+  0:   On ';' to state 86
+
+
+State 85:
+20: if_block -> IF '(' executable_statement ')' goto_statement  . 
+  Reduce by 20: if_block -> IF '(' executable_statement ')' goto_statement  . 
+
+
+State 86:
+22: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
+  Reduce by 22: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
+
+
+
