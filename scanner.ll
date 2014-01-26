@@ -28,6 +28,21 @@
 
 %%
 
+if		{
+			store_token_name("IF");
+			return Parser::IF;
+		}
+		
+else	{
+			store_token_name("ELSE");
+			return Parser::ELSE;
+		}
+
+goto	{
+			store_token_name("GOTO");
+			return Parser::GOTO;
+		}
+		
 int		{
 			store_token_name("INTEGER");
 			return Parser::INTEGER; 
@@ -36,17 +51,6 @@ int		{
 return	{ 
 			store_token_name("RETURN");
 			return Parser::RETURN; 
-		}
-if		{
-			return Parser::IF;
-		}
-else	{
-			return Parser::ELSE;
-		}
-
-goto	{
-			store_token_name("GOTO");
-			return Parser::GOTO;
 		}
 
 [<>:{}();=!&|]	{

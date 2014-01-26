@@ -40,11 +40,12 @@
 	Procedure * procedure;
 }
 
-%token IF ELSE GOTO
 
 %token <integer_value> INTEGER_NUMBER
 %token <string_value> NAME
 %token RETURN INTEGER 
+
+%token IF ELSE GOTO
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement

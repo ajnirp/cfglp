@@ -46,13 +46,13 @@ Production Rules
 Symbolic Terminal tokens:
        error
        EOF
-   257: IF
-   258: ELSE
-   259: GOTO
-   260: INTEGER_NUMBER
-   261: NAME
-   262: RETURN
-   263: INTEGER
+   257: INTEGER_NUMBER
+   258: NAME
+   259: RETURN
+   260: INTEGER
+   261: IF
+   262: ELSE
+   263: GOTO
     60: '<'
     62: '>'
     61: '='
