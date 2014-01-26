@@ -6,23 +6,25 @@
 
            About:
 
-           Implemented   by  Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
-           Khedker    (http://www.cse.iitb.ac.in/~uday)  for the courses
-           cs302+cs306: Language  Processors  (theory and  lab)  at  IIT
+           Implemented by Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
+           Khedker (http://www.cse.iitb.ac.in/~uday)  for the courses
+           cs302+cs306: Language  Processors (theory and lab)  at IIT
            Bombay.
 
-           Release  date  Jan  15, 2013.  Copyrights  reserved  by  Uday
-           Khedker. This  implemenation  has been made  available purely
+           Release  date Jan  15, 2013.  Copyrights reserved  by Uday
+           Khedker. This implemenation has been made available purely
            for academic purposes without any warranty of any kind.
 
-           Documentation (functionality, manual, and design) and related
-           tools are  available at http://www.cse.iitb.ac.in/~uday/cfglp
+           A  doxygen   generated  documentation  can  be   found  at
+           http://www.cse.iitb.ac.in/~uday/cfglp
 
 
 ***********************************************************************************************/
 
 %filenames="scanner"
 %lex-source="scanner.cc"
+
+
 
 %%
 
@@ -36,10 +38,38 @@ return		{
 			return Parser::RETURN; 
 		}
 
-[<>:{}();=]	{
+do 		{
+			return Parser::DO;
+		}
+while	{
+			return Parser::WHILE;
+		}
+for		{
+			return Parser::FOR;
+		}
+if		{
+			return Parser::IF;
+		}
+else	{
+			return Parser::ELSE;
+		}
+
+goto	{
+			return Parser::GOTO;
+		}
+
+"||"|"&&"	{
+			std::cout<<"hey there"<<std::endl;
+			return Parser::BINARY_LOGICAL_OPERATOR;
+		}
+
+[<>:{}();=!]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
+
+
+		
 
 [-]?[[:digit:]_]+ 	{ 
 				store_token_name("NUM");
