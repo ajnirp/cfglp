@@ -33,7 +33,7 @@ int		{
 			return Parser::INTEGER; 
 		}
 
-return		{ 
+return	{ 
 			store_token_name("RETURN");
 			return Parser::RETURN; 
 		}
@@ -45,6 +45,7 @@ else	{
 		}
 
 goto	{
+			store_token_name("GOTO");
 			return Parser::GOTO;
 		}
 

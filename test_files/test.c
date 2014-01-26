@@ -2,5 +2,9 @@ int a;
 main()
 {
 	int b;
-	b = a;
+	int a;
+	if (1 < a) {
+		b = 2;
+	}
+	return;
 }

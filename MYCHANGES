@@ -1,0 +1,9 @@
+Changes made for level 1
+------------------------
+
+1. In Makefile, changed the line
+	CC=gcc
+to
+	CC=gcc-4.6
+
+2. Added tokens to scanner.ll (changed metachars)

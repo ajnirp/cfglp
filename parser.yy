@@ -54,18 +54,14 @@
 %type <ast_list> statement_list
 %type <ast> statement
 %type <ast> expression
-%type <ast> boolean_expr
 %type <ast> comparison_op
 %type <ast> comparison_expr
-%type <ast> logical_op
-%type <ast> logical_expr
-%type <ast> ternary_expr
 %type <ast> assignment_expr
-%type <ast> if_statement
-%type <ast> if_block
-%type <ast> else_block
 %type <ast> variable
 %type <ast> constant
+
+%right '<' '>'
+%left '='
 
 %start program
 
@@ -287,9 +283,8 @@ basic_block:
 
 basic_block_body:
 	statement_list RETURN ';'
-	{}
-|	statement_list 	{}
-|	RETURN ';' {}
+|	statement_list
+|	RETURN ';'
 ;
 
 statement_list:
@@ -319,69 +314,39 @@ statement_list:
 ;
 
 statement
-:	GOTO '<' NAME INTEGER_NUMBER '>' ';'	{}
-|	if_statement	{}
-|	expression ';'	{}
+:	goto_statement
+|	IF '(' comparison_expr ')' goto_statement ELSE goto_statement
+|	expression ';'
 ;
 
 expression
-:	assignment_expr	{}
-|	boolean_expr	{}
-|	ternary_expr	{}
-|	variable 	{}
-|	constant	{}
+:	assignment_expr
+|   comparison_expr
+|	variable
+|	constant
 |	'(' expression ')'
 ;
 
-boolean_expr
-:	comparison_expr	{}
-|	logical_expr	{}
-;
-
 comparison_op
-:	'!''='	{}
-|	'>''='	{}
-|	'=''='	{}
-|	'<''='	{}
-|	'<'		{}
-|	'>'		{}
+:	'!''='
+|	'>''='
+|	'<''='
+|	'=''='
+|	'<'
+|	'>'
 ;
 
 comparison_expr
-:	expression comparison_op expression	{}
-;
-
-logical_op
-:	'&''&'	{}
-|	'|''|'	{}
-;
-
-logical_expr
-:	expression logical_op expression	{}
-|	'!' expression
-;
-
-ternary_expr
-:	boolean_expr '?' expression ':' expression	{}
+:	variable comparison_op variable
+|	variable comparison_op constant
 ;
 
 assignment_expr
-:	variable '=' expression	{}
+:	variable '=' expression
 ;
 
-if_statement
-:	if_block	{}
-|	if_block else_block	{}
-; 
-
-if_block
-:	IF '(' expression ')' statement_list{}
-|	IF '(' expression ')' '{' statement_list '}'	{}
-;
-
-else_block
-:	ELSE statement 	{}
-|	ELSE '{' statement_list '}'	{}
+goto_statement
+:	GOTO '<' NAME INTEGER_NUMBER '>' ';'
 ;
 
 variable:

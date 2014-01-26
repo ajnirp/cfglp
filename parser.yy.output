@@ -20,39 +20,27 @@ Production Rules
 17: basic_block_body (RETURN) ->  RETURN ';'
 18: statement_list ->  statement statement_list
 19: statement_list ->  statement
-20: statement (GOTO) ->  GOTO '<' NAME INTEGER_NUMBER '>' ';'
-21: statement ->  if_statement
+20: statement ->  goto_statement
+21: statement (IF) ->  IF '(' comparison_expr ')' goto_statement ELSE goto_statement
 22: statement (';') ->  expression ';'
 23: expression ->  assignment_expr
-24: expression ->  boolean_expr
-25: expression ->  ternary_expr
-26: expression ->  variable
-27: expression ->  constant
-28: expression ('(') ->  '(' expression ')'
-29: boolean_expr ->  comparison_expr
-30: boolean_expr ->  logical_expr
-31: comparison_op ('!') ->  '!' '='
-32: comparison_op ('>') ->  '>' '='
-33: comparison_op ('=') ->  '=' '='
-34: comparison_op ('<') ->  '<' '='
-35: comparison_op ('<') ->  '<'
-36: comparison_op ('>') ->  '>'
-37: comparison_expr ->  expression comparison_op expression
-38: logical_op ('&') ->  '&' '&'
-39: logical_op ('|') ->  '|' '|'
-40: logical_expr ->  expression logical_op expression
-41: logical_expr ('!') ->  '!' expression
-42: ternary_expr ('?') ->  boolean_expr '?' expression ':' expression
-43: assignment_expr ('=') ->  variable '=' expression
-44: if_statement ->  if_block
-45: if_statement ->  if_block else_block
-46: if_block (IF) ->  IF '(' expression ')' statement_list
-47: if_block (IF) ->  IF '(' expression ')' '{' statement_list '}'
-48: else_block (ELSE) ->  ELSE statement
-49: else_block (ELSE) ->  ELSE '{' statement_list '}'
-50: variable (NAME) ->  NAME
-51: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
-52: program_$ ->  program
+24: expression ->  comparison_expr
+25: expression ->  variable
+26: expression ->  constant
+27: expression ('(') ->  '(' expression ')'
+28: comparison_op ('!') ->  '!' '='
+29: comparison_op ('>') ->  '>' '='
+30: comparison_op ('<') ->  '<' '='
+31: comparison_op ('=') ->  '=' '='
+32: comparison_op ('<') ->  '<'
+33: comparison_op ('>') ->  '>'
+34: comparison_expr ->  variable comparison_op variable
+35: comparison_expr ->  variable comparison_op constant
+36: assignment_expr ('=') ->  variable '=' expression
+37: goto_statement (GOTO) ->  GOTO '<' NAME INTEGER_NUMBER '>' ';'
+38: variable (NAME) ->  NAME
+39: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+40: program_$ ->  program
 
 
 Symbolic Terminal tokens:
@@ -65,24 +53,21 @@ Symbolic Terminal tokens:
    261: NAME
    262: RETURN
    263: INTEGER
+    60: '<'
+    62: '>'
+    61: '='
     40: '('
     41: ')'
    123: '{'
    125: '}'
     59: ';'
-    60: '<'
-    62: '>'
     58: ':'
     33: '!'
-    61: '='
-    38: '&'
-   124: '|'
-    63: '?'
 
 
 Grammar States: 
 State 0:
-52: program_$ ->  . program 
+40: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_statement_list to state 2
   2:   On procedure_name to state 3
@@ -92,7 +77,7 @@ State 0:
 
 
 State 1:
-52: program_$ -> program  . 
+40: program_$ -> program  . 
 
 
 State 2:
@@ -265,22 +250,17 @@ State 30:
   1:   On statement_list to state 32
   2:   On RETURN to state 33
   3:   On statement to state 34
-  4:   On GOTO to state 35
-  5:   On if_statement to state 36
+  4:   On goto_statement to state 35
+  5:   On IF to state 36
   6:   On expression to state 37
-  7:   On if_block to state 38
+  7:   On GOTO to state 38
   8:   On assignment_expr to state 39
-  9:   On boolean_expr to state 40
-  10:   On ternary_expr to state 41
-  11:   On variable to state 42
-  12:   On constant to state 43
-  13:   On '(' to state 44
-  14:   On IF to state 45
-  15:   On comparison_expr to state 46
-  16:   On logical_expr to state 47
-  17:   On NAME to state 48
-  18:   On INTEGER_NUMBER to state 49
-  19:   On '!' to state 50
+  9:   On comparison_expr to state 40
+  10:   On variable to state 41
+  11:   On constant to state 42
+  12:   On '(' to state 43
+  13:   On NAME to state 44
+  14:   On INTEGER_NUMBER to state 45
 
 
 State 31:
@@ -291,70 +271,52 @@ State 31:
 State 32:
 15: basic_block_body -> statement_list  . RETURN ';' 
 16: basic_block_body -> statement_list  . 
-  0:   On RETURN to state 51
+  0:   On RETURN to state 46
   Reduce by 16: basic_block_body -> statement_list  . 
 
 
 State 33:
 17: basic_block_body -> RETURN  . ';' 
-  0:   On ';' to state 52
+  0:   On ';' to state 47
 
 
 State 34:
 18: statement_list -> statement  . statement_list 
 19: statement_list -> statement  . 
-  0:   On statement_list to state 53
+  0:   On statement_list to state 48
   1:   On statement to state 34
-  2 (AUTO REMOVED by S/R resolution):   On GOTO to state 35
-  3:   On if_statement to state 36
+  2:   On goto_statement to state 35
+  3:   On IF to state 36
   4:   On expression to state 37
-  5:   On if_block to state 38
+  5:   On GOTO to state 38
   6:   On assignment_expr to state 39
-  7:   On boolean_expr to state 40
-  8:   On ternary_expr to state 41
-  9:   On variable to state 42
-  10:   On constant to state 43
-  11 (AUTO REMOVED by S/R resolution):   On '(' to state 44
-  12 (AUTO REMOVED by S/R resolution):   On IF to state 45
-  13:   On comparison_expr to state 46
-  14:   On logical_expr to state 47
-  15 (AUTO REMOVED by S/R resolution):   On NAME to state 48
-  16 (AUTO REMOVED by S/R resolution):   On INTEGER_NUMBER to state 49
-  17 (AUTO REMOVED by S/R resolution):   On '!' to state 50
+  7:   On comparison_expr to state 40
+  8:   On variable to state 41
+  9:   On constant to state 42
+  10:   On '(' to state 43
+  11:   On NAME to state 44
+  12:   On INTEGER_NUMBER to state 45
   Reduce by 19: statement_list -> statement  . 
 
 
 State 35:
-20: statement -> GOTO  . '<' NAME INTEGER_NUMBER '>' ';' 
-  0:   On '<' to state 54
+20: statement -> goto_statement  . 
+  Reduce by 20: statement -> goto_statement  . 
 
 
 State 36:
-21: statement -> if_statement  . 
-  Reduce by 21: statement -> if_statement  . 
+21: statement -> IF  . '(' comparison_expr ')' goto_statement ELSE goto_statement 
+  0:   On '(' to state 49
 
 
 State 37:
 22: statement -> expression  . ';' 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On ';' to state 55
-  1:   On comparison_op to state 56
-  2:   On logical_op to state 57
-  3:   On '!' to state 58
-  4:   On '>' to state 59
-  5:   On '=' to state 60
-  6:   On '<' to state 61
-  7:   On '&' to state 62
-  8:   On '|' to state 63
+  0:   On ';' to state 50
 
 
 State 38:
-44: if_statement -> if_block  . 
-45: if_statement -> if_block  . else_block 
-  0:   On else_block to state 64
-  1 (AUTO REMOVED by S/R resolution):   On ELSE to state 65
-  Reduce by 44: if_statement -> if_block  . 
+37: goto_statement -> GOTO  . '<' NAME INTEGER_NUMBER '>' ';' 
+  0:   On '<' to state 51
 
 
 State 39:
@@ -363,572 +325,234 @@ State 39:
 
 
 State 40:
-24: expression -> boolean_expr  . 
-42: ternary_expr -> boolean_expr  . '?' expression ':' expression 
-  0 (AUTO REMOVED by S/R resolution):   On '?' to state 66
-  Reduce by 24: expression -> boolean_expr  . 
+24: expression -> comparison_expr  . 
+  Reduce by 24: expression -> comparison_expr  . 
 
 
 State 41:
-25: expression -> ternary_expr  . 
-  Reduce by 25: expression -> ternary_expr  . 
+25: expression -> variable  . 
+36: assignment_expr -> variable  . '=' expression 
+34: comparison_expr -> variable  . comparison_op variable 
+35: comparison_expr -> variable  . comparison_op constant 
+  0:   On '=' to state 52
+  1:   On comparison_op to state 53
+  2:   On '!' to state 54
+  3:   On '>' to state 55
+  4:   On '<' to state 56
+  Reduce by 25: expression -> variable  . 
 
 
 State 42:
-26: expression -> variable  . 
-43: assignment_expr -> variable  . '=' expression 
-  0 (AUTO REMOVED by S/R resolution):   On '=' to state 67
-  Reduce by 26: expression -> variable  . 
+26: expression -> constant  . 
+  Reduce by 26: expression -> constant  . 
 
 
 State 43:
-27: expression -> constant  . 
-  Reduce by 27: expression -> constant  . 
+27: expression -> '('  . expression ')' 
+  0:   On expression to state 57
+  1:   On assignment_expr to state 39
+  2:   On comparison_expr to state 40
+  3:   On variable to state 41
+  4:   On constant to state 42
+  5:   On '(' to state 43
+  6:   On NAME to state 44
+  7:   On INTEGER_NUMBER to state 45
 
 
 State 44:
-28: expression -> '('  . expression ')' 
-  0:   On expression to state 68
-  1:   On assignment_expr to state 39
-  2:   On boolean_expr to state 40
-  3:   On ternary_expr to state 41
-  4:   On variable to state 42
-  5:   On constant to state 43
-  6:   On '(' to state 44
-  7:   On comparison_expr to state 46
-  8:   On logical_expr to state 47
-  9:   On NAME to state 48
-  10:   On INTEGER_NUMBER to state 49
-  11:   On '!' to state 50
+38: variable -> NAME  . 
+  Reduce by 38: variable -> NAME  . 
 
 
 State 45:
-46: if_block -> IF  . '(' expression ')' statement_list 
-47: if_block -> IF  . '(' expression ')' '{' statement_list '}' 
-  0:   On '(' to state 69
+39: constant -> INTEGER_NUMBER  . 
+  Reduce by 39: constant -> INTEGER_NUMBER  . 
 
 
 State 46:
-29: boolean_expr -> comparison_expr  . 
-  Reduce by 29: boolean_expr -> comparison_expr  . 
+15: basic_block_body -> statement_list RETURN  . ';' 
+  0:   On ';' to state 58
 
 
 State 47:
-30: boolean_expr -> logical_expr  . 
-  Reduce by 30: boolean_expr -> logical_expr  . 
-
-
-State 48:
-50: variable -> NAME  . 
-  Reduce by 50: variable -> NAME  . 
-
-
-State 49:
-51: constant -> INTEGER_NUMBER  . 
-  Reduce by 51: constant -> INTEGER_NUMBER  . 
-
-
-State 50:
-41: logical_expr -> '!'  . expression 
-  0:   On expression to state 70
-  1:   On assignment_expr to state 39
-  2:   On boolean_expr to state 40
-  3:   On ternary_expr to state 41
-  4:   On variable to state 42
-  5:   On constant to state 43
-  6:   On '(' to state 44
-  7:   On comparison_expr to state 46
-  8:   On logical_expr to state 47
-  9:   On NAME to state 48
-  10:   On INTEGER_NUMBER to state 49
-  11:   On '!' to state 50
-
-
-State 51:
-15: basic_block_body -> statement_list RETURN  . ';' 
-  0:   On ';' to state 71
-
-
-State 52:
 17: basic_block_body -> RETURN ';'  . 
   Reduce by 17: basic_block_body -> RETURN ';'  . 
 
 
-State 53:
+State 48:
 18: statement_list -> statement statement_list  . 
   Reduce by 18: statement_list -> statement statement_list  . 
 
 
-State 54:
-20: statement -> GOTO '<'  . NAME INTEGER_NUMBER '>' ';' 
-  0:   On NAME to state 72
+State 49:
+21: statement -> IF '('  . comparison_expr ')' goto_statement ELSE goto_statement 
+  0:   On comparison_expr to state 59
+  1:   On variable to state 60
+  2:   On NAME to state 44
 
 
-State 55:
+State 50:
 22: statement -> expression ';'  . 
   Reduce by 22: statement -> expression ';'  . 
 
 
+State 51:
+37: goto_statement -> GOTO '<'  . NAME INTEGER_NUMBER '>' ';' 
+  0:   On NAME to state 61
+
+
+State 52:
+36: assignment_expr -> variable '='  . expression 
+31: comparison_op -> '='  . '=' 
+  0:   On expression to state 62
+  1:   On '=' to state 63
+  2:   On assignment_expr to state 39
+  3:   On comparison_expr to state 40
+  4:   On variable to state 41
+  5:   On constant to state 42
+  6:   On '(' to state 43
+  7:   On NAME to state 44
+  8:   On INTEGER_NUMBER to state 45
+
+
+State 53:
+34: comparison_expr -> variable comparison_op  . variable 
+35: comparison_expr -> variable comparison_op  . constant 
+  0:   On variable to state 64
+  1:   On constant to state 65
+  2:   On NAME to state 44
+  3:   On INTEGER_NUMBER to state 45
+
+
+State 54:
+28: comparison_op -> '!'  . '=' 
+  0:   On '=' to state 66
+
+
+State 55:
+29: comparison_op -> '>'  . '=' 
+33: comparison_op -> '>'  . 
+  0:   On '=' to state 67
+  Reduce by 33: comparison_op -> '>'  . 
+
+
 State 56:
-37: comparison_expr -> expression comparison_op  . expression 
-  0:   On expression to state 73
-  1:   On assignment_expr to state 39
-  2:   On boolean_expr to state 40
-  3:   On ternary_expr to state 41
-  4:   On variable to state 42
-  5:   On constant to state 43
-  6:   On '(' to state 44
-  7:   On comparison_expr to state 46
-  8:   On logical_expr to state 47
-  9:   On NAME to state 48
-  10:   On INTEGER_NUMBER to state 49
-  11:   On '!' to state 50
+30: comparison_op -> '<'  . '=' 
+32: comparison_op -> '<'  . 
+  0:   On '=' to state 68
+  Reduce by 32: comparison_op -> '<'  . 
 
 
 State 57:
-40: logical_expr -> expression logical_op  . expression 
-  0:   On expression to state 74
-  1:   On assignment_expr to state 39
-  2:   On boolean_expr to state 40
-  3:   On ternary_expr to state 41
-  4:   On variable to state 42
-  5:   On constant to state 43
-  6:   On '(' to state 44
-  7:   On comparison_expr to state 46
-  8:   On logical_expr to state 47
-  9:   On NAME to state 48
-  10:   On INTEGER_NUMBER to state 49
-  11:   On '!' to state 50
+27: expression -> '(' expression  . ')' 
+  0:   On ')' to state 69
 
 
 State 58:
-31: comparison_op -> '!'  . '=' 
-  0:   On '=' to state 75
-
-
-State 59:
-32: comparison_op -> '>'  . '=' 
-36: comparison_op -> '>'  . 
-  0:   On '=' to state 76
-  Reduce by 36: comparison_op -> '>'  . 
-
-
-State 60:
-33: comparison_op -> '='  . '=' 
-  0:   On '=' to state 77
-
-
-State 61:
-34: comparison_op -> '<'  . '=' 
-35: comparison_op -> '<'  . 
-  0:   On '=' to state 78
-  Reduce by 35: comparison_op -> '<'  . 
-
-
-State 62:
-38: logical_op -> '&'  . '&' 
-  0:   On '&' to state 79
-
-
-State 63:
-39: logical_op -> '|'  . '|' 
-  0:   On '|' to state 80
-
-
-State 64:
-45: if_statement -> if_block else_block  . 
-  Reduce by 45: if_statement -> if_block else_block  . 
-
-
-State 65:
-48: else_block -> ELSE  . statement 
-49: else_block -> ELSE  . '{' statement_list '}' 
-  0:   On statement to state 81
-  1:   On '{' to state 82
-  2:   On GOTO to state 35
-  3:   On if_statement to state 36
-  4:   On expression to state 37
-  5:   On if_block to state 38
-  6:   On assignment_expr to state 39
-  7:   On boolean_expr to state 40
-  8:   On ternary_expr to state 41
-  9:   On variable to state 42
-  10:   On constant to state 43
-  11:   On '(' to state 44
-  12:   On IF to state 45
-  13:   On comparison_expr to state 46
-  14:   On logical_expr to state 47
-  15:   On NAME to state 48
-  16:   On INTEGER_NUMBER to state 49
-  17:   On '!' to state 50
-
-
-State 66:
-42: ternary_expr -> boolean_expr '?'  . expression ':' expression 
-  0:   On expression to state 83
-  1:   On assignment_expr to state 39
-  2:   On boolean_expr to state 40
-  3:   On ternary_expr to state 41
-  4:   On variable to state 42
-  5:   On constant to state 43
-  6:   On '(' to state 44
-  7:   On comparison_expr to state 46
-  8:   On logical_expr to state 47
-  9:   On NAME to state 48
-  10:   On INTEGER_NUMBER to state 49
-  11:   On '!' to state 50
-
-
-State 67:
-43: assignment_expr -> variable '='  . expression 
-  0:   On expression to state 84
-  1:   On assignment_expr to state 39
-  2:   On boolean_expr to state 40
-  3:   On ternary_expr to state 41
-  4:   On variable to state 42
-  5:   On constant to state 43
-  6:   On '(' to state 44
-  7:   On comparison_expr to state 46
-  8:   On logical_expr to state 47
-  9:   On NAME to state 48
-  10:   On INTEGER_NUMBER to state 49
-  11:   On '!' to state 50
-
-
-State 68:
-28: expression -> '(' expression  . ')' 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On ')' to state 85
-  1:   On comparison_op to state 56
-  2:   On logical_op to state 57
-  3:   On '!' to state 58
-  4:   On '>' to state 59
-  5:   On '=' to state 60
-  6:   On '<' to state 61
-  7:   On '&' to state 62
-  8:   On '|' to state 63
-
-
-State 69:
-46: if_block -> IF '('  . expression ')' statement_list 
-47: if_block -> IF '('  . expression ')' '{' statement_list '}' 
-  0:   On expression to state 86
-  1:   On assignment_expr to state 39
-  2:   On boolean_expr to state 40
-  3:   On ternary_expr to state 41
-  4:   On variable to state 42
-  5:   On constant to state 43
-  6:   On '(' to state 44
-  7:   On comparison_expr to state 46
-  8:   On logical_expr to state 47
-  9:   On NAME to state 48
-  10:   On INTEGER_NUMBER to state 49
-  11:   On '!' to state 50
-
-
-State 70:
-41: logical_expr -> '!' expression  . 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On comparison_op to state 56
-  1:   On logical_op to state 57
-  2:   On '!' to state 58
-  3:   On '>' to state 59
-  4:   On '=' to state 60
-  5:   On '<' to state 61
-  6:   On '&' to state 62
-  7:   On '|' to state 63
-  Reduce by 41: logical_expr -> '!' expression  . 
-Solved SR CONFLICT on '!': shift to state 58, removed '!' from LA-set of rule 41)
-Solved SR CONFLICT on '>': shift to state 59, removed '>' from LA-set of rule 41)
-Solved SR CONFLICT on '>': shift to state 59, removed '>' from LA-set of rule 41)
-Solved SR CONFLICT on '=': shift to state 60, removed '=' from LA-set of rule 41)
-Solved SR CONFLICT on '<': shift to state 61, removed '<' from LA-set of rule 41)
-Solved SR CONFLICT on '<': shift to state 61, removed '<' from LA-set of rule 41)
-Solved SR CONFLICT on '&': shift to state 62, removed '&' from LA-set of rule 41)
-Solved SR CONFLICT on '|': shift to state 63, removed '|' from LA-set of rule 41)
-
-
-State 71:
 15: basic_block_body -> statement_list RETURN ';'  . 
   Reduce by 15: basic_block_body -> statement_list RETURN ';'  . 
 
 
+State 59:
+21: statement -> IF '(' comparison_expr  . ')' goto_statement ELSE goto_statement 
+  0:   On ')' to state 70
+
+
+State 60:
+34: comparison_expr -> variable  . comparison_op variable 
+35: comparison_expr -> variable  . comparison_op constant 
+  0:   On comparison_op to state 53
+  1:   On '!' to state 54
+  2:   On '>' to state 55
+  3:   On '<' to state 56
+  4:   On '=' to state 71
+
+
+State 61:
+37: goto_statement -> GOTO '<' NAME  . INTEGER_NUMBER '>' ';' 
+  0:   On INTEGER_NUMBER to state 72
+
+
+State 62:
+36: assignment_expr -> variable '=' expression  . 
+  Reduce by 36: assignment_expr -> variable '=' expression  . 
+
+
+State 63:
+31: comparison_op -> '=' '='  . 
+  Reduce by 31: comparison_op -> '=' '='  . 
+
+
+State 64:
+34: comparison_expr -> variable comparison_op variable  . 
+  Reduce by 34: comparison_expr -> variable comparison_op variable  . 
+
+
+State 65:
+35: comparison_expr -> variable comparison_op constant  . 
+  Reduce by 35: comparison_expr -> variable comparison_op constant  . 
+
+
+State 66:
+28: comparison_op -> '!' '='  . 
+  Reduce by 28: comparison_op -> '!' '='  . 
+
+
+State 67:
+29: comparison_op -> '>' '='  . 
+  Reduce by 29: comparison_op -> '>' '='  . 
+
+
+State 68:
+30: comparison_op -> '<' '='  . 
+  Reduce by 30: comparison_op -> '<' '='  . 
+
+
+State 69:
+27: expression -> '(' expression ')'  . 
+  Reduce by 27: expression -> '(' expression ')'  . 
+
+
+State 70:
+21: statement -> IF '(' comparison_expr ')'  . goto_statement ELSE goto_statement 
+  0:   On goto_statement to state 73
+  1:   On GOTO to state 38
+
+
+State 71:
+31: comparison_op -> '='  . '=' 
+  0:   On '=' to state 63
+
+
 State 72:
-20: statement -> GOTO '<' NAME  . INTEGER_NUMBER '>' ';' 
-  0:   On INTEGER_NUMBER to state 87
+37: goto_statement -> GOTO '<' NAME INTEGER_NUMBER  . '>' ';' 
+  0:   On '>' to state 74
 
 
 State 73:
-37: comparison_expr -> expression comparison_op expression  . 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On comparison_op to state 56
-  1:   On logical_op to state 57
-  2 (AUTO REMOVED by S/R resolution):   On '!' to state 58
-  3 (AUTO REMOVED by S/R resolution):   On '>' to state 59
-  4 (AUTO REMOVED by S/R resolution):   On '=' to state 60
-  5 (AUTO REMOVED by S/R resolution):   On '<' to state 61
-  6 (AUTO REMOVED by S/R resolution):   On '&' to state 62
-  7 (AUTO REMOVED by S/R resolution):   On '|' to state 63
-  Reduce by 37: comparison_expr -> expression comparison_op expression  . 
+21: statement -> IF '(' comparison_expr ')' goto_statement  . ELSE goto_statement 
+  0:   On ELSE to state 75
 
 
 State 74:
-40: logical_expr -> expression logical_op expression  . 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On comparison_op to state 56
-  1:   On logical_op to state 57
-  2 (AUTO REMOVED by S/R resolution):   On '!' to state 58
-  3 (AUTO REMOVED by S/R resolution):   On '>' to state 59
-  4 (AUTO REMOVED by S/R resolution):   On '=' to state 60
-  5 (AUTO REMOVED by S/R resolution):   On '<' to state 61
-  6 (AUTO REMOVED by S/R resolution):   On '&' to state 62
-  7 (AUTO REMOVED by S/R resolution):   On '|' to state 63
-  Reduce by 40: logical_expr -> expression logical_op expression  . 
+37: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>'  . ';' 
+  0:   On ';' to state 76
 
 
 State 75:
-31: comparison_op -> '!' '='  . 
-  Reduce by 31: comparison_op -> '!' '='  . 
+21: statement -> IF '(' comparison_expr ')' goto_statement ELSE  . goto_statement 
+  0:   On goto_statement to state 77
+  1:   On GOTO to state 38
 
 
 State 76:
-32: comparison_op -> '>' '='  . 
-  Reduce by 32: comparison_op -> '>' '='  . 
+37: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
+  Reduce by 37: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
 
 
 State 77:
-33: comparison_op -> '=' '='  . 
-  Reduce by 33: comparison_op -> '=' '='  . 
-
-
-State 78:
-34: comparison_op -> '<' '='  . 
-  Reduce by 34: comparison_op -> '<' '='  . 
-
-
-State 79:
-38: logical_op -> '&' '&'  . 
-  Reduce by 38: logical_op -> '&' '&'  . 
-
-
-State 80:
-39: logical_op -> '|' '|'  . 
-  Reduce by 39: logical_op -> '|' '|'  . 
-
-
-State 81:
-48: else_block -> ELSE statement  . 
-  Reduce by 48: else_block -> ELSE statement  . 
-
-
-State 82:
-49: else_block -> ELSE '{'  . statement_list '}' 
-  0:   On statement_list to state 88
-  1:   On statement to state 34
-  2:   On GOTO to state 35
-  3:   On if_statement to state 36
-  4:   On expression to state 37
-  5:   On if_block to state 38
-  6:   On assignment_expr to state 39
-  7:   On boolean_expr to state 40
-  8:   On ternary_expr to state 41
-  9:   On variable to state 42
-  10:   On constant to state 43
-  11:   On '(' to state 44
-  12:   On IF to state 45
-  13:   On comparison_expr to state 46
-  14:   On logical_expr to state 47
-  15:   On NAME to state 48
-  16:   On INTEGER_NUMBER to state 49
-  17:   On '!' to state 50
-
-
-State 83:
-42: ternary_expr -> boolean_expr '?' expression  . ':' expression 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On ':' to state 89
-  1:   On comparison_op to state 56
-  2:   On logical_op to state 57
-  3:   On '!' to state 58
-  4:   On '>' to state 59
-  5:   On '=' to state 60
-  6:   On '<' to state 61
-  7:   On '&' to state 62
-  8:   On '|' to state 63
-
-
-State 84:
-43: assignment_expr -> variable '=' expression  . 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On comparison_op to state 56
-  1:   On logical_op to state 57
-  2:   On '!' to state 58
-  3:   On '>' to state 59
-  4:   On '=' to state 60
-  5:   On '<' to state 61
-  6:   On '&' to state 62
-  7:   On '|' to state 63
-  Reduce by 43: assignment_expr -> variable '=' expression  . 
-Solved SR CONFLICT on '!': shift to state 58, removed '!' from LA-set of rule 43)
-Solved SR CONFLICT on '>': shift to state 59, removed '>' from LA-set of rule 43)
-Solved SR CONFLICT on '>': shift to state 59, removed '>' from LA-set of rule 43)
-Solved SR CONFLICT on '=': shift to state 60, removed '=' from LA-set of rule 43)
-Solved SR CONFLICT on '<': shift to state 61, removed '<' from LA-set of rule 43)
-Solved SR CONFLICT on '<': shift to state 61, removed '<' from LA-set of rule 43)
-Solved SR CONFLICT on '&': shift to state 62, removed '&' from LA-set of rule 43)
-Solved SR CONFLICT on '|': shift to state 63, removed '|' from LA-set of rule 43)
-
-
-State 85:
-28: expression -> '(' expression ')'  . 
-  Reduce by 28: expression -> '(' expression ')'  . 
-
-
-State 86:
-46: if_block -> IF '(' expression  . ')' statement_list 
-47: if_block -> IF '(' expression  . ')' '{' statement_list '}' 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On ')' to state 90
-  1:   On comparison_op to state 56
-  2:   On logical_op to state 57
-  3:   On '!' to state 58
-  4:   On '>' to state 59
-  5:   On '=' to state 60
-  6:   On '<' to state 61
-  7:   On '&' to state 62
-  8:   On '|' to state 63
-
-
-State 87:
-20: statement -> GOTO '<' NAME INTEGER_NUMBER  . '>' ';' 
-  0:   On '>' to state 91
-
-
-State 88:
-49: else_block -> ELSE '{' statement_list  . '}' 
-  0:   On '}' to state 92
-
-
-State 89:
-42: ternary_expr -> boolean_expr '?' expression ':'  . expression 
-  0:   On expression to state 93
-  1:   On assignment_expr to state 39
-  2:   On boolean_expr to state 40
-  3:   On ternary_expr to state 41
-  4:   On variable to state 42
-  5:   On constant to state 43
-  6:   On '(' to state 44
-  7:   On comparison_expr to state 46
-  8:   On logical_expr to state 47
-  9:   On NAME to state 48
-  10:   On INTEGER_NUMBER to state 49
-  11:   On '!' to state 50
-
-
-State 90:
-46: if_block -> IF '(' expression ')'  . statement_list 
-47: if_block -> IF '(' expression ')'  . '{' statement_list '}' 
-  0:   On statement_list to state 94
-  1:   On '{' to state 95
-  2:   On statement to state 34
-  3:   On GOTO to state 35
-  4:   On if_statement to state 36
-  5:   On expression to state 37
-  6:   On if_block to state 38
-  7:   On assignment_expr to state 39
-  8:   On boolean_expr to state 40
-  9:   On ternary_expr to state 41
-  10:   On variable to state 42
-  11:   On constant to state 43
-  12:   On '(' to state 44
-  13:   On IF to state 45
-  14:   On comparison_expr to state 46
-  15:   On logical_expr to state 47
-  16:   On NAME to state 48
-  17:   On INTEGER_NUMBER to state 49
-  18:   On '!' to state 50
-
-
-State 91:
-20: statement -> GOTO '<' NAME INTEGER_NUMBER '>'  . ';' 
-  0:   On ';' to state 96
-
-
-State 92:
-49: else_block -> ELSE '{' statement_list '}'  . 
-  Reduce by 49: else_block -> ELSE '{' statement_list '}'  . 
-
-
-State 93:
-42: ternary_expr -> boolean_expr '?' expression ':' expression  . 
-37: comparison_expr -> expression  . comparison_op expression 
-40: logical_expr -> expression  . logical_op expression 
-  0:   On comparison_op to state 56
-  1:   On logical_op to state 57
-  2:   On '!' to state 58
-  3:   On '>' to state 59
-  4:   On '=' to state 60
-  5:   On '<' to state 61
-  6:   On '&' to state 62
-  7:   On '|' to state 63
-  Reduce by 42: ternary_expr -> boolean_expr '?' expression ':' expression  . 
-Solved SR CONFLICT on '!': shift to state 58, removed '!' from LA-set of rule 42)
-Solved SR CONFLICT on '>': shift to state 59, removed '>' from LA-set of rule 42)
-Solved SR CONFLICT on '>': shift to state 59, removed '>' from LA-set of rule 42)
-Solved SR CONFLICT on '=': shift to state 60, removed '=' from LA-set of rule 42)
-Solved SR CONFLICT on '<': shift to state 61, removed '<' from LA-set of rule 42)
-Solved SR CONFLICT on '<': shift to state 61, removed '<' from LA-set of rule 42)
-Solved SR CONFLICT on '&': shift to state 62, removed '&' from LA-set of rule 42)
-Solved SR CONFLICT on '|': shift to state 63, removed '|' from LA-set of rule 42)
-
-
-State 94:
-46: if_block -> IF '(' expression ')' statement_list  . 
-  Reduce by 46: if_block -> IF '(' expression ')' statement_list  . 
-
-
-State 95:
-47: if_block -> IF '(' expression ')' '{'  . statement_list '}' 
-  0:   On statement_list to state 97
-  1:   On statement to state 34
-  2:   On GOTO to state 35
-  3:   On if_statement to state 36
-  4:   On expression to state 37
-  5:   On if_block to state 38
-  6:   On assignment_expr to state 39
-  7:   On boolean_expr to state 40
-  8:   On ternary_expr to state 41
-  9:   On variable to state 42
-  10:   On constant to state 43
-  11:   On '(' to state 44
-  12:   On IF to state 45
-  13:   On comparison_expr to state 46
-  14:   On logical_expr to state 47
-  15:   On NAME to state 48
-  16:   On INTEGER_NUMBER to state 49
-  17:   On '!' to state 50
-
-
-State 96:
-20: statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
-  Reduce by 20: statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
-
-
-State 97:
-47: if_block -> IF '(' expression ')' '{' statement_list  . '}' 
-  0:   On '}' to state 98
-
-
-State 98:
-47: if_block -> IF '(' expression ')' '{' statement_list '}'  . 
-  Reduce by 47: if_block -> IF '(' expression ')' '{' statement_list '}'  . 
+21: statement -> IF '(' comparison_expr ')' goto_statement ELSE goto_statement  . 
+  Reduce by 21: statement -> IF '(' comparison_expr ')' goto_statement ELSE goto_statement  . 
 
 
 
