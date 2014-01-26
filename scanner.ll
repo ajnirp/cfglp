@@ -37,16 +37,6 @@ return		{
 			store_token_name("RETURN");
 			return Parser::RETURN; 
 		}
-
-do 		{
-			return Parser::DO;
-		}
-while	{
-			return Parser::WHILE;
-		}
-for		{
-			return Parser::FOR;
-		}
 if		{
 			return Parser::IF;
 		}
@@ -58,12 +48,7 @@ goto	{
 			return Parser::GOTO;
 		}
 
-"||"|"&&"	{
-			std::cout<<"hey there"<<std::endl;
-			return Parser::BINARY_LOGICAL_OPERATOR;
-		}
-
-[<>:{}();=!]	{
+[<>:{}();=!&|]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}

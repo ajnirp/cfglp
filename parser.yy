@@ -40,28 +40,30 @@
 	Procedure * procedure;
 }
 
-%token IF ELSE GOTO FOR DO WHILE
+%token IF ELSE GOTO
 
 %token <integer_value> INTEGER_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER UNARY_LOGICAL_OPERATOR BINARY_LOGICAL_OPERATOR
+%token RETURN INTEGER 
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
 %type <basic_block_list> basic_block_list
 %type <basic_block> basic_block
-%type <ast_list> assignment_statement_list
+%type <ast> basic_block_body
 %type <ast_list> statement_list
 %type <ast> statement
-%type <ast> assignment_statement
+%type <ast> expression
+%type <ast> boolean_expr
+%type <ast> comparison_op
+%type <ast> comparison_expr
+%type <ast> logical_op
+%type <ast> logical_expr
+%type <ast> ternary_expr
+%type <ast> assignment_expr
 %type <ast> if_statement
 %type <ast> if_block
 %type <ast> else_block
-%type <ast> goto_statement
-%type <ast> executable_statement
-%type <ast> ternary_statement
-%type <ast> comparison_statement
-%type <ast> binary_boolean_statement
 %type <ast> variable
 %type <ast> constant
 
@@ -80,7 +82,7 @@ program:
 	}
 	procedure_body
 	{
-	
+		
 	#if 0
 		program_object.set_procedure_map(*current_procedure);
 
@@ -93,14 +95,12 @@ program:
 |
 	procedure_name
 	{
-	
 	#if 0
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 	#endif
 	}
 	procedure_body
 	{
-		
 		#if 0
 		program_object.set_procedure_map(*current_procedure);
 		#endif
@@ -110,7 +110,6 @@ program:
 procedure_name:
 	NAME '(' ')'
 	{
-		
 		#if 0
 		current_procedure = new Procedure(void_data_type, *$1);
 		#endif
@@ -224,7 +223,7 @@ declaration_statement:
 ;
 
 basic_block_list:
-	basic_block_list basic_block
+	basic_block basic_block_list
 	{	
 	#if 0
 		if (!$2)
@@ -257,7 +256,7 @@ basic_block_list:
 ;
 
 basic_block:
-	'<' NAME INTEGER_NUMBER '>' ':' statement_list
+	'<' NAME INTEGER_NUMBER '>' ':' basic_block_body
 	{	
 	#if 0
 		if (*$2 != "bb")
@@ -286,44 +285,22 @@ basic_block:
 	}
 ;
 
-statement:
-	executable_statement ';'
-|	
-	if_statement
-|
-	goto_statement ';'
+basic_block_body:
+	statement_list RETURN ';'
+	{}
+|	statement_list 	{}
+|	RETURN ';' {}
 ;
-	
-
-if_statement:
-	if_block
-|
-	if_block else_block
-;
-
-if_block:
-	IF '(' executable_statement ')' goto_statement
-;
-
-else_block:
-	ELSE goto_statement
-;
-
-goto_statement:
-	GOTO '<' NAME INTEGER_NUMBER '>' ';'
-;
-
 
 statement_list:
-	statement
-	statement_list
+	statement statement_list
 	{	
 	#if 0
 		$$ = $1;
 		#endif
 	}
 |
-	statement RETURN ';'
+	statement
 	{	
 	#if 0
 		Ast * ret = new Return_Ast();
@@ -341,114 +318,70 @@ statement_list:
 	}
 ;
 
-executable_statement:
-	{	
-	#if 0
-		$$ = NULL;
-		#endif
-	}
-|	
-	assignment_statement
-	{
-	
-	}
-|
-	comparison_statement
-	{
-
-	}
-|
-	ternary_statement
-	{
-
-	}
-|
-	binary_boolean_statement
-	{
-
-	}
-|
-	'!'	executable_statement
-	{
-
-	}
-|
-	'(' executable_statement ')'
-	{
-
-	}
-|
-	variable
-	{
-
-	}
-
-|
-	constant
-	{
-
-	}
-
+statement
+:	GOTO '<' NAME INTEGER_NUMBER '>' ';'	{}
+|	if_statement	{}
+|	expression ';'	{}
 ;
 
-comparison_op:
-	'!''='
-|	'>''='
-|	'=''='
-|	'<''='
-|	'<'
-|	'>'
+expression
+:	assignment_expr	{}
+|	boolean_expr	{}
+|	ternary_expr	{}
+|	variable 	{}
+|	constant	{}
+|	'(' expression ')'
 ;
 
-comparison_statement:
-	executable_statement comparison_op executable_statement
-	{
-
-	}
+boolean_expr
+:	comparison_expr	{}
+|	logical_expr	{}
 ;
 
-ternary_statement:
-	executable_statement '?' executable_statement ':' executable_statement
-	{
-
-	}
+comparison_op
+:	'!''='	{}
+|	'>''='	{}
+|	'=''='	{}
+|	'<''='	{}
+|	'<'		{}
+|	'>'		{}
 ;
 
-binary_boolean_statement:
-	executable_statement BINARY_LOGICAL_OPERATOR executable_statement
-	{
-		
-	}	
+comparison_expr
+:	expression comparison_op expression	{}
 ;
 
-
-	
-
-assignment_statement_list:
-	assignment_statement_list assignment_statement
-	{	
-	#if 0
-		if ($1 == NULL)
-			$$ = new list<Ast *>;
-
-		else
-			$$ = $1;
-
-		$$->push_back($2);
-		#endif
-	}
+logical_op
+:	'&''&'	{}
+|	'|''|'	{}
 ;
 
-assignment_statement:
-	variable '=' executable_statement
-	{	
-	#if 0
-		$$ = new Assignment_Ast($1, $3);
+logical_expr
+:	expression logical_op expression	{}
+|	'!' expression
+;
 
-		int line = get_line_number();
-		$$->check_ast(line);
-		#endif
-	}
+ternary_expr
+:	boolean_expr '?' expression ':' expression	{}
+;
+
+assignment_expr
+:	variable '=' expression	{}
+;
+
+if_statement
+:	if_block	{}
+|	if_block else_block	{}
+; 
+
+if_block
+:	IF '(' expression ')' statement_list{}
+|	IF '(' expression ')' '{' statement_list '}'	{}
+;
+
+else_block
+:	ELSE statement 	{}
+|	ELSE '{' statement_list '}'	{}
 ;
 
 variable:
