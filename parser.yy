@@ -54,7 +54,6 @@
 %type <ast> basic_block_body
 %type <ast_list> statement_list
 %type <ast> statement
-%type <ast> expression
 %type <ast> comparison_op
 %type <ast> comparison_expr
 %type <ast> assignment_expr
@@ -317,15 +316,7 @@ statement_list:
 statement
 :	goto_statement
 |	IF '(' comparison_expr ')' goto_statement ELSE goto_statement
-|	expression ';'
-;
-
-expression
-:	assignment_expr
-|   comparison_expr
-|	variable
-|	constant
-|	'(' expression ')'
+|	assignment_expr ';'
 ;
 
 comparison_op
@@ -338,12 +329,18 @@ comparison_op
 ;
 
 comparison_expr
-:	variable comparison_op variable
+:	variable comparison_op comparison_expr
+|	constant comparison_op comparison_expr
+|	variable comparison_op variable
 |	variable comparison_op constant
+|	constant comparison_op constant
+|	constant comparison_op variable
 ;
 
 assignment_expr
-:	variable '=' expression
+:	variable '=' comparison_expr
+|	variable '=' variable
+|	variable '=' constant
 ;
 
 goto_statement
