@@ -1,1 +1,8 @@
 .fuse_hidden*
+*.o
+a.out
+parser.cc
+parser.yy.output
+parserbase.h
+scanner.cc
+scannerbase.h

@@ -1,9 +1,33 @@
 Changes made for level 1
-------------------------
+========================
 
-1. In Makefile, changed the line
+The following is a list of files, each followed by the changes we made to that particular file.
+
+
+Makefile.cfg
+------------
+
+1. Changed the line
 	CC=gcc
 to
 	CC=gcc-4.6
+to ensure that our code uses exactly gcc-4.6 (and not a later or earlier version)
 
-2. Added tokens to scanner.ll (changed metachars)
+
+scanner.ll
+----------
+
+1. Added lexemes for if, else and goto
+2. Added actions for each of the above lexemes
+
+
+parser.yy
+---------
+
+1. Added a line specifying that IF, ELSE and GOTO are tokens
+2. Rewrote the grammar
+	a. Removed executable_statement and executable_statement_list
+	b. Added a number of new nonterminals
+	c. Added appropriate %type lines at the top of parser.yy
+3. Added precedence rules for '<', '>' and '=' to ensure no shift/reduce conflicts in our grammar
+4. Commented out the C++ base code as mentioned in the problem statement
