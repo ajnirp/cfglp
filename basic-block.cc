@@ -73,6 +73,10 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 			report_error ("Ast pointer seems to be NULL", NOLINE);
 
 		result = &((*i)->evaluate(eval_env, file_buffer)); 
+		//TODO_DONE
+		if(result->get_result_enum() == skip_result){
+			break;
+		}
 	}
 
 	return *result;

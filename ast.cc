@@ -263,7 +263,185 @@ void Return_Ast::print_ast(ostream & file_buffer)
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result & result = *new Eval_Result_Value_Int();
+	print_ast(file_buffer);
 	return result;
 }
 
 template class Number_Ast<int>;
+
+//TODO_DONE
+
+////////////////////////////////////////////////////////////////
+
+Comparison_Ast::Comparison_Ast(Ast * temp_lhs, Comparison_Op_Enum temp_op, Ast * temp_rhs)
+{
+	lhs = temp_lhs;
+	op = temp_op;
+	rhs = temp_rhs;
+}
+
+Comparison_Ast::~Comparison_Ast()
+{
+	delete lhs;
+	delete rhs;
+}
+
+Data_Type Comparison_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Comparison_Ast::check_ast(int line)
+{
+	//changes for float or any other type of comparison to be made here
+	if (lhs->get_data_type() == rhs->get_data_type())
+	{
+		//Default data type of comparison is int, true is 1 and false is 0
+		node_data_type = lhs->get_data_type();
+		return true;
+	}
+
+	report_error("Comparison statement data type not compatible", line);
+}
+
+void Comparison_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer<<"\n"<<AST_NODE_SPACE<<"Condition: ";
+	switch(op){
+		case NE_OP:
+			file_buffer << "NE";
+			break;
+		case GE_OP:
+			file_buffer << "GE";
+			break;
+		case LE_OP:
+			file_buffer << "LE";
+			break;
+		case EQ_OP:
+			file_buffer << "EQ";
+			break;
+		case LT_OP:
+			file_buffer << "LT";
+			break;
+		case GT_OP:
+			file_buffer << "GT";
+			break;
+	}
+
+	file_buffer <<"\n"<<AST_NODE_SPACE<<"   LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+
+	file_buffer <<AST_NODE_SPACE<<"   RHS (";
+	rhs->print_ast(file_buffer);
+	file_buffer << ")";
+}
+
+Eval_Result & Comparison_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	Eval_Result & lhs_result = lhs->evaluate(eval_env, file_buffer);
+	Eval_Result & rhs_result = rhs->evaluate(eval_env, file_buffer);
+	Eval_Result & result = *new Eval_Result_Value_Int();
+
+	switch(op){	
+		case NE_OP:
+			result.set_value((int)(lhs_result.get_value() != rhs_result.get_value()));
+			break;
+		case GE_OP:
+			result.set_value((int)(lhs_result.get_value() >= rhs_result.get_value()));
+			break;
+		case LE_OP:
+			result.set_value((int)(lhs_result.get_value() <= rhs_result.get_value()));
+			break;
+		case EQ_OP:
+			result.set_value((int)(lhs_result.get_value() == rhs_result.get_value()));
+			break;
+		case LT_OP:
+			result.set_value((int)(lhs_result.get_value() < rhs_result.get_value()));
+			break;
+		case GT_OP:
+			result.set_value((int)(lhs_result.get_value() > rhs_result.get_value()));
+			break;
+	}
+	
+	return result;
+}
+
+
+/////////////////////////////////////////////////////////////////
+
+Goto_Ast::Goto_Ast(int temp_bb_number)
+{
+	bb_number = temp_bb_number;
+}
+
+Goto_Ast::~Goto_Ast()
+{}
+
+Data_Type Goto_Ast::get_data_type()
+{
+	return void_data_type;
+}
+
+void Goto_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer << AST_SPACE << "Goto statement:\n";	
+	file_buffer <<AST_NODE_SPACE<< "Successor: "<<bb_number<<"\n";	
+
+}
+
+Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	print_ast(file_buffer);
+	Eval_Result & result = *new Eval_Result_Value_Int();
+	result.set_value(bb_number);
+	result.set_result_enum(skip_result);
+	file_buffer <<AST_SPACE<< "GOTO (BB "<<bb_number<<")\n";
+	return result;
+}
+
+/////////////////////////////////////////////////////////////////
+
+If_Ast::If_Ast(Ast* temp_condition ,int temp_true_bb_number, int temp_false_bb_number)
+{
+	condition = temp_condition;
+	true_bb_number = temp_true_bb_number;
+	false_bb_number = temp_false_bb_number;
+}
+
+If_Ast::~If_Ast()
+{
+	delete condition;
+}
+
+Data_Type If_Ast::get_data_type()
+{
+	return void_data_type;
+}
+
+void If_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer << AST_SPACE << "If_Else statement:";	
+	condition->print_ast(file_buffer);
+	file_buffer <<"\n"<<AST_NODE_SPACE<<"True Successor: "<<true_bb_number;
+	file_buffer <<"\n"<<AST_NODE_SPACE<<"False Successor: "<<false_bb_number<<"\n";
+}
+
+Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+		Eval_Result & condition_result = condition->evaluate(eval_env, file_buffer);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		result.set_result_enum(skip_result);
+		print_ast(file_buffer);
+		if(condition_result.get_value()){
+			file_buffer <<AST_SPACE<<"Condition True : Goto (BB "<<true_bb_number<<")\n";
+			result.set_value(true_bb_number);
+		}
+		else{
+			file_buffer << "Condition False : Goto (BB "<<false_bb_number<<")\n";
+			result.set_value(false_bb_number);
+		}
+		return result;
+}
+

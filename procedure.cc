@@ -131,6 +131,13 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
+		//TODO_DONE
+		if(result->get_result_enum() == skip_result){
+			while(current_bb && current_bb->get_bb_number() != result->get_value()){
+				current_bb = get_next_bb(*current_bb);	
+			}
+			continue;
+		}
 		current_bb = get_next_bb(*current_bb);		
 	}
 

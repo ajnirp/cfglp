@@ -31,10 +31,12 @@
 
 using namespace std;
 
+//TODO_DONE
 typedef enum
 {
 	int_result,
-	void_result
+	void_result,
+	skip_result
 } Result_Enum;
 
 class Eval_Result;

@@ -31,6 +31,12 @@
 
 using namespace std;
 
+//TODO_DONE
+typedef enum
+{
+	NE_OP,GE_OP,LE_OP,EQ_OP,LT_OP,GT_OP
+} Comparison_Op_Enum;
+
 class Ast;
 
 class Ast
@@ -113,6 +119,57 @@ public:
 
 	void print_ast(ostream & file_buffer);
 
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+//TODO_DONE
+
+class Comparison_Ast:public Ast
+{
+	Ast * lhs;
+	Comparison_Op_Enum op;
+	Ast * rhs;
+
+public:
+	Comparison_Ast(Ast * temp_lhs, Comparison_Op_Enum temp_op, Ast * temp_rhs);
+	~Comparison_Ast();
+
+	Data_Type get_data_type();
+	bool check_ast(int line);
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
+class Goto_Ast:public Ast
+{
+	int bb_number;
+
+public:
+	Goto_Ast(int temp_bb_number);
+	~Goto_Ast();
+
+	Data_Type get_data_type();
+
+	void print_ast(ostream & file_buffer);
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+class If_Ast:public Ast
+{
+	Ast* condition;
+	int true_bb_number;
+	int false_bb_number;
+
+public:
+	If_Ast(Ast* temp_condition ,int temp_true_bb_number, int temp_false_bb_number);
+	~If_Ast();
+
+	Data_Type get_data_type();
+
+	void print_ast(ostream & file_buffer);
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
