@@ -45,7 +45,8 @@
 %token RETURN INTEGER 
 %token IF ELSE GOTO
 
-%token LE LT GE GT NE EQ ASSIGN_OP BASIC_BLOCK
+%token LE LT GE GT NE EQ ASSIGN_OP 
+%token <string_value> BASIC_BLOCK
 
 
 %type <symbol_table> declaration_statement_list
@@ -255,7 +256,7 @@ basic_block:
 	{
 		
 		char num[10];
-		string str(*($1.string_value));
+		string str(*$1);
 		for(int i = 4 ; i<str.length(); i++){
 			if(str[i] == '>'){
 				num[i-4] = '\0';
@@ -345,8 +346,8 @@ if_statement:
 
 		char num1[10];
 		char num2[10];
-		string str1(*($6.string_value));
-		string str2(*($10.string_value));
+		string str1(*$6);
+		string str2(*$10);
 		for(int i = 4 ; i<str1.length(); i++){
 			if(str1[i] == '>'){
 				num1[i-4] = '\0';
@@ -379,7 +380,7 @@ goto_statement
 	//TODO_DONE
 	
 		char num[10];
-		string str(*($2.string_value));
+		string str(*$2);
 		for(int i = 4 ; i<str.length(); i++){
 			if(str[i] == '>'){
 				num[i-4] = '\0';
