@@ -5,7 +5,7 @@ main()
 	int c = 4;
 	int d = 1;
 
-	if(!(a<=b<c)){
+	if(a < b > c != a <= b){
 		b = a;
 	}
 	else{

@@ -46,8 +46,7 @@
 %token RETURN INTEGER 
 %token IF ELSE GOTO
 
-%token ASSIGN_OP LT LE GT GE NE EQ
-
+%token ASSIGN_OP NE EQ LT LE GT GE
 
 
 %type <symbol_table> declaration_statement_list
@@ -373,8 +372,97 @@ if_statement:
 		}
 
 		$$ = new If_Ast($3,atoi(num1),atoi(num2));
-		
+	}
+|
+	IF '(' comparison_expr ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
+		//TODO_DONE
+
+		char num1[10];
+		char num2[10];
+		string str1(*$6);
+		string str2(*$10);
+		for(int i = 4 ; i<str1.length(); i++){
+			if(str1[i] == '>'){
+				num1[i-4] = '\0';
+				break;
+			}
+			else{
+				num1[i-4] = str1[i];
+			}
+		}
+
+		for(int i = 4 ; i<str2.length(); i++){
+			if(str2[i] == '>'){
+				num2[i-4] = '\0';
+				break;
+			}
+			else{
+				num2[i-4] = str2[i];
+			}
+		}
+
+		$$ = new If_Ast($3,atoi(num1),atoi(num2));
+	}
+|	IF '(' variable ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
+	
+		//TODO_DONE
+
+		char num1[10];
+		char num2[10];
+		string str1(*$6);
+		string str2(*$10);
+		for(int i = 4 ; i<str1.length(); i++){
+			if(str1[i] == '>'){
+				num1[i-4] = '\0';
+				break;
+			}
+			else{
+				num1[i-4] = str1[i];
+			}
+		}
+
+		for(int i = 4 ; i<str2.length(); i++){
+			if(str2[i] == '>'){
+				num2[i-4] = '\0';
+				break;
+			}
+			else{
+				num2[i-4] = str2[i];
+			}
+		}
+
+		$$ = new If_Ast($3,atoi(num1),atoi(num2));
+	}
+|	IF '(' constant ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
+	
+		//TODO_DONE
+
+		char num1[10];
+		char num2[10];
+		string str1(*$6);
+		string str2(*$10);
+		for(int i = 4 ; i<str1.length(); i++){
+			if(str1[i] == '>'){
+				num1[i-4] = '\0';
+				break;
+			}
+			else{
+				num1[i-4] = str1[i];
+			}
+		}
+
+		for(int i = 4 ; i<str2.length(); i++){
+			if(str2[i] == '>'){
+				num2[i-4] = '\0';
+				break;
+			}
+			else{
+				num2[i-4] = str2[i];
+			}
+		}
+
+		$$ = new If_Ast($3,atoi(num1),atoi(num2));
 	}
 ;
 	
@@ -450,6 +538,16 @@ assignment_statement:
 		$$->check_ast(line);
 	
 	}
+|
+	variable ASSIGN_OP comparison_expr ';'	{
+	
+		//TODO_DONE
+		$$ = new Assignment_Ast($1, $3);
+
+		int line = get_line_number();
+		$$->check_ast(line);
+	
+	}
 ;
 
 equality_op
@@ -483,43 +581,116 @@ comparison_op
 ;
 
 h_comparison_expr
-:	h_comparison_expr equality_op comparison_expr 	{
+:	variable equality_op constant 	{
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
 	}
-|
-	comparison_expr 	{
-		$$ = $1;
+|	constant equality_op constant 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
-
+|	h_comparison_expr equality_op constant 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	comparison_expr equality_op constant 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	variable equality_op variable 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	constant equality_op variable 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	h_comparison_expr equality_op variable 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	comparison_expr equality_op variable 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	variable equality_op comparison_expr 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	constant equality_op comparison_expr 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	comparison_expr equality_op comparison_expr 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|	h_comparison_expr equality_op comparison_expr 	{
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
 ;
 
 comparison_expr
-:	comparison_expr comparison_op constant 	{
-	
-		//TODO_DONE
-		$$ = new Comparison_Ast($1,$2,$3);
-		int line = get_line_number();
-		$$->check_ast(line);
-	
-	}
-|
-	comparison_expr comparison_op variable 	{
-	
-		//TODO_DONE
-		$$ = new Comparison_Ast($1,$2,$3);
-		int line = get_line_number();
-		$$->check_ast(line);
-	
-	}
-| 	constant 	{
-		$$ = $1;
-	}
-| 	variable 	{
-		$$ = $1;
-	}
+: comparison_expr comparison_op variable {
 
+	//TODO_DONE
+	$$ = new Comparison_Ast($1,$2,$3);
+	int line = get_line_number();
+	$$->check_ast(line);
+
+}
+| comparison_expr comparison_op constant {
+
+	//TODO_DONE
+	$$ = new Comparison_Ast($1,$2,$3);
+	int line = get_line_number();
+	$$->check_ast(line);
+
+}
+| variable comparison_op variable {
+
+	//TODO_DONE
+	$$ = new Comparison_Ast($1,$2,$3);
+	int line = get_line_number();
+	$$->check_ast(line);
+
+}
+| variable comparison_op constant {
+
+	//TODO_DONE
+	$$ = new Comparison_Ast($1,$2,$3);
+	int line = get_line_number();
+	$$->check_ast(line);
+
+}
+| constant comparison_op constant {
+
+	//TODO_DONE
+	$$ = new Comparison_Ast($1,$2,$3);
+	int line = get_line_number();
+	$$->check_ast(line);
+
+}
+| constant comparison_op variable {
+
+	//TODO_DONE
+	$$ = new Comparison_Ast($1,$2,$3);
+	int line = get_line_number();
+	$$->check_ast(line);
+}
 ;
 
 variable:

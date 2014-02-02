@@ -14,6 +14,19 @@ then
 		diff -b f1 f0
 		rm f0 f1
 	done;
+elif [ $1 == ecfg ]
+then
+	cd test_files; x="$(ls *.ecfg)"
+	cd ..
+	# x="GlobTernaryInIfLoop.cs306.cfg"
+	for file in $x
+	do
+		echo "testing $file"
+		./cfglp -d -tokens test_files/"$file" > file0
+		./cfglp64_l1 -d -tokens test_files/"$file" > file1
+		diff -b file0 file1
+		rm file0 file1
+	done;
 
 elif [ $1 == ast ]
 then
@@ -26,8 +39,23 @@ then
 		./cfglp -d -ast test_files/"$file" > file0
 		./cfglp64_l1 -d -ast test_files/"$file" > file1
 		diff -b file0 file1
-	done
-	# rm file0 file1
+		rm file0 file1
+	done;
+	
+
+elif [ $1 == eval ]
+then
+	cd test_files; x="$(ls *.cfg)"
+	cd ..
+	# x="GlobTernaryInIfLoop.cs306.cfg"
+	for file in $x
+	do
+		echo "testing $file"
+		./cfglp -d -eval test_files/"$file" > file0
+		./cfglp64_l1 -d -eval test_files/"$file" > file1
+		diff -b file0 file1
+		rm file0 file1
+	done;
 
 else
 	cd test_files; x="$(ls *.cfg)"

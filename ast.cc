@@ -396,7 +396,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	result.set_value(bb_number);
 	result.set_result_enum(skip_result);
-	file_buffer <<AST_SPACE<< "GOTO (BB "<<bb_number<<")\n";
+	file_buffer <<"\n"<<AST_SPACE<< "GOTO (BB "<<bb_number<<")\n";
 	return result;
 }
 
@@ -435,11 +435,11 @@ Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buff
 		result.set_result_enum(skip_result);
 		print_ast(file_buffer);
 		if(condition_result.get_value()){
-			file_buffer <<AST_SPACE<<"Condition True : Goto (BB "<<true_bb_number<<")\n";
+			file_buffer <<"\n"<<AST_SPACE<<"Condition True : Goto (BB "<<true_bb_number<<")\n";
 			result.set_value(true_bb_number);
 		}
 		else{
-			file_buffer << AST_SPACE<<"Condition False : Goto (BB "<<false_bb_number<<")\n";
+			file_buffer <<"\n"<< AST_SPACE<<"Condition False : Goto (BB "<<false_bb_number<<")\n";
 			result.set_value(false_bb_number);
 		}
 		return result;
