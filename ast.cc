@@ -96,7 +96,7 @@ bool Assignment_Ast::check_ast(int line)
 
 void Assignment_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Asgn:\n";
+	file_buffer << "\n" << AST_SPACE << "Asgn:\n";
 
 	file_buffer << AST_NODE_SPACE"LHS (";
 	lhs->print_ast(file_buffer);
@@ -104,7 +104,7 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 
 	file_buffer << AST_NODE_SPACE << "RHS (";
 	rhs->print_ast(file_buffer);
-	file_buffer << ")\n";
+	file_buffer << ")";
 }
 
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -257,7 +257,7 @@ Return_Ast::~Return_Ast()
 
 void Return_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Return <NOTHING>\n";
+	file_buffer << "\n" AST_SPACE <<  "Return <NOTHING>\n";
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -385,8 +385,8 @@ Data_Type Goto_Ast::get_data_type()
 
 void Goto_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Goto statement:\n";	
-	file_buffer <<AST_NODE_SPACE<< "Successor: "<<bb_number<<"\n";	
+	file_buffer << "\n" << AST_SPACE << "Goto statement:";	
+	file_buffer << "\n" << AST_NODE_SPACE<< "Successor: "<<bb_number;	
 
 }
 
@@ -421,10 +421,10 @@ Data_Type If_Ast::get_data_type()
 
 void If_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "If_Else statement:";	
+	file_buffer << "\n" AST_SPACE <<  "If_Else statement:";	
 	condition->print_ast(file_buffer);
 	file_buffer <<"\n"<<AST_NODE_SPACE<<"True Successor: "<<true_bb_number;
-	file_buffer <<"\n"<<AST_NODE_SPACE<<"False Successor: "<<false_bb_number<<"\n";
+	file_buffer <<"\n"<<AST_NODE_SPACE<<"False Successor: "<<false_bb_number;
 }
 
 Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -439,7 +439,7 @@ Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buff
 			result.set_value(true_bb_number);
 		}
 		else{
-			file_buffer << "Condition False : Goto (BB "<<false_bb_number<<")\n";
+			file_buffer << AST_SPACE<<"Condition False : Goto (BB "<<false_bb_number<<")\n";
 			result.set_value(false_bb_number);
 		}
 		return result;

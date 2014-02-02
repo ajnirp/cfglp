@@ -46,8 +46,9 @@
 %token RETURN INTEGER 
 %token IF ELSE GOTO
 
-%token ASSIGN_OP NE EQ LT LE GT GE
-
+%token ASSIGN_OP
+%left LT LE GT GE
+%left NE EQ
 
 
 
@@ -479,7 +480,15 @@ comparison_op
 ;
 
 comparison_expr
-:	comparison_expr comparison_op  variable	{
+:	comparison_expr comparison_op  comparison_expr	{
+	
+		//TODO_DONE
+		$$ = new Comparison_Ast($1,$2,$3);
+		int line = get_line_number();
+		$$->check_ast(line);
+	
+	}
+|	comparison_expr comparison_op  variable	{
 	
 		//TODO_DONE
 		$$ = new Comparison_Ast($1,$2,$3);
