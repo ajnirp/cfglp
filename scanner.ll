@@ -48,7 +48,7 @@ goto		{
 			return Parser::GOTO; 
 		}
 [<]bb[ ][0-9]+[>]	{
-			store_token_name("BASIC_BLOCK");
+			store_token_name("BASIC BLOCK");
 			ParserBase::STYPE__ * val = getSval();
 			val->string_value = new std::string(matched());
 			return Parser::BASIC_BLOCK;

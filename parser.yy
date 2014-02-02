@@ -41,12 +41,14 @@
 };
 
 %token <integer_value> INTEGER_NUMBER
+%token <string_value> BASIC_BLOCK
 %token <string_value> NAME
 %token RETURN INTEGER 
 %token IF ELSE GOTO
 
-%token LE LT GE GT NE EQ ASSIGN_OP 
-%token <string_value> BASIC_BLOCK
+%token ASSIGN_OP NE EQ LT LE GT GE
+
+
 
 
 %type <symbol_table> declaration_statement_list
@@ -123,12 +125,13 @@ procedure_body:
 	}
 	basic_block_list '}'
 	{
-	
+		#if 0
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
 			report_error("Atleast 1 basic block should have a return statement", line);
 		}
+		#endif
 		//shouldn't it be $3
 		current_procedure->set_basic_block_list(*$4);
 
@@ -138,13 +141,13 @@ procedure_body:
 |
 	'{' basic_block_list '}'
 	{
-	
+		#if 0
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
 			report_error("Atleast 1 basic block should have a return statement", line);
 		}
-
+		#endif
 		current_procedure->set_basic_block_list(*$2);
 
 		delete $2;
