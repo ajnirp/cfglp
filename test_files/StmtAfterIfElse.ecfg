@@ -15,8 +15,8 @@ main ()
   else
     goto <bb 5>;
 
-  // no statement after if else goto condition
-  // only basic block is allowed after if else goto condition
+    // no statement after if else goto condition
+      // only basic block is allowed after if else goto condition
   i = 10;
   // predicted unlikely by continue predictor.
   goto <bb 6>;

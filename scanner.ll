@@ -50,7 +50,22 @@ goto		{
 [<]bb[ ][0-9]+[>]	{
 			store_token_name("BASIC BLOCK");
 			ParserBase::STYPE__ * val = getSval();
-			val->string_value = new std::string(matched());
+			char num[10];
+			string str = matched();
+			for(int i = 4 ; i<str.length(); i++){
+				if(str[i] == '>'){
+					num[i-4] = '\0';
+					break;
+				}
+				else{
+					num[i-4] = str[i];
+				}
+			}
+			if(atoi(num)<2){
+				int line = lineNr();
+				report_error("Illegal basic block lable", line);
+			}
+			val->integer_value = atoi(num);
 			return Parser::BASIC_BLOCK;
 		}
 "<="		{
@@ -110,8 +125,11 @@ goto		{
 				ignore_token();
 		}    
 
-";;".*  	|
-[ \t]		{
+[ \t]*";;".*|[ \t]	{
+			if (command_options.is_show_tokens_selected())
+				ignore_token();
+		}
+[ \t]*"//"[^\n]*	{
 			if (command_options.is_show_tokens_selected())
 				ignore_token();
 		}

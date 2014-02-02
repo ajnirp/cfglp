@@ -41,7 +41,7 @@
 };
 
 %token <integer_value> INTEGER_NUMBER
-%token <string_value> BASIC_BLOCK
+%token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
 %token RETURN INTEGER 
 %token IF ELSE GOTO
@@ -78,7 +78,6 @@ program:
 	
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	
 	}
 	procedure_body
 	{
@@ -96,7 +95,6 @@ program:
 	{
 	
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	
 	}
 	procedure_body
 	{
@@ -132,7 +130,6 @@ procedure_body:
 			report_error("Atleast 1 basic block should have a return statement", line);
 		}
 		#endif
-		//shouldn't it be $3
 		current_procedure->set_basic_block_list(*$4);
 
 		delete $4;
@@ -229,7 +226,6 @@ basic_block_list:
 			int line = get_line_number();
 			report_error("Basic block doesn't exist", line);
 		}
-
 		bb_strictly_increasing_order_check($$, $2->get_bb_number());
 
 		$$ = $1;
@@ -255,35 +251,16 @@ basic_block_list:
 
 
 basic_block:
-	BASIC_BLOCK	':'	executable_statement_list
+	BASIC_BLOCK ':' executable_statement_list
 	{
-		
-		char num[10];
-		string str(*$1);
-		for(int i = 4 ; i<str.length(); i++){
-			if(str[i] == '>'){
-				num[i-4] = '\0';
-				break;
-			}
-			else{
-				num[i-4] = str[i];
-			}
+		if ($3 != NULL){
+			$$ = new Basic_Block($1, *$3);
 		}
-
-		if (atoi(num) < 2)
-		{
-			int line = get_line_number();
-			report_error("Illegal basic block lable", line);
-		}
-
-		if ($3 != NULL)
-			$$ = new Basic_Block(atoi(num), *$3);
 		else
 		{
 			list<Ast *> * ast_list = new list<Ast *>;
-			$$ = new Basic_Block(atoi(num), *ast_list);
+			$$ = new Basic_Block($1, *ast_list);
 		}
-	
 	}
 ;
 
@@ -346,123 +323,26 @@ if_statement:
 	IF '(' h_comparison_expr ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
 		//TODO_DONE
-
-		char num1[10];
-		char num2[10];
-		string str1(*$6);
-		string str2(*$10);
-		for(int i = 4 ; i<str1.length(); i++){
-			if(str1[i] == '>'){
-				num1[i-4] = '\0';
-				break;
-			}
-			else{
-				num1[i-4] = str1[i];
-			}
-		}
-
-		for(int i = 4 ; i<str2.length(); i++){
-			if(str2[i] == '>'){
-				num2[i-4] = '\0';
-				break;
-			}
-			else{
-				num2[i-4] = str2[i];
-			}
-		}
-
-		$$ = new If_Ast($3,atoi(num1),atoi(num2));
+		$$ = new If_Ast($3,$6,$10);
 	}
 |
 	IF '(' comparison_expr ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
 		//TODO_DONE
 
-		char num1[10];
-		char num2[10];
-		string str1(*$6);
-		string str2(*$10);
-		for(int i = 4 ; i<str1.length(); i++){
-			if(str1[i] == '>'){
-				num1[i-4] = '\0';
-				break;
-			}
-			else{
-				num1[i-4] = str1[i];
-			}
-		}
-
-		for(int i = 4 ; i<str2.length(); i++){
-			if(str2[i] == '>'){
-				num2[i-4] = '\0';
-				break;
-			}
-			else{
-				num2[i-4] = str2[i];
-			}
-		}
-
-		$$ = new If_Ast($3,atoi(num1),atoi(num2));
+		$$ = new If_Ast($3,$6,$10);
 	}
 |	IF '(' variable ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
 		//TODO_DONE
 
-		char num1[10];
-		char num2[10];
-		string str1(*$6);
-		string str2(*$10);
-		for(int i = 4 ; i<str1.length(); i++){
-			if(str1[i] == '>'){
-				num1[i-4] = '\0';
-				break;
-			}
-			else{
-				num1[i-4] = str1[i];
-			}
-		}
-
-		for(int i = 4 ; i<str2.length(); i++){
-			if(str2[i] == '>'){
-				num2[i-4] = '\0';
-				break;
-			}
-			else{
-				num2[i-4] = str2[i];
-			}
-		}
-
-		$$ = new If_Ast($3,atoi(num1),atoi(num2));
+		$$ = new If_Ast($3,$6,$10);
 	}
 |	IF '(' constant ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
 		//TODO_DONE
 
-		char num1[10];
-		char num2[10];
-		string str1(*$6);
-		string str2(*$10);
-		for(int i = 4 ; i<str1.length(); i++){
-			if(str1[i] == '>'){
-				num1[i-4] = '\0';
-				break;
-			}
-			else{
-				num1[i-4] = str1[i];
-			}
-		}
-
-		for(int i = 4 ; i<str2.length(); i++){
-			if(str2[i] == '>'){
-				num2[i-4] = '\0';
-				break;
-			}
-			else{
-				num2[i-4] = str2[i];
-			}
-		}
-
-		$$ = new If_Ast($3,atoi(num1),atoi(num2));
+		$$ = new If_Ast($3,$6,$10);
 	}
 ;
 	
@@ -470,20 +350,8 @@ if_statement:
 goto_statement
 :	GOTO BASIC_BLOCK {
 	//TODO_DONE
-	
-		char num[10];
-		string str(*$2);
-		for(int i = 4 ; i<str.length(); i++){
-			if(str[i] == '>'){
-				num[i-4] = '\0';
-				break;
-			}
-			else{
-				num[i-4] = str[i];
-			}
-		}
 
-		$$ = new Goto_Ast(atoi(num));
+		$$ = new Goto_Ast($2);
 	}
 ;
 
