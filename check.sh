@@ -32,7 +32,6 @@ elif [ $1 == ast ]
 then
 	cd test_files; x="$(ls *.cfg)"
 	cd ..
-	# x="GlobTernaryInIfLoop.cs306.cfg"
 	for file in $x
 	do
 		echo "testing $file"
@@ -50,11 +49,16 @@ then
 	# x="GlobTernaryInIfLoop.cs306.cfg"
 	for file in $x
 	do
-		echo "testing $file"
-		./cfglp -d -eval test_files/"$file" > file0
-		./cfglp64_l1 -d -eval test_files/"$file" > file1
-		diff -b file0 file1
-		rm file0 file1
+		if [ $file == "InfiniteLoop.cs306.cfg" ] || [ $file == "NestedLoop.cs306.cfg" ]
+		then
+			echo "Skipping testing of $file"
+		else
+			echo "testing $file"
+			./cfglp -d -eval test_files/"$file" > file0
+			./cfglp64_l1 -d -eval test_files/"$file" > file1
+			diff -b file0 file1
+			rm file0 file1
+		fi
 	done;
 
 else
