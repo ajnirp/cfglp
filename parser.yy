@@ -81,7 +81,22 @@ program:
 	}
 	procedure_body
 	{
-	
+
+		int i = 0;
+		while(i < bb_requested.size() && bb_made.find(bb_requested[i]) != bb_made.end()){
+			i++;
+		}
+
+		if(i < bb_requested.size()){
+			//error
+			stringstream ss;
+			ss << bb_requested[i];
+			string error = "bb ";
+			error += ss.str();
+			error += " doesn't exist";
+			report_error(error, -1);
+		}
+
 		program_object.set_procedure_map(*current_procedure);
 
 		if ($1)
@@ -98,7 +113,21 @@ program:
 	}
 	procedure_body
 	{
-	
+		int i = 0;
+		while(i < bb_requested.size() && bb_made.find(bb_requested[i]) != bb_made.end()){
+			i++;
+		}
+
+		if(i < bb_requested.size()){
+			//error
+			stringstream ss;
+			ss << bb_requested[i];
+			string error = "bb ";
+			error += ss.str();
+			error += " doesn't exist";
+			report_error(error, -1);
+		}
+
 		program_object.set_procedure_map(*current_procedure);
 	
 	}
@@ -261,6 +290,7 @@ basic_block:
 			list<Ast *> * ast_list = new list<Ast *>;
 			$$ = new Basic_Block($1, *ast_list);
 		}
+		bb_made.insert($1);
 	}
 ;
 
@@ -323,25 +353,30 @@ if_statement:
 	IF '(' h_comparison_expr ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
 		//TODO_DONE
+		bb_requested.push_back($6);
+		bb_requested.push_back($10);
 		$$ = new If_Ast($3,$6,$10);
 	}
 |
 	IF '(' comparison_expr ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
 		//TODO_DONE
-
+		bb_requested.push_back($6);
+		bb_requested.push_back($10);
 		$$ = new If_Ast($3,$6,$10);
 	}
 |	IF '(' variable ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
 		//TODO_DONE
-
+		bb_requested.push_back($6);
+		bb_requested.push_back($10);
 		$$ = new If_Ast($3,$6,$10);
 	}
 |	IF '(' constant ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
 		//TODO_DONE
-
+		bb_requested.push_back($6);
+		bb_requested.push_back($10);
 		$$ = new If_Ast($3,$6,$10);
 	}
 ;
@@ -352,6 +387,7 @@ goto_statement
 	//TODO_DONE
 
 		$$ = new Goto_Ast($2);
+		bb_requested.push_back($2);
 	}
 ;
 

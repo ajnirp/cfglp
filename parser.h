@@ -35,6 +35,7 @@
 #include<vector>
 #include<list>
 #include<map>
+#include<set>
 
 using namespace std;
 
@@ -74,6 +75,8 @@ class Parser: public ParserBase
         int lex();
 
 	bool return_statement_used_flag;				// Keeps track that atleast a procedure has atleast 1 return statement
+  set<int> bb_made;
+  vector<int> bb_requested;
 	void bb_strictly_increasing_order_check(list<Basic_Block *> * bb_list, int bb_number); 
         
 	void executeAction(int ruleNr);

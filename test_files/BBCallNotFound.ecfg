@@ -12,15 +12,19 @@ main ()
   a = 3;
   b = 4;
   if (a > 2)
-    goto <bb 3>;
+    goto <bb 5>;
   else
     goto <bb 4>;
 
 <bb 3>:
   iftmp0 = a;
-  goto <bb 5>;
+  goto <bb 9>;
 
 <bb 4>:
+  iftmp0 = a;
+  goto <bb 90>;
+
+<bb 5>:
   iftmp0 = b;
   c = iftmp0;
   return;

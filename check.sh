@@ -22,9 +22,10 @@ then
 	for file in $x
 	do
 		echo "testing $file"
-		./cfglp -d -tokens test_files/"$file" > file0
-		./cfglp64_l1 -d -tokens test_files/"$file" > file1
+		./cfglp -d -tokens test_files/"$file" 2> file0 1> file2
+		./cfglp64_l1 -d -tokens test_files/"$file" 2> file1 1> file3
 		diff -b file0 file1
+		diff -b file2 file3
 		rm file0 file1
 	done;
 
