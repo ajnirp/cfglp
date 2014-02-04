@@ -54,7 +54,7 @@ void Eval_Result::set_variable_status(bool def)
 
 Eval_Result_Value_Int::Eval_Result_Value_Int()
 {
-	value = 0;
+	// value = -1;
 	defined = false;
 	result_type = int_result;
 }
@@ -130,10 +130,6 @@ bool Local_Environment::is_variable_defined(string name)
 Eval_Result_Value * Local_Environment::get_variable_value(string name)
 {
 	Eval_Result_Value * i = variable_table[name];
-	if (i == NULL) {
-		cout << name << " not defined\n";
-		return NULL;
-	}
 	return i;
 }
 

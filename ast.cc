@@ -180,21 +180,19 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
-	if (eval_env.does_variable_exist(variable_name))
+	if (eval_env.does_variable_exist(variable_name) && eval_env.is_variable_defined(variable_name))
 	{
-		// cout << eval_env.get_variable_value(variable_name) << "...\n";
-		if (eval_env.get_variable_value(variable_name)) {
-			Eval_Result * result = eval_env.get_variable_value(variable_name);
-			return *result;
-		}
-		else {
-			cout << "null!\n";
-			// return NULL;
-		}
+		Eval_Result * result = eval_env.get_variable_value(variable_name);
+		return *result;
 	}
 
-	Eval_Result * result = interpreter_global_table.get_variable_value(variable_name);
-	return *result;
+	if (interpreter_global_table.does_variable_exist(variable_name) && interpreter_global_table.is_variable_defined(variable_name))
+	{
+		Eval_Result * result = interpreter_global_table.get_variable_value(variable_name);
+		return *result;
+	}
+
+	report_error("Variable not defined", -2);
 }
 
 void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result)
@@ -346,6 +344,7 @@ void Comparison_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Comparison_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+
 	Eval_Result & lhs_result = lhs->evaluate(eval_env, file_buffer);
 	Eval_Result & rhs_result = rhs->evaluate(eval_env, file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
@@ -436,11 +435,12 @@ void If_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+		print_ast(file_buffer);
+
 		Eval_Result & condition_result = condition->evaluate(eval_env, file_buffer);
 
 		Eval_Result & result = *new Eval_Result_Value_Int();
 		result.set_result_enum(skip_result);
-		print_ast(file_buffer);
 		if(condition_result.get_value()){
 			file_buffer <<"\n"<<AST_SPACE<<"Condition True : Goto (BB "<<true_bb_number<<")\n";
 			result.set_value(true_bb_number);

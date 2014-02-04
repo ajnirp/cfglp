@@ -75,6 +75,7 @@ class Eval_Result_Value_Int:public Eval_Result_Value
 {
 	int value;
 	bool defined;
+	
 public:
 	Eval_Result_Value_Int();
 	~Eval_Result_Value_Int();
