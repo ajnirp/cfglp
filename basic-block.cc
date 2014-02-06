@@ -21,18 +21,18 @@
 
 ***********************************************************************************************/
 
-#include<string>
-#include<fstream>
+#include <string>
+#include <fstream>
 
 using namespace std;
 
-#include"local-environment.hh"
-#include"error-display.hh"
-#include"user-options.hh"
+#include "local-environment.hh"
+#include "error-display.hh"
+#include "user-options.hh"
 
-#include"symbol-table.hh"
-#include"ast.hh"
-#include"basic-block.hh"
+#include "symbol-table.hh"
+#include "ast.hh"
+#include "basic-block.hh"
 
 Basic_Block::Basic_Block(int basic_block_number, list<Ast *> & ast_list)
 {

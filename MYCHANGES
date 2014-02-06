@@ -1,0 +1,100 @@
+Changes made for level 1
+========================
+
+The following is a list of files, each followed by the changes we made to that particular file.
+
+
+Makefile.cfg
+------------
+
+1. Changed the line
+	CC=gcc
+to
+	CC=gcc-4.6
+to ensure that our code uses exactly gcc-4.6 (and not a later or earlier version)
+
+
+scanner.ll
+----------
+
+1. Added lexemes for if, else and goto
+2. Added actions for each of the above lexemes
+
+
+parser.yy
+---------
+
+1. Added a line specifying that IF, ELSE and GOTO are tokens
+
+2. Rewrote the grammar:
+
+	a. Removed executable_statement and executable_statement_list
+	b. Added a number of new nonterminals
+	c. Added appropriate %type lines at the top of parser.yy
+
+   We plan to revert these changes in the future to comply with the given grammar rules if need be. The only reason we changed the given rules was to force ourselves to write everything from scratch and learn more about parsing and context-free grammars in the process.
+
+3. Added precedence rules for '<', '>' and '=' to ensure no shift/reduce conflicts in our grammar
+
+4. Commented out the C++ base code as mentioned in the problem statement
+
+5. Added commented-out actions for some of the rules to prevent type-association and type-clash warnings while running bisonc++ on the parser.yy file.
+
+Changes made for level 2
+========================
+
+This is a list of files. Below each file we have listed the changes made to that file.
+
+
+scanner.ll
+----------
+
+1. Added lexemes to recognise comparison operators
+
+
+parser.yy
+---------
+
+1. Wrote action routines for appropriate routines
+
+2. Defined tokens for the comparison operators (as opposed to before, where they were META_CHARs)
+
+
+parser.h
+--------
+
+1. Defined a set of Basic Blocks seen so far (bb_made) and a vector of 'requested' Basic Blocks (bb_requested). A Basic Block is said to be 'requested' if somewhere in the program, there is a Goto instructing the program to jump to that Basic Block.
+
+2. Added code to check that the parser does not validate a program in which a Basic Block is being requested when it has not been seen. To do this we iterate over bb_requested and check if each number in it is also present in the set bb_made.
+
+
+ast.hh and ast.cc
+-----------------
+
+1. Added Comparison_Ast, Goto_Ast and If_Ast classes.
+
+2. Defined evaluate, print_ast and other methods for each of these classes.
+
+3. Also added a function 'successor_found' which is explained in the next section.
+
+
+local-environment.hh and local-environment.cc
+---------------------------------------------
+
+1. Defined an Enum for possible return types of an Ast. At this stage, we have only three possible return types: int, void and skip. The skip_result return type is returned by If_Ast and Goto_Ast
+
+
+basic-block.hh and basic-block.cc
+---------------------------------
+
+1. Defined successor_found function. This function checks if a basic block has one of the following ASTs at its end: an If_Ast, a Goto_Ast or a Return_Ast. This function is called on the last block of a procedure. If it returns false, an error is reported. Internally, this function calls the 'successor_found' virtual function of the Ast class.
+
+2. Modified the 'evaluate' function for the Basic_Block class.
+
+
+procedure.hh and procedure.cc
+-----------------------------
+
+1. Added a function 'get_jump_bb' which takes as input a number representing a basic block and returns a pointer to the basic block with that number, or NULL if it cannot find such a basic block.
+
+2. Modified the 'evaluate' function to account for skip_result being returned from an Ast. In such a case, we use 'get_jump_bb' to jump to the requested block.

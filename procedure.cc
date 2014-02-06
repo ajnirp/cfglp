@@ -21,20 +21,20 @@
 
 ***********************************************************************************************/
 
-#include<string>
-#include<fstream>
-#include<iostream>
+#include <string>
+#include <fstream>
+#include <iostream>
 
 using namespace std;
 
-#include"error-display.hh"
-#include"local-environment.hh"
+#include "error-display.hh"
+#include "local-environment.hh"
 
-#include"symbol-table.hh"
-#include"ast.hh"
-#include"basic-block.hh"
-#include"procedure.hh"
-#include"program.hh"
+#include "symbol-table.hh"
+#include "ast.hh"
+#include "basic-block.hh"
+#include "procedure.hh"
+#include "program.hh"
 
 Procedure::Procedure(Data_Type proc_return_type, string proc_name)
 {
@@ -152,8 +152,6 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 		//TODO_DONE
 		if(result->get_result_enum() == skip_result){
 			current_bb = get_jump_bb(result->get_value());
-			// cout<<current_bb->get_bb_number()<<endl;
-			// exit(0);
 			continue;
 		}
 		current_bb = get_next_bb(*current_bb);		
