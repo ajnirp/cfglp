@@ -56,8 +56,9 @@ void Basic_Block::print_bb(ostream & file_buffer)
 	file_buffer << "\n" << BB_SPACE << "Basic_Block " << id_number;
 
 	list<Ast *>::iterator i;
-	for(i = statement_list.begin(); i != statement_list.end(); i++)
+	for(i = statement_list.begin(); i != statement_list.end(); i++){
 		(*i)->print_ast(file_buffer);
+	}
 }
 
 Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -82,7 +83,20 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 	}
 
 	if (result == NULL)
-		report_internal_error("result from ast cannot be null");
+		report_internal_error("Atleast one of true, false, direct successors should be set");
 
 	return *result;
+}
+
+void Basic_Block::successor_found(){
+	list<Ast *>::reverse_iterator i = statement_list.rbegin();
+	if(i != statement_list.rend()){
+		if(!((*i)->successor_found())){
+			report_internal_error("Atleast one of true, false, direct successors should be set");
+		}
+	}
+	else{
+		report_internal_error("Atleast one of true, false, direct successors should be set");
+	}
+	
 }

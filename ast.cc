@@ -64,6 +64,10 @@ void Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & re
 	report_internal_error("Should not reach, Ast : set_value_of_evaluation");
 }
 
+bool Ast::successor_found(){
+	return false;	
+}
+
 ////////////////////////////////////////////////////////////////
 
 Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs)
@@ -180,19 +184,14 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
-	if (eval_env.does_variable_exist(variable_name) && eval_env.is_variable_defined(variable_name))
+	if (eval_env.does_variable_exist(variable_name))
 	{
 		Eval_Result * result = eval_env.get_variable_value(variable_name);
 		return *result;
 	}
 
-	if (interpreter_global_table.does_variable_exist(variable_name) && interpreter_global_table.is_variable_defined(variable_name))
-	{
-		Eval_Result * result = interpreter_global_table.get_variable_value(variable_name);
-		return *result;
-	}
-
-	report_error("Variable not defined", -2);
+	Eval_Result * result = interpreter_global_table.get_variable_value(variable_name);
+	return *result;
 }
 
 void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result)
@@ -272,11 +271,12 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 	return result;
 }
 
+bool Return_Ast::successor_found(){
+	return true;	
+}
+
 template class Number_Ast<int>;
 
-//TODO_DONE
-
-////////////////////////////////////////////////////////////////
 
 Comparison_Ast::Comparison_Ast(Ast * temp_lhs, Comparison_Op_Enum temp_op, Ast * temp_rhs)
 {
@@ -348,6 +348,13 @@ Eval_Result & Comparison_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	Eval_Result & lhs_result = lhs->evaluate(eval_env, file_buffer);
 	Eval_Result & rhs_result = rhs->evaluate(eval_env, file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
+	if(!lhs_result.is_variable_defined()){
+		report_error("Variable should be defined to be on lhs of condition", -2);
+	}
+
+	if(!rhs_result.is_variable_defined()){
+		report_error("Variable should be defined to be on rhs of condition", -2);
+	}
 
 	switch(op){	
 		case NE_OP:
@@ -406,6 +413,10 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 	return result;
 }
 
+bool Goto_Ast::successor_found(){
+	return true;	
+}
+
 /////////////////////////////////////////////////////////////////
 
 If_Ast::If_Ast(Ast* temp_condition ,int temp_true_bb_number, int temp_false_bb_number)
@@ -452,3 +463,6 @@ Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buff
 		return result;
 }
 
+bool If_Ast::successor_found(){
+	return true;	
+}

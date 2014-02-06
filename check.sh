@@ -22,8 +22,8 @@ then
 	for file in $x
 	do
 		echo "testing $file"
-		./cfglp -d -tokens test_files/"$file" 2> file0 1> file2
-		./cfglp64_l1 -d -tokens test_files/"$file" 2> file1 1> file3
+		./cfglp -d -tokens test_files/"$file" 1> file2 2> file0
+		./cfglp64_l1 -d -tokens test_files/"$file" 1> file3 2> file1
 		diff -b file0 file1
 		diff -b file2 file3
 		rm file0 file1
@@ -31,7 +31,8 @@ then
 
 elif [ $1 == ast ]
 then
-	cd test_files; x="$(ls *.cfg)"
+	cd test_files; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
+
 	cd ..
 	# x="ContDoWhile.cs306.cfg"
 	for file in $x
@@ -48,7 +49,7 @@ then
 
 elif [ $1 == eval ]
 then
-	cd test_files; x="$(ls *.cfg)"
+	cd test_files; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
 	cd ..
 	# x="ContDoWhile.cs306.cfg"
 	for file in $x

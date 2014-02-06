@@ -85,8 +85,13 @@ void Procedure::print_ast(ostream & file_buffer)
 	file_buffer << PROC_SPACE << "Procedure: main" << "\n";
 
 	list<Basic_Block *>::iterator i;
-	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
+	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++){
 		(*i)->print_bb(file_buffer);
+	}
+
+	list<Basic_Block *>::reverse_iterator last;
+	last = basic_block_list.rbegin();
+	(*last)->successor_found();
 }
 	
 Basic_Block & Procedure::get_start_basic_block()
@@ -153,6 +158,10 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 		}
 		current_bb = get_next_bb(*current_bb);		
 	}
+
+	list<Basic_Block *>::reverse_iterator last;
+	last = basic_block_list.rbegin();
+	(*last)->successor_found();
 
 	file_buffer << "\n\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating):\n";

@@ -55,6 +55,7 @@ public:
 
 	virtual Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
 	virtual void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
+	virtual bool successor_found();
 	virtual Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer) = 0;
 };
 
@@ -118,7 +119,7 @@ public:
 	~Return_Ast();
 
 	void print_ast(ostream & file_buffer);
-
+	bool successor_found();
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
@@ -152,7 +153,7 @@ public:
 	~Goto_Ast();
 
 	Data_Type get_data_type();
-
+	bool successor_found();
 	void print_ast(ostream & file_buffer);
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
@@ -168,7 +169,7 @@ public:
 	~If_Ast();
 
 	Data_Type get_data_type();
-
+	bool successor_found();
 	void print_ast(ostream & file_buffer);
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };

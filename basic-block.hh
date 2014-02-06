@@ -27,6 +27,7 @@
 #include<string>
 #include<map>
 #include<list>
+#include<typeinfo>
 
 #define BB_SPACE "      "
 
@@ -48,6 +49,8 @@ public:
 	void print_bb(ostream & file_buffer);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+
+  void successor_found();
 };
 
 #endif

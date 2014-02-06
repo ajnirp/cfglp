@@ -11,5 +11,4 @@ main()
 	else{
 		c = a;
 	}
-	return;
 }
