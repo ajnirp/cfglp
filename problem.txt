@@ -1,2 +1,0 @@
-complex_if_expression.cs306.cfg
-LongOps.cs306.cfg
