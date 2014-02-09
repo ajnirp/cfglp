@@ -1,15 +1,11 @@
 main()
-{	
-	int a = 3;
-	int b = 3;
-	int c = 4;
-	int d = 1;
+{
+	int a;
+	int b;
+	int c;
 
-	if(a < b > c != a <= b){
-		b = a;
-	}
-	else{
-		c = a;
-	}
-	return;
+	a = 3;
+	c = 3;
+	b = a*c;
+	
 }

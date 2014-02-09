@@ -30,7 +30,14 @@ int		{
 			store_token_name("INTEGER");
 			return Parser::INTEGER; 
 		}
-
+float	{
+			store_token_name("META CHAR");
+			return Parser::FLOAT; 
+		}
+double	{
+			store_token_name("META CHAR");
+			return Parser::DOUBLE; 
+		}
 return		{ 
 			store_token_name("RETURN");
 			return Parser::RETURN; 
@@ -67,6 +74,22 @@ goto		{
 			}
 			val->integer_value = atoi(num);
 			return Parser::BASIC_BLOCK;
+		}
+"+"		{
+			store_token_name("ARITHOP");
+			return Parser::PLUS; 
+		}
+"-"		{
+			store_token_name("ARITHOP");
+			return Parser::MINUS; 
+		}
+"*"		{
+			store_token_name("ARITHOP");
+			return Parser::MUL; 
+		}
+"/"		{
+			store_token_name("ARITHOP");
+			return Parser::DIV; 
 		}
 "<="		{
 			store_token_name("LE");
@@ -109,6 +132,14 @@ goto		{
 				val->integer_value = atoi(matched().c_str());
 
 				return Parser::INTEGER_NUMBER; 
+			}
+[-]?[[:digit:]_]+[.][[:digit:]_]+ 	{ 
+				store_token_name("FNUM");
+
+				ParserBase::STYPE__ * val = getSval();
+				val->integer_value = atoi(matched().c_str());
+
+				return Parser::FLOAT_NUMBER; 
 			}
 
 [[:alpha:]_][[:alpha:][:digit:]_]* {

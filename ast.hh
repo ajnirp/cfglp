@@ -37,6 +37,12 @@ typedef enum
 	NE_OP,GE_OP,LE_OP,EQ_OP,LT_OP,GT_OP
 } Comparison_Op_Enum;
 
+//level2
+typedef enum
+{
+	PLUS_OP, MINUS_OP, DIV_OP, MUL_OP
+} Arith_Op_Enum;
+
 class Ast;
 
 class Ast
