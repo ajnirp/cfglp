@@ -932,6 +932,11 @@ var_const
 	$$ = $2;
 	#endif
 }
+|	MINUS variable {
+	#if 0
+	$$ = $1;
+	#endif
+}
 ;
 
 variable:
