@@ -44,15 +44,14 @@
 	Arith_Op_Enum arith_op_enum;
 };
 
-%token <integer_value> INTEGER_NUMBER
 %token <float_value> FLOAT_NUMBER
+%token <integer_value> INTEGER_NUMBER
 %token <float_value> DOUBLE_NUMBER
-%token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
 %token RETURN
 %token INTEGER FLOAT DOUBLE
+%token <integer_value> BASIC_BLOCK
 %token IF ELSE GOTO
-
 %token ASSIGN_OP NE EQ LT LE GT GE
 %left PLUS MINUS
 %left MUL DIV
@@ -841,12 +840,17 @@ comparison_expr_plain
 mul_div_expr
 :	var_const mul_div var_const{
 	//level2
-	cout<<"hey there"<<endl;
 	#if 0
 	$$ = new Number_Ast<int>($1, int_data_type);
 	#endif
 }
 |	typecast '(' var_const mul_div var_const ')'{
+	//level2
+	#if 0
+	$$ = new Number_Ast<int>($1, int_data_type);
+	#endif
+}
+|	var_const mul_div mul_div_expr {
 	//level2
 	#if 0
 	$$ = new Number_Ast<int>($1, int_data_type);

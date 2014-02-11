@@ -9,7 +9,7 @@ then
 	do
 	echo "testing $words"
 		make -f Makefile.cfg FILE=$words  1> /dev/null  2> /dev/null 
-		./cfglp64_l1 -d -tokens test_files/"$words"s306.cfg > f1
+		./cfglp64_l2 -d -tokens test_files/"$words"s306.cfg > f1
 		./cfglp -d -tokens test_files/"$words"s306.cfg > f0
 		diff -b f1 f0
 		rm f0 f1
@@ -23,7 +23,7 @@ then
 	do
 		echo "testing $file"
 		./cfglp -d -tokens test_files/"$file" 1> file2 2> file0
-		./cfglp64_l1 -d -tokens test_files/"$file" 1> file3 2> file1
+		./cfglp64_l2 -d -tokens test_files/"$file" 1> file3 2> file1
 		diff -b file0 file1
 		diff -b file2 file3
 		rm file0 file1
@@ -39,7 +39,7 @@ then
 	do
 		echo "testing $file"
 		./cfglp -d -ast test_files/"$file" 1> file0 2> file2
-		./cfglp64_l1 -d -ast test_files/"$file" 1> file1 2> file3
+		./cfglp64_l2 -d -ast test_files/"$file" 1> file1 2> file3
 		diff -b file0 file1
 		diff -b file2 file3
 		rm file0 file1
@@ -60,7 +60,7 @@ then
 		else
 			echo "testing $file"
 			./cfglp -d -eval test_files/"$file" 1> file0 2> file2
-			./cfglp64_l1 -d -eval test_files/"$file" 1> file1 2> file3
+			./cfglp64_l2 -d -eval test_files/"$file" 1> file1 2> file3
 			cat file2 file3
 			diff -b file0 file1
 			diff -b file2 file3
@@ -77,7 +77,7 @@ then
 	for words in $x
 	do
 		echo "testing $words"
-		./cfglp64_l1 -d -tokens test_files/$words > f1
+		./cfglp64_l2 -d -tokens test_files/$words > f1
 		./cfglp -d -tokens test_files/$words > f0
 		diff -b f1 f0
 		rm f0 f1
