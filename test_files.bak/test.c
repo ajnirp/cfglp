@@ -1,14 +1,8 @@
 main()
-{	
-	int a = 3;
-	int b = 3;
-	int c = 4;
-	int d = 1;
+{
+	int a;
+	float b;
+	float c;
 
-	if(a < b > c != a <= b){
-		b = a;
-	}
-	else{
-		c = a;
-	}
+	a = b > c? (int)b : (int) c;
 }

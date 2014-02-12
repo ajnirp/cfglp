@@ -26,34 +26,6 @@
 
 %%
 
-int		{
-			store_token_name("INTEGER");
-			return Parser::INTEGER; 
-		}
-float	{
-			store_token_name("META CHAR");
-			return Parser::FLOAT; 
-		}
-double	{
-			store_token_name("META CHAR");
-			return Parser::DOUBLE; 
-		}
-return		{ 
-			store_token_name("RETURN");
-			return Parser::RETURN; 
-		}
-if			{
-			store_token_name("IF");
-			return Parser::IF; 
-		}
-else		{
-			store_token_name("ELSE");
-			return Parser::ELSE; 
-		}
-goto		{
-			store_token_name("GOTO");
-			return Parser::GOTO; 
-		}
 [<]bb[ ][0-9]+[>]	{
 			store_token_name("BASIC BLOCK");
 			ParserBase::STYPE__ * val = getSval();
@@ -75,35 +47,47 @@ goto		{
 			val->integer_value = atoi(num);
 			return Parser::BASIC_BLOCK;
 		}
-"+"		{
-			store_token_name("ARITHOP");
-			return Parser::PLUS; 
+int		{
+			store_token_name("INTEGER");
+			return Parser::INTEGER; 
 		}
-"-"		{
-			store_token_name("ARITHOP");
-			return Parser::MINUS; 
+float	{
+			store_token_name("FLOAT");
+			return Parser::FLOAT; 
 		}
-"*"		{
-			store_token_name("ARITHOP");
-			return Parser::MUL; 
+double	{
+			store_token_name("DOUBLE");
+			return Parser::DOUBLE; 
 		}
-"/"		{
-			store_token_name("ARITHOP");
-			return Parser::DIV; 
+return	{ 
+			store_token_name("RETURN");
+			return Parser::RETURN; 
 		}
-"<="		{
+if		{
+			store_token_name("IF");
+			return Parser::IF; 
+		}
+else	{
+			store_token_name("ELSE");
+			return Parser::ELSE; 
+		}
+goto	{
+			store_token_name("GOTO");
+			return Parser::GOTO; 
+		}
+"<="	{
 			store_token_name("LE");
 			return Parser::LE; 
 		}
-">="		{
+">="	{
 			store_token_name("GE");
 			return Parser::GE; 
 		}
-"=="		{
+"=="	{
 			store_token_name("EQ");
 			return Parser::EQ; 
 		}
-"!="		{
+"!="	{
 			store_token_name("NE");
 			return Parser::NE; 
 		}
@@ -120,12 +104,17 @@ goto		{
 			return Parser::ASSIGN_OP; 
 		}
 
+[-+/*]		{
+			store_token_name("ARITHOP");
+			return matched()[0];
+		}
+
 [<>:{}();=!]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
 
-[-]?[[:digit:]_]+ 	{ 
+[-]?[[:digit:]]+ 	{ 
 				store_token_name("NUM");
 
 				ParserBase::STYPE__ * val = getSval();

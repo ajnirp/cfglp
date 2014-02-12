@@ -44,18 +44,16 @@
 	Arith_Op_Enum arith_op_enum;
 };
 
+
 %token <integer_value> INTEGER_NUMBER
-%token <float_value> FLOAT_NUMBER
-%token <float_value> DOUBLE_NUMBER
 %token <integer_value> BASIC_BLOCK
+%token <float_value> FLOAT_NUMBER
 %token <string_value> NAME
 %token RETURN
 %token INTEGER FLOAT DOUBLE
 %token IF ELSE GOTO
-
 %token ASSIGN_OP NE EQ LT LE GT GE
-%left PLUS MINUS
-%left MUL DIV
+%token <float_value> DOUBLE_NUMBER
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -544,12 +542,12 @@ comparison_op
 ;
 
 plus_minus
-:	PLUS {
+:	'+' {
 		#if 0
 		$$ = PLUS_OP;
 		#endif
 	}
-| 	MINUS {
+| 	'-' {
 		#if 0
 		$$ = MINUS_OP;
 		#endif
@@ -557,12 +555,12 @@ plus_minus
 ;
 
 mul_div
-:	MUL {
+:	'*' {
 		#if 0
 		$$ = MUL_OP;
 		#endif
 	}
-| 	DIV {
+| 	'/' {
 		#if 0
 		$$ = DIV_OP;
 		#endif
@@ -835,18 +833,28 @@ comparison_expr_plain
 	$$->check_ast(line);
 	#endif
 }
-
 ;
 
 mul_div_expr
 :	var_const mul_div var_const{
 	//level2
-	cout<<"hey there"<<endl;
 	#if 0
 	$$ = new Number_Ast<int>($1, int_data_type);
 	#endif
 }
 |	typecast '(' var_const mul_div var_const ')'{
+	//level2
+	#if 0
+	$$ = new Number_Ast<int>($1, int_data_type);
+	#endif
+}
+|	var_const mul_div mul_div_expr {
+	//level2
+	#if 0
+	$$ = new Number_Ast<int>($1, int_data_type);
+	#endif
+}
+|	typecast '(' var_const mul_div mul_div_expr ')' {
 	//level2
 	#if 0
 	$$ = new Number_Ast<int>($1, int_data_type);
@@ -924,6 +932,36 @@ var_const
 	#endif
 }
 | typecast constant {
+	#if 0
+	$$ = $2;
+	#endif
+}
+| '-' var_const {
+	#if 0
+	$$ = $2;
+	#endif
+}
+| '(' h_comparison_expr ')' {
+	#if 0
+	$$ = $2;
+	#endif
+}
+| '(' comparison_expr ')' {
+	#if 0
+	$$ = $2;
+	#endif
+}
+| '(' arithmetic_expr ')' {
+	#if 0
+	$$ = $2;
+	#endif
+}
+| '(' mul_div_expr ')' {
+	#if 0
+	$$ = $2;
+	#endif
+}
+| '(' var_const ')' {
 	#if 0
 	$$ = $2;
 	#endif

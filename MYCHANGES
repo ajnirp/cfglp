@@ -1,5 +1,5 @@
-Changes made for level 1
-========================
+Changes made for submission 1
+=============================
 
 The following is a list of files, each followed by the changes we made to that particular file.
 
@@ -40,8 +40,8 @@ parser.yy
 
 5. Added commented-out actions for some of the rules to prevent type-association and type-clash warnings while running bisonc++ on the parser.yy file.
 
-Changes made for level 2
-========================
+Changes made for submission 2
+=============================
 
 This is a list of files. Below each file we have listed the changes made to that file.
 

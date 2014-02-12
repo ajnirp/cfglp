@@ -1,11 +1,8 @@
 main()
 {
 	int a;
-	int b;
-	int c;
+	float b;
+	float c;
 
-	a = 3;
-	c = 3;
-	b = a*c;
-	
+	a = b > c? (int)b : (int) c;
 }
