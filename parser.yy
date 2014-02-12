@@ -63,6 +63,7 @@
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
 %type <ast> var_const
+%type <ast> var_const_plain
 %type <ast> variable
 %type <ast> constant
 
@@ -72,13 +73,10 @@
 %type <arith_op_enum> mul_div
 %type <comparison_op_enum> equality_op
 %type <ast> comparison_expr
-%type <ast> comparison_expr_plain
 %type <ast> h_comparison_expr
-%type <ast> h_comparison_expr_plain
 %type <ast> goto_statement
 %type <ast> if_statement
 %type <ast> mul_div_expr
-%type <ast> arithmetic_expr_plain
 %type <ast> arithmetic_expr
 
 
@@ -586,19 +584,6 @@ typecast
 ;
 
 h_comparison_expr
-: h_comparison_expr_plain{
-	#if 0
-	$$ = $1;	
-	#endif
-}
-| typecast '(' h_comparison_expr_plain ')' {
-	#if 0
-	$$ = $3;
-	#endif
-}
-;
-
-h_comparison_expr_plain
 :	var_const equality_op var_const 	{
 		#if 0
 		$$ = new Comparison_Ast($1,$2,$3);
@@ -741,20 +726,8 @@ h_comparison_expr_plain
 	}
 ;
 
-comparison_expr
-: comparison_expr_plain{
-	#if 0
-	$$ = $1;	
-	#endif
-}
-| typecast '(' comparison_expr_plain ')' {
-	#if 0
-	$$ = $3;
-	#endif
-}
-;
 
-comparison_expr_plain
+comparison_expr
 : var_const comparison_op var_const {
 	#if 0
 	$$ = new Comparison_Ast($1,$2,$3);
@@ -842,40 +815,16 @@ mul_div_expr
 	$$ = new Number_Ast<int>($1, int_data_type);
 	#endif
 }
-|	typecast '(' var_const mul_div var_const ')'{
-	//level2
-	#if 0
-	$$ = new Number_Ast<int>($1, int_data_type);
-	#endif
-}
 |	var_const mul_div mul_div_expr {
 	//level2
 	#if 0
 	$$ = new Number_Ast<int>($1, int_data_type);
 	#endif
 }
-|	typecast '(' var_const mul_div mul_div_expr ')' {
-	//level2
-	#if 0
-	$$ = new Number_Ast<int>($1, int_data_type);
-	#endif
-}
 ;
+
 
 arithmetic_expr
-:	arithmetic_expr_plain {
-		#if 0
-		$$ = $1;
-		#endif
-	}
-|	typecast '(' arithmetic_expr_plain ')' {
-		#if 0
-		$$ = $3;
-		#endif
-	}
-;
-
-arithmetic_expr_plain
 :	var_const plus_minus var_const{
 	//level2
 	#if 0
@@ -914,8 +863,21 @@ arithmetic_expr_plain
 }
 ;
 
+var_const:
+	var_const_plain{
+	#if 0
+		$$ = $1;
+	#endif
+}
+|	typecast var_const_plain {
+	#if 0
+		$$ = $2;
+	#endif
+	}
+;
 
-var_const
+
+var_const_plain
 :	variable {
 	#if 0
 	$$ = $1;
@@ -925,22 +887,7 @@ var_const
 	#if 0
 	$$ = $1;
 	#endif
-}
-| typecast variable {
-	#if 0
-	$$ = $2;
-	#endif
-}
-| typecast constant {
-	#if 0
-	$$ = $2;
-	#endif
-}
-| '-' var_const {
-	#if 0
-	$$ = $2;
-	#endif
-}
+}	
 | '(' h_comparison_expr ')' {
 	#if 0
 	$$ = $2;
@@ -961,11 +908,17 @@ var_const
 	$$ = $2;
 	#endif
 }
-| '(' var_const ')' {
+| '-' var_const_plain {
 	#if 0
 	$$ = $2;
 	#endif
 }
+| '(' var_const_plain ')' {
+	#if 0
+	$$ = $2;
+	#endif
+}
+
 ;
 
 variable:
