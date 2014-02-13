@@ -913,7 +913,7 @@ var_const_plain
 	$$ = $2;
 	#endif
 }
-| '(' var_const_plain ')' {
+| '(' var_const ')' {
 	#if 0
 	$$ = $2;
 	#endif

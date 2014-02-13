@@ -98,3 +98,34 @@ procedure.hh and procedure.cc
 1. Added a function 'get_jump_bb' which takes as input a number representing a basic block and returns a pointer to the basic block with that number, or NULL if it cannot find such a basic block.
 
 2. Modified the 'evaluate' function to account for skip_result being returned from an Ast. In such a case, we use 'get_jump_bb' to jump to the requested block.
+
+Changes made for submission 3
+=============================
+
+In this submission we added support for tokens for 'float' and 'double' data types, and for arithmetic operators +, -, / and * as well as unary minus. Below is a list of files, and below each file is a list of changes we made to that file.
+
+
+scanner.ll
+----------
+
+1. Added a token named ARITHOP that captures the lexemes -, +, / and *.
+
+2. Added a token named FNUM to capture floating point numbers. The action routine for FNUM returns the token Parser::FLOAT_NUMBER.
+
+
+parser.yy
+---------
+
+1. Constants can now also be FLOAT_NUMBERs and DOUBLE_NUMBERs, not just INTEGER_NUMBERs.
+
+2. Added many new nonterminals and expansions to capture multiplication/division and plus/minus expressions.
+
+3. Since typecasting is now also possible, we are distinguishing between 'typecast' and 'non-typecast' atoms. An atom is either a variable, a constant, or a CFG expression wrapped in parentheses.
+
+To capture the difference between typecast and non-typecast atoms we have a nonterminal called 'var_const'. 'var_const' expands into either 'var_const_plain' or 'typecast' 'var_const_plain'.
+
+
+ast.hh
+------
+
+1. Added an Enum for arithmetic operators called Arith_Op_Enum. It can take any one of the values PLUS_OP, MINUS_OP, DIV_OP, MUL_OP.

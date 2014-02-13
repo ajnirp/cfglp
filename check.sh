@@ -11,7 +11,7 @@ then
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
 		./cfglp64_l2 -d -tokens test_files/"$words"s306.cfg  | awk '{print $2}' > f1
 		./cfglp -d -tokens test_files/"$words"s306.cfg  | awk '{print $2}' > f0
-		diff -b f1 f0 1>/dev/null 2&>1
+		diff -b f1 f0
 		rm f0 f1
 	done;
 elif [ $1 == ecfg ]
@@ -27,6 +27,7 @@ then
 		diff -b file0 file1
 		diff -b file2 file3
 		rm file0 file1
+		rm file2 file3
 	done;
 
 elif [ $1 == ast ]
