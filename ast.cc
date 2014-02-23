@@ -275,8 +275,14 @@ bool Return_Ast::successor_found(){
 	return true;	
 }
 
-template class Number_Ast<int>;
+/////////////////////////////////////////////////////////////////
 
+template class Number_Ast<int>;
+// submission 3b
+template class Number_Ast<float>;
+template class Number_Ast<double>;
+
+/////////////////////////////////////////////////////////////////
 
 Comparison_Ast::Comparison_Ast(Ast * temp_lhs, Comparison_Op_Enum temp_op, Ast * temp_rhs)
 {
@@ -380,6 +386,150 @@ Eval_Result & Comparison_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	return result;
 }
 
+/////////////////////////////////////////////////////////////////
+
+// submission 3b
+Arithmetic_Ast::Arithmetic_Ast(Ast * temp_lhs, Arith_Op_Enum temp_op, Ast * temp_rhs)
+{
+	lhs = temp_lhs;
+	op = temp_op;
+	rhs = temp_rhs;
+}
+
+Arithmetic_Ast::~Arithmetic_Ast()
+{
+	delete lhs;
+	delete rhs;
+}
+
+Data_Type Arithmetic_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+// todo
+bool Arithmetic_Ast::check_ast(int line)
+{
+	//changes for float or any other type of comparison to be made here
+	if (lhs->get_data_type() == rhs->get_data_type())
+	{
+		//Default data type of comparison is int, true is 1 and false is 0
+		node_data_type = lhs->get_data_type();
+		return true;
+	}
+
+	report_error("Arithmetic statement data type not compatible", line);
+}
+
+void Arithmetic_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer<<"\n"<<AST_NODE_SPACE<<"Arith: ";
+	switch(op)
+	{
+		case PLUS_OP:
+			file_buffer << "PLUS";
+			break;
+		case MINUS_OP:
+			file_buffer << "MINUS";
+			break;
+		case MUL_OP:
+			file_buffer << "MULT";
+			break;
+		case DIV_OP:
+			file_buffer << "DIV";
+			break;
+	}
+
+	file_buffer <<"\n"<<AST_NODE_SPACE<<"   LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+
+	file_buffer <<AST_NODE_SPACE<<"   RHS (";
+	rhs->print_ast(file_buffer);
+	file_buffer << ")";
+}
+
+Eval_Result & Arithmetic_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+
+	Eval_Result & lhs_result = lhs->evaluate(eval_env, file_buffer);
+	Eval_Result & rhs_result = rhs->evaluate(eval_env, file_buffer);
+	Eval_Result & result = *new Eval_Result_Value_Int();
+	if(!lhs_result.is_variable_defined()){
+		report_error("Variable should be defined to be on lhs of arithmetic expression", -2);
+	}
+
+	if(!rhs_result.is_variable_defined()){
+		report_error("Variable should be defined to be on rhs of arithmetic expression", -2);
+	}
+
+	switch(op){	
+		case PLUS_OP:
+			result.set_value((int)(lhs_result.get_value() + rhs_result.get_value()));
+			break;
+		case MINUS_OP:
+			result.set_value((int)(lhs_result.get_value() - rhs_result.get_value()));
+			break;
+		case MUL_OP:
+			result.set_value((int)(lhs_result.get_value() * rhs_result.get_value()));
+			break;
+		case DIV_OP:
+			result.set_value((int)(lhs_result.get_value() / rhs_result.get_value()));
+			break;
+	}
+	
+	return result;
+}
+
+/////////////////////////////////////////////////////////////////
+
+// submission 3b
+Typecast_Ast::Typecast_Ast(Data_Type dt, Ast * a)
+{
+	dtype = dt;
+	ast = a;
+}
+
+Typecast_Ast::~Typecast_Ast()
+{
+	delete ast;
+}
+
+Data_Type Typecast_Ast::get_data_type()
+{
+	return dtype;
+}
+
+void Typecast_Ast::print_ast(ostream & file_buffer)
+{
+	ast->print_ast(file_buffer);
+}
+
+Eval_Result & Typecast_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	Eval_Result r = ast->evaluate(eval_env, file_buffer);
+	switch (dtype)
+	{
+		case int_data_type:
+			Eval_Result_Value_Int * result;
+			result->set_variable_status(r.is_variable_defined());
+			result->set_value((int) r.get_value());
+			return *result;
+			break;
+		case float_data_type:
+			Eval_Result_Value_Float * result;
+			result->set_variable_status(r.is_variable_defined());
+			result->set_value((float) r.get_value());
+			return *result;
+			break;
+		case double_data_type:
+			Eval_Result_Value_Double * result;
+			result->set_variable_status(r.is_variable_defined());
+			result->set_value((double) r.get_value());
+			return *result;
+			break;
+	}
+}
 
 /////////////////////////////////////////////////////////////////
 

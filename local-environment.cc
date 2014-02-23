@@ -30,10 +30,10 @@ using namespace std;
 #include"error-display.hh"
 #include"user-options.hh"
 
-int Eval_Result::get_value()
-{
-	report_internal_error("Should not reach, Eval_Result : get_value");
-}
+// int Eval_Result::get_value()
+// {
+// 	report_internal_error("Should not reach, Eval_Result : get_value");
+// }
 
 void Eval_Result::set_value(int number)
 {
@@ -89,6 +89,94 @@ void Eval_Result_Value_Int::set_result_enum(Result_Enum res)
 }
 
 Result_Enum Eval_Result_Value_Int::get_result_enum()
+{
+	return result_type;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+// submission 3b
+
+Eval_Result_Value_Float::Eval_Result_Value_Float()
+{
+	defined = false;
+	result_type = float_result;
+}
+
+Eval_Result_Value_Float::~Eval_Result_Value_Float()
+{ }
+
+void Eval_Result_Value_Float::set_value(float number)
+{
+	value = number;
+	defined = true;
+}
+
+float Eval_Result_Value_Float::get_value()
+{
+	return value;
+}
+
+void Eval_Result_Value_Float::set_variable_status(bool def)
+{
+	defined = def;
+}
+
+bool Eval_Result_Value_Float::is_variable_defined()
+{
+	return defined;
+}
+
+void Eval_Result_Value_Float::set_result_enum(Result_Enum res)
+{
+	result_type = res;
+}
+
+Result_Enum Eval_Result_Value_Float::get_result_enum()
+{
+	return result_type;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+// submission 3b
+
+Eval_Result_Value_Double::Eval_Result_Value_Double()
+{
+	defined = false;
+	result_type = double_result;
+}
+
+Eval_Result_Value_Double::~Eval_Result_Value_Double()
+{ }
+
+void Eval_Result_Value_Double::set_value(double number)
+{
+	value = number;
+	defined = true;
+}
+
+double Eval_Result_Value_Double::get_value()
+{
+	return value;
+}
+
+void Eval_Result_Value_Double::set_variable_status(bool def)
+{
+	defined = def;
+}
+
+bool Eval_Result_Value_Double::is_variable_defined()
+{
+	return defined;
+}
+
+void Eval_Result_Value_Double::set_result_enum(Result_Enum res)
+{
+	result_type = res;
+}
+
+Result_Enum Eval_Result_Value_Double::get_result_enum()
 {
 	return result_type;
 }

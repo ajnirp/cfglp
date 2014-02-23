@@ -149,7 +149,6 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
-
 class Goto_Ast:public Ast
 {
 	int bb_number;
@@ -177,6 +176,42 @@ public:
 	Data_Type get_data_type();
 	bool successor_found();
 	void print_ast(ostream & file_buffer);
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+// submission 3b
+class Arithmetic_Ast:public Ast
+{
+	Ast * lhs;
+	Arith_Op_Enum op;
+	Ast * rhs;
+
+public:
+	Arithmetic_Ast(Ast * temp_lhs, Arith_Op_Enum temp_op, Ast * temp_rhs);
+	~Arithmetic_Ast();
+
+	Data_Type get_data_type();
+	bool check_ast(int line);
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+// submission 3b
+class Typecast_Ast:public Ast
+{
+	Data_Type dtype;
+	Ast * ast;
+
+public:
+	Typecast_Ast(Data_Type dt, Ast * a);
+	~Typecast_Ast();
+
+	Data_Type get_data_type();
+
+	void print_ast(ostream & file_buffer);
+
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
