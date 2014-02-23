@@ -114,6 +114,8 @@ scanner.ll
 
 2. Added a token named FNUM to capture floating point numbers. The action routine for FNUM returns the token Parser::FLOAT_NUMBER.
 
+3. Added tokens FLOAT and DOUBLE to detect the declaration type of float and double numbers respectively.
+
 
 parser.yy
 ---------
