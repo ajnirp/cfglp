@@ -1,12 +1,8 @@
 main()
 {
-	int a = 3;
-	int b = 5;
+	int a;
+	float b;
+	float c;
 
-	fn();
-}
-
-fn()
-{
-	int c = 4;
+	a = b > c? (int)b : (int) c;
 }
