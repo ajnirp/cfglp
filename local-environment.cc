@@ -30,12 +30,12 @@ using namespace std;
 #include"error-display.hh"
 #include"user-options.hh"
 
-// int Eval_Result::get_value()
-// {
-// 	report_internal_error("Should not reach, Eval_Result : get_value");
-// }
+result_value_type Eval_Result::get_value()
+{
+	report_internal_error("Should not reach, Eval_Result : get_value");
+}
 
-void Eval_Result::set_value(int number)
+void Eval_Result::set_value(result_value_type number)
 {
 	report_internal_error("Should not reach, Eval_Result : set_value");
 }
@@ -54,7 +54,6 @@ void Eval_Result::set_variable_status(bool def)
 
 Eval_Result_Value_Int::Eval_Result_Value_Int()
 {
-	// value = -1;
 	defined = false;
 	result_type = int_result;
 }
@@ -62,13 +61,13 @@ Eval_Result_Value_Int::Eval_Result_Value_Int()
 Eval_Result_Value_Int::~Eval_Result_Value_Int()
 { }
 
-void Eval_Result_Value_Int::set_value(int number)
+void Eval_Result_Value_Int::set_value(result_value_type number)
 {
-	value = number;
+	value.int_val = number.int_val;
 	defined = true;
 }
 
-int Eval_Result_Value_Int::get_value()
+result_value_type Eval_Result_Value_Int::get_value()
 {
 	return value;
 }
@@ -106,13 +105,13 @@ Eval_Result_Value_Float::Eval_Result_Value_Float()
 Eval_Result_Value_Float::~Eval_Result_Value_Float()
 { }
 
-void Eval_Result_Value_Float::set_value(float number)
+void Eval_Result_Value_Float::set_value(result_value_type number)
 {
-	value = number;
+	value.float_val = number.float_val;
 	defined = true;
 }
 
-float Eval_Result_Value_Float::get_value()
+result_value_type Eval_Result_Value_Float::get_value()
 {
 	return value;
 }
@@ -137,50 +136,6 @@ Result_Enum Eval_Result_Value_Float::get_result_enum()
 	return result_type;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-// submission 3b
-
-Eval_Result_Value_Double::Eval_Result_Value_Double()
-{
-	defined = false;
-	result_type = double_result;
-}
-
-Eval_Result_Value_Double::~Eval_Result_Value_Double()
-{ }
-
-void Eval_Result_Value_Double::set_value(double number)
-{
-	value = number;
-	defined = true;
-}
-
-double Eval_Result_Value_Double::get_value()
-{
-	return value;
-}
-
-void Eval_Result_Value_Double::set_variable_status(bool def)
-{
-	defined = def;
-}
-
-bool Eval_Result_Value_Double::is_variable_defined()
-{
-	return defined;
-}
-
-void Eval_Result_Value_Double::set_result_enum(Result_Enum res)
-{
-	result_type = res;
-}
-
-Result_Enum Eval_Result_Value_Double::get_result_enum()
-{
-	return result_type;
-}
-
 ///////////////////////////////////////////////////////////////////////////////////
 
 Local_Environment::Local_Environment()
@@ -200,8 +155,16 @@ void Local_Environment::print(ostream & file_buffer)
 			if (vi->is_variable_defined() == false)
 				file_buffer << VAR_SPACE << (*i).first << " : undefined" << "\n";
 		
-			else
-				file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_value() << "\n";
+			else{
+				switch (vi->get_result_enum()){
+				case int_result:
+					file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_value().int_val << "\n";	
+					break;
+				case float_result:
+					file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_value().float_val << "\n";	
+					break;
+				}		
+			}
 		}
 	}
 }

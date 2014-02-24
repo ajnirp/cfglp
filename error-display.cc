@@ -37,9 +37,9 @@ void report_error(string error_message, int line)
 
 	stringstream message;
 	if (line > NOLINE)
-		message << file_name << " : line " << line << " :: error : " << error_message;
+		message <<"cfglp error: File: "<<file_name << ", Line: " << line << ": " << error_message;
 	else
-		message << file_name << " :: cfglp error : " << error_message;
+		message <<"cfglp error: File: "<<file_name << " : " << error_message;
 	print_error(message.str(), NOTEXIT);
 	exit(0);
 }

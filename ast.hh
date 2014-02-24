@@ -215,4 +215,19 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
+class UnaryMinus_Ast:public Ast
+{
+	Ast * ast;
+
+public:
+	UnaryMinus_Ast(Ast * a);
+	~UnaryMinus_Ast();
+
+	Data_Type get_data_type();
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
 #endif

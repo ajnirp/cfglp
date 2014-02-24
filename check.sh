@@ -3,8 +3,8 @@
 if [ $1 == c ]
 then
 	cd test_files; x="$(ls *.c)"
-	# echo $x
 	cd ..
+	echo -e "\nCHECKING TOKENS\n"
 	for words in $x
 	do
 	echo "testing $words"
@@ -14,11 +14,30 @@ then
 		diff -b f1 f0
 		rm f0 f1
 	done;
+	echo -e "\nCHECKING AST\n"
+	for words in $x
+	do
+	echo "testing $words"
+		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
+		./cfglp64_l2 -d -ast test_files/"$words"s306.cfg  | awk '{print $2}' > f1
+		./cfglp -d -ast test_files/"$words"s306.cfg  | awk '{print $2}' > f0
+		diff -b f1 f0
+		rm f0 f1
+	done;
+	echo -e "\nCHECKING EVAL\n"
+	for words in $x
+	do
+	echo "testing $words"
+		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
+		./cfglp64_l2 -d -eval test_files/"$words"s306.cfg  | awk '{print $2}' > f1
+		./cfglp -d -eval test_files/"$words"s306.cfg  | awk '{print $2}' > f0
+		diff -b f1 f0
+		rm f0 f1
+	done;
 elif [ $1 == ecfg ]
 then
 	cd test_files; x="$(ls *.ecfg)"
 	cd ..
-	# x="GlobTernaryInIfLoop.cs306.cfg"
 	for file in $x
 	do
 		echo "testing $file"
@@ -35,7 +54,6 @@ then
 	cd test_files; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
 
 	cd ..
-	# x="ContDoWhile.cs306.cfg"
 	for file in $x
 	do
 		echo "testing $file"

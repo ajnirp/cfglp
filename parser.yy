@@ -30,7 +30,6 @@
 {
 	int integer_value;
 	float float_value;
-	double double_value;
 	std::string * string_value;
 	list<Ast *> * ast_list;
 	Ast * ast;
@@ -53,7 +52,6 @@
 %token INTEGER FLOAT DOUBLE
 %token IF ELSE GOTO
 %token ASSIGN_OP NE EQ LT LE GT GE
-%token <double_value> DOUBLE_NUMBER
 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -277,7 +275,7 @@ declaration_statement:
 	DOUBLE NAME ';'
 	{
 		
-		$$ = new Symbol_Table_Entry(*$2, double_data_type);
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
 
 		delete $2;
 		
@@ -553,16 +551,17 @@ plus_minus
 ;
 
 mul_div
-:	'*' {
-		
-		$$ = MUL_OP;
-		
-	}
-| 	'/' {
+: 	'/' {
 		
 		$$ = DIV_OP;
 		
 	}
+|	'*' {
+		
+		$$ = MUL_OP;
+		
+	}
+
 ;
 
 typecast
@@ -578,7 +577,7 @@ typecast
 	}
 |	'(' DOUBLE ')' {
 		
-		$$ = double_data_type;
+		$$ = float_data_type;
 		
 	}
 ;
@@ -829,7 +828,7 @@ mul_div_expr
 	$$->check_ast(line);
 	
 }
-|	var_const mul_div mul_div_expr {
+|	mul_div_expr mul_div var_const {
 	//level2
 	// submission 3b
 	$$ = new Arithmetic_Ast($1,$2,$3);
@@ -933,7 +932,7 @@ var_const_plain
 }
 | '-' var_const_plain {
 	
-	$$ = $2;
+	$$ = new UnaryMinus_Ast($2);
 	
 }
 | '(' var_const ')' {
@@ -978,10 +977,5 @@ constant:
 	FLOAT_NUMBER
 	{
 		$$ = new Number_Ast<float>($1, float_data_type);	
-	}
-|	
-	DOUBLE_NUMBER
-	{
-		$$ = new Number_Ast<double>($1, double_data_type);
 	}
 ;

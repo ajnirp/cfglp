@@ -36,10 +36,14 @@ typedef enum
 {
 	int_result,
 	float_result, // submission 3b
-	double_result, // submission 3b
 	void_result,
 	skip_result
 } Result_Enum;
+
+union result_value_type{
+	int int_val;
+	float float_val;
+};
 
 class Eval_Result;
 class Local_Environment;
@@ -50,8 +54,8 @@ protected:
 	Result_Enum result_type;
 
 public:
-	// virtual int get_value(); // submission 3b
-	// virtual void set_value(int value);
+	virtual result_value_type get_value();
+	virtual void set_value(result_value_type value);
 
 	virtual bool is_variable_defined();
 	virtual void set_variable_status(bool def);
@@ -63,8 +67,8 @@ public:
 class Eval_Result_Value:public Eval_Result
 {
 public:
-	virtual void set_value(int number) = 0;
-	// virtual int get_value() = 0; submission 3b
+	virtual void set_value(result_value_type number) = 0;
+	virtual result_value_type get_value() = 0;
 
 	virtual bool is_variable_defined() = 0;
 	virtual void set_variable_status(bool def) = 0;
@@ -75,15 +79,14 @@ public:
 
 class Eval_Result_Value_Int:public Eval_Result_Value
 {
-	int value;
+	result_value_type value;
 	bool defined;
-	
 public:
 	Eval_Result_Value_Int();
 	~Eval_Result_Value_Int();
 
-	void set_value(int number);
-	int get_value();
+	void set_value(result_value_type number);
+	result_value_type get_value();
 
 	void set_variable_status(bool def);
 	bool is_variable_defined();
@@ -94,35 +97,15 @@ public:
 
 // submission 3b
 class Eval_Result_Value_Float:public Eval_Result_Value
-{
-	float value;
+{	
+	result_value_type value;
 	bool defined;
-	
 public:
 	Eval_Result_Value_Float();
 	~Eval_Result_Value_Float();
 
-	void set_value(float number);
-	float get_value();
-
-	void set_variable_status(bool def);
-	bool is_variable_defined();
-
-	void set_result_enum(Result_Enum res);
-	Result_Enum get_result_enum();
-};
-
-class Eval_Result_Value_Double:public Eval_Result_Value
-{
-	double value;
-	bool defined;
-	
-public:
-	Eval_Result_Value_Double();
-	~Eval_Result_Value_Double();
-
-	void set_value(double number);
-	double get_value();
+	void set_value(result_value_type number);
+	result_value_type get_value();
 
 	void set_variable_status(bool def);
 	bool is_variable_defined();

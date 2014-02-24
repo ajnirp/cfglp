@@ -95,7 +95,8 @@ Symbol_Table_Entry & Symbol_Table::get_symbol_table_entry(string variable_name)
 void Symbol_Table::create(Local_Environment & local_global_variables_table)
 {
 	list<Symbol_Table_Entry *>::iterator i;
-
+	result_value_type sVal;
+	sVal.int_val = 0;
 	for (i = variable_table.begin(); i != variable_table.end(); i++)
 	{
 		string name = (*i)->get_variable_name();
@@ -103,7 +104,7 @@ void Symbol_Table::create(Local_Environment & local_global_variables_table)
 		if (scope == global)
 		{
 			j->set_variable_status(true);
-			j->set_value(0);
+			j->set_value(sVal);
 		}
 
 		local_global_variables_table.put_variable_value(*j, name);

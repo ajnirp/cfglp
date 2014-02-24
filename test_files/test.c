@@ -1,8 +1,12 @@
 main()
 {
-	int a;
-	float b;
-	float c;
+	int a = 3;
+	int b = 5;
 
-	a = (float)(-b);
+	fn();
+}
+
+fn()
+{
+	int c = 4;
 }

@@ -151,7 +151,8 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 		result = &(current_bb->evaluate(eval_env, file_buffer));
 		//TODO_DONE
 		if(result->get_result_enum() == skip_result){
-			current_bb = get_jump_bb(result->get_value());
+			if(result->get_value().int_val == -1) break;
+			current_bb = get_jump_bb(result->get_value().int_val);
 			continue;
 		}
 		current_bb = get_next_bb(*current_bb);		

@@ -23,6 +23,7 @@
 
 #include<string>
 #include<fstream>
+#include<iomanip>
 
 using namespace std;
 
@@ -35,6 +36,7 @@ using namespace std;
 #include"basic-block.hh"
 #include"procedure.hh"
 #include"program.hh"
+
 
 Program program_object;
 Local_Environment interpreter_global_table;
@@ -118,6 +120,7 @@ Eval_Result & Program::evaluate()
 
 	command_options.create_output_buffer();
 	ostream & file_buffer = command_options.get_output_buffer();
+	file_buffer << setprecision(2)<<fixed;
 	file_buffer << "Evaluating Program\n";
 	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
 	interpreter_global_table.print(file_buffer);
