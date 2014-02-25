@@ -106,6 +106,7 @@ void Program::print_ast()
 
 	else
 	{
+		ast_buffer<<setprecision(2)<<fixed;
 		main->print_ast(ast_buffer);
 	}
 }

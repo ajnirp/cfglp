@@ -894,6 +894,14 @@ var_const:
 |	typecast var_const_plain {
 		$$ = new Typecast_Ast($1, $2);
 	}
+|	'-' typecast var_const_plain {
+		$$ = new Typecast_Ast($2, new UnaryMinus_Ast($3));
+	}
+| '-' var_const_plain {
+	
+	$$ = new UnaryMinus_Ast($2);
+	
+}
 ;
 
 
@@ -926,11 +934,6 @@ var_const_plain
 | '(' mul_div_expr ')' {
 	
 	$$ = $2;
-	
-}
-| '-' var_const_plain {
-	
-	$$ = new UnaryMinus_Ast($2);
 	
 }
 | '(' var_const ')' {

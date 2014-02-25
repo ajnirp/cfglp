@@ -1,4 +1,4 @@
-Changes made for submission 1
+Changes made for submission 1a
 =============================
 
 The following is a list of files, each followed by the changes we made to that particular file.
@@ -41,7 +41,7 @@ parser.yy
 5. Added commented-out actions for some of the rules to prevent type-association and type-clash warnings while running bisonc++ on the parser.yy file.
 
 
-Changes made for submission 2
+Changes made for submission 1b
 =============================
 
 This is a list of files. Below each file we have listed the changes made to that file.
@@ -101,7 +101,7 @@ procedure.hh and procedure.cc
 2. Modified the 'evaluate' function to account for skip_result being returned from an Ast. In such a case, we use 'get_jump_bb' to jump to the requested block.
 
 
-Changes made for submission 3
+Changes made for submission 2a
 =============================
 
 In this submission we added support for tokens for 'float' and 'double' data types, and for arithmetic operators +, -, / and * as well as unary minus. Below is a list of files, and below each file is a list of changes we made to that file.
@@ -133,3 +133,38 @@ ast.hh
 ------
 
 1. Added an Enum for arithmetic operators called Arith_Op_Enum. It can take any one of the values PLUS_OP, MINUS_OP, DIV_OP, MUL_OP.
+
+
+Changes made for submission 2b
+=============================
+
+Ast.hh and Ast.cc
+------------------
+
+1. Wrote the Ast classes for following:
+	a). Arithmetic_Ast --- Ast class for arithmetic expressions
+	a). Typecast_Ast --- Ast class for type-casting variables and expression values
+	a). UnaryMinus_Ast --- Ast class for applying Unary minus operator to any value.
+
+2. Added features to check for compatibility of lhs and rhs operands before the operation and raise appropirate error.
+
+3. Modified evaluate function of Return_Ast to exit the program normally.
+
+local-evironment.cc and local-environment.hh
+---------------------------------------------
+
+1. One nice problem that we faced was that an instance of Eval_Result or any of its derived class could only return an intger as a result. But since we also had to deal with single precision floats in addition to ints, we needed a generic return type to return the result value according to the context. So we modified the Eval_result class and its derivatives to provide the result as a "Union" object. Thus, result for any calculation can now be calculated and its integer and float variants can be extracted out according the situation.
+
+Program.cc
+-----------
+
+1. Set the precision of output stream as fixed 2 digits after decimal to print out the floats correctly.
+
+Parser.yy
+-----------
+
+1. Added actions routines for all the required non terminals in this file and integrated them to work correctly.
+	New actions added for:
+	a). Arithmetic_expr
+	b). mul_div_expr
+	c). Typecast of expressions, variables and constants etc.
