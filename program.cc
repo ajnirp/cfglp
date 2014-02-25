@@ -120,11 +120,10 @@ Eval_Result & Program::evaluate()
 
 	command_options.create_output_buffer();
 	ostream & file_buffer = command_options.get_output_buffer();
-	file_buffer << setprecision(2)<<fixed;
 	file_buffer << "Evaluating Program\n";
 	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
 	interpreter_global_table.print(file_buffer);
-
+	file_buffer << setprecision(2)<<fixed;
 	Eval_Result & result = main->evaluate(file_buffer);
 
 	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";

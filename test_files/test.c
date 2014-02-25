@@ -1,8 +1,9 @@
 main()
 {
 	int a;
-	float b;
-	float c;
-
-	a = b > c? (int)b : (int) c;
+	int b;
+	int c;
+	b = 2;
+	c = 4;
+	a = b + -c;
 }

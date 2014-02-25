@@ -100,7 +100,13 @@ void Symbol_Table::create(Local_Environment & local_global_variables_table)
 	for (i = variable_table.begin(); i != variable_table.end(); i++)
 	{
 		string name = (*i)->get_variable_name();
-		Eval_Result_Value_Int * j = new Eval_Result_Value_Int();
+		Eval_Result_Value * j;
+		if((*i)->get_data_type() == int_data_type){
+			j = new Eval_Result_Value_Int();	
+		}
+		else if((*i)->get_data_type() == float_data_type){
+			j = new Eval_Result_Value_Float();	
+		}
 		if (scope == global)
 		{
 			j->set_variable_status(true);

@@ -254,7 +254,6 @@ declaration_statement_list:
 declaration_statement:
 	INTEGER NAME ';'
 	{
-		
 		$$ = new Symbol_Table_Entry(*$2, int_data_type);
 
 		delete $2;
@@ -264,7 +263,6 @@ declaration_statement:
 |
 	FLOAT NAME ';'
 	{
-		
 		$$ = new Symbol_Table_Entry(*$2, float_data_type);
 
 		delete $2;
