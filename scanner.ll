@@ -59,6 +59,10 @@ double	{
 			store_token_name("DOUBLE");
 			return Parser::DOUBLE; 
 		}
+void	{
+			store_token_name("VOID");
+			return Parser::VOID;
+		}
 return	{ 
 			store_token_name("RETURN");
 			return Parser::RETURN; 
@@ -109,7 +113,7 @@ goto	{
 			return matched()[0];
 		}
 
-[<>:{}();=!]	{
+[<>:{}();=!,]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}

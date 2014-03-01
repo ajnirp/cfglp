@@ -49,7 +49,7 @@
 %token <float_value> FLOAT_NUMBER
 %token <string_value> NAME
 %token RETURN
-%token INTEGER FLOAT DOUBLE
+%token INTEGER FLOAT DOUBLE VOID
 %token IF ELSE GOTO
 %token ASSIGN_OP NE EQ LT LE GT GE
 
@@ -83,76 +83,64 @@
 %%
 
 program:
-	declaration_statement_list procedure_name
-	{
-		
-		program_object.set_global_table(*$1);
-		return_statement_used_flag = false;				// No return statement in the current procedure till now
-		
-	}
-	procedure_body
-	{
-		
-		int i = 0;
-		while(i < bb_requested.size() && bb_made.find(bb_requested[i]) != bb_made.end()){
-			i++;
-		}
-
-		if(i < bb_requested.size()){
-			//error
-			stringstream ss;
-			ss << bb_requested[i];
-			string error = "bb ";
-			error += ss.str();
-			error += " doesn't exist";
-			report_error(error, -1);
-		}
-
-		program_object.set_procedure_map(*current_procedure);
-
-		if ($1)
-			$1->global_list_in_proc_map_check(get_line_number());
-
-		delete $1;
-		
-	}
+	declaration_statement_list procedure_declaration_list procedure_definition_list
 |
-	procedure_name
-	{
-		
-		return_statement_used_flag = false;				// No return statement in the current procedure till now
-		
-	}
-	procedure_body
-	{	
-		
-		int i = 0;
-		while(i < bb_requested.size() && bb_made.find(bb_requested[i]) != bb_made.end()){
-			i++;
-		}
+	procedure_declaration_list procedure_definition_list
+|
+	declaration_statement_list procedure_definition_list
+|
+	procedure_definition_list
+;
 
-		if(i < bb_requested.size()){
-			//error
-			stringstream ss;
-			ss << bb_requested[i];
-			string error = "bb ";
-			error += ss.str();
-			error += " doesn't exist";
-			report_error(error, -1);
-		}
+procedure_declaration:
+	INTEGER procedure_name ';'
+|
+	FLOAT procedure_name ';'
+|
+	DOUBLE procedure_name ';'
+|
+	VOID procedure_name ';'
+;
 
-		program_object.set_procedure_map(*current_procedure);
-		
-	}
+procedure_declaration_list:
+	procedure_declaration_list procedure_declaration
+|
+	procedure_declaration
+;
+
+procedure_definition_list:
+	procedure_definition_list procedure_definition
+|
+	procedure_definition
+;
+
+procedure_definition:
+	procedure_name procedure_body
+;
+
+parameter_list:
+	parameter_list ',' parameter
+|
+	parameter
+;
+
+parameter:
+	INTEGER NAME
+|
+	FLOAT NAME
+|
+	DOUBLE NAME
 ;
 
 procedure_name:
-	NAME '(' ')'
+	NAME '(' parameter_list ')'
 	{
 		
 		current_procedure = new Procedure(void_data_type, *$1);
 		
 	}
+|
+	NAME '(' ')'
 ;
 
 procedure_body:
@@ -456,7 +444,8 @@ assignment_statement:
 		
 	}
 |
-	variable ASSIGN_OP h_comparison_expr ';'	{
+	variable ASSIGN_OP h_comparison_expr ';'
+	{
 	
 		
 		$$ = new Assignment_Ast($1, $3);
@@ -947,7 +936,6 @@ var_const_plain
 variable:
 	NAME
 	{
-		
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
@@ -965,7 +953,6 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
-		
 	}
 ;
 

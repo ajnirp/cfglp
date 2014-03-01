@@ -1,16 +1,19 @@
 #bin/bash
 
+TEST_DIR="test_files"
+REFERENCE_CFGLP="cfglp64_l3"
+
 if [ $1 == c ]
 then
-	cd test_files; x="$(ls *.c)"
+	cd $TEST_DIR; x="$(ls *.c)"
 	cd ..
 	echo -e "\nCHECKING TOKENS\n"
 	for words in $x
 	do
 	echo "testing $words"
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
-		./cfglp64_l2 -d -tokens test_files/"$words"s306.cfg  | awk '{print $2}' > f1
-		./cfglp -d -tokens test_files/"$words"s306.cfg  | awk '{print $2}' > f0
+		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
+		./cfglp -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
 		diff -b f1 f0
 		rm f0 f1
 	done;
@@ -19,8 +22,8 @@ then
 	do
 	echo "testing $words"
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
-		./cfglp64_l2 -d -ast test_files/"$words"s306.cfg  | awk '{print $2}' > f1
-		./cfglp -d -ast test_files/"$words"s306.cfg  | awk '{print $2}' > f0
+		./$REFERENCE_CFGLP -d -ast $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
+		./cfglp -d -ast $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
 		diff -b f1 f0
 		rm f0 f1
 	done;
@@ -29,20 +32,34 @@ then
 	do
 	echo "testing $words"
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
-		./cfglp64_l2 -d -eval test_files/"$words"s306.cfg  | awk '{print $2}' > f1
-		./cfglp -d -eval test_files/"$words"s306.cfg  | awk '{print $2}' > f0
+		./$REFERENCE_CFGLP -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
+		./cfglp -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
+		diff -b f1 f0
+		rm f0 f1
+	done;
+elif [ $1 == tokens ]
+then
+	cd $TEST_DIR; x="$(ls *.c)"
+	cd ..
+	echo -e "\nCHECKING TOKENS\n"
+	for words in $x
+	do
+	echo "testing $words"
+		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
+		./cfglp64_l3 -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
+		./cfglp -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
 		diff -b f1 f0
 		rm f0 f1
 	done;
 elif [ $1 == ecfg ]
 then
-	cd test_files; x="$(ls *.ecfg)"
+	cd $TEST_DIR; x="$(ls *.ecfg)"
 	cd ..
 	for file in $x
 	do
 		echo "testing $file"
-		./cfglp -d -tokens test_files/"$file" 1> file2 2> file0
-		./cfglp64_l2 -d -tokens test_files/"$file" 1> file3 2> file1
+		./cfglp -d -tokens $TEST_DIR/"$file" 1> file2 2> file0
+		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/"$file" 1> file3 2> file1
 		diff -b file0 file1
 		diff -b file2 file3
 		rm file0 file1
@@ -51,14 +68,14 @@ then
 
 elif [ $1 == ast ]
 then
-	cd test_files; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
+	cd $TEST_DIR; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
 
 	cd ..
 	for file in $x
 	do
 		echo "testing $file"
-		./cfglp -d -ast test_files/"$file" 1> file0 2> file2
-		./cfglp64_l2 -d -ast test_files/"$file" 1> file1 2> file3
+		./cfglp -d -ast $TEST_DIR/"$file" 1> file0 2> file2
+		./$REFERENCE_CFGLP -d -ast $TEST_DIR/"$file" 1> file1 2> file3
 		diff -b file0 file1
 		diff -b file2 file3
 		rm file0 file1
@@ -68,7 +85,7 @@ then
 
 elif [ $1 == eval ]
 then
-	cd test_files; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
+	cd $TEST_DIR; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
 	cd ..
 	# x="ContDoWhile.cs306.cfg"
 	for file in $x
@@ -78,8 +95,8 @@ then
 			echo "Skipping testing of $file"
 		else
 			echo "testing $file"
-			./cfglp -d -eval test_files/"$file" 1> file0 2> file2
-			./cfglp64_l2 -d -eval test_files/"$file" 1> file1 2> file3
+			./cfglp -d -eval $TEST_DIR/"$file" 1> file0 2> file2
+			./$REFERENCE_CFGLP -d -eval $TEST_DIR/"$file" 1> file1 2> file3
 			cat file2 file3
 			diff -b file0 file1
 			diff -b file2 file3
@@ -90,14 +107,14 @@ then
 
 elif [ $1 == "cfg" ]
 then
-	cd test_files; x="$(ls *.cfg)"
+	cd $TEST_DIR; x="$(ls *.cfg)"
 	# echo $x
 	cd ..
 	for words in $x
 	do
 		echo "testing $words"
-		./cfglp64_l2 -d -tokens test_files/$words > f1
-		./cfglp -d -tokens test_files/$words > f0
+		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/$words > f1
+		./cfglp -d -tokens $TEST_DIR/$words > f0
 		diff -b f1 f0
 		rm f0 f1
 	done;
