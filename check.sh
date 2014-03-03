@@ -17,26 +17,26 @@ then
 		diff -b f1 f0
 		rm f0 f1
 	done;
-	echo -e "\nCHECKING AST\n"
-	for words in $x
-	do
-	echo "testing $words"
-		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
-		./$REFERENCE_CFGLP -d -ast $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
-		./cfglp -d -ast $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
-		diff -b f1 f0
-		rm f0 f1
-	done;
-	echo -e "\nCHECKING EVAL\n"
-	for words in $x
-	do
-	echo "testing $words"
-		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
-		./$REFERENCE_CFGLP -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
-		./cfglp -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
-		diff -b f1 f0
-		rm f0 f1
-	done;
+	# echo -e "\nCHECKING AST\n"
+	# for words in $x
+	# do
+	# echo "testing $words"
+	# 	make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
+	# 	./$REFERENCE_CFGLP -d -ast $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
+	# 	./cfglp -d -ast $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
+	# 	diff -b f1 f0
+	# 	rm f0 f1
+	# done;
+	# echo -e "\nCHECKING EVAL\n"
+	# for words in $x
+	# do
+	# echo "testing $words"
+	# 	make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
+	# 	./$REFERENCE_CFGLP -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
+	# 	./cfglp -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
+	# 	diff -b f1 f0
+	# 	rm f0 f1
+	# done;
 elif [ $1 == tokens ]
 then
 	cd $TEST_DIR; x="$(ls *.c)"
