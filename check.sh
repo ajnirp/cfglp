@@ -12,7 +12,7 @@ then
 	do
 	echo "testing $words"
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
-		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
+		./$REFERENCE_CFGLP -d -tokens -parse $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
 		./cfglp -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
 		diff -b f1 f0
 		rm f0 f1
