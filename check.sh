@@ -59,7 +59,7 @@ then
 	do
 		echo "testing $file"
 		./cfglp -d -tokens $TEST_DIR/"$file" 1> file2 2> file0
-		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/"$file" 1> file3 2> file1
+		./$REFERENCE_CFGLP -d -tokens -parse $TEST_DIR/"$file" 1> file3 2> file1
 		diff -b file0 file1
 		diff -b file2 file3
 		rm file0 file1
