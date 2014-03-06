@@ -30,9 +30,12 @@ using namespace std;
 #include"user-options.hh"
 #include"error-display.hh"
 #include"local-environment.hh"
-
 #include"symbol-table.hh"
 #include"ast.hh"
+#include"procedure.hh"
+#include"program.hh"
+
+Program program_object;
 
 Ast::Ast()
 {}
@@ -262,11 +265,14 @@ void Number_Ast<DATA_TYPE>::print_ast(ostream & file_buffer)
 template <class DATA_TYPE>
 Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+	// print_ast(file_buffer);
+
 	if (node_data_type == int_data_type)
 	{
 		Eval_Result & result = *new Eval_Result_Value_Int();
 		result_value_type sVal;
 		sVal.int_val = constant;
+		// cout<<"CONSTANT "<<constant<<endl;
 		result.set_value(sVal);
 
 		return result;
@@ -283,27 +289,47 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast()
-{}
+Return_Ast::Return_Ast(Ast * r_ast)
+{
+	ret_ast = r_ast;
+}
 
 Return_Ast::~Return_Ast()
-{}
+{
+	delete(ret_ast);
+}
 
 void Return_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << "\n" AST_SPACE <<  "Return <NOTHING>\n";
+	if(ret_ast == NULL)
+	{
+		file_buffer << "\n" <<AST_SPACE <<  "RETURN <NOTHING>\n";
+	}
+	else{
+		file_buffer << "\n" <<AST_SPACE <<  "RETURN ";
+		ret_ast->print_ast(file_buffer);
+		file_buffer<<"\n";
+	}
+
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-
-	Eval_Result & result = *new Eval_Result_Value_Int();
-	result.set_result_enum(skip_result);
-	result_value_type sVal;
-	sVal.int_val == -1;
-	result.set_value(sVal);
-	print_ast(file_buffer);
-	return result;
+	if(ret_ast == NULL){
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		result.set_result_enum(skip_result);
+		result_value_type sVal;
+		sVal.int_val == -1;
+		result.set_value(sVal);
+		print_ast(file_buffer);
+		return result;
+	}
+	else{
+		Eval_Result & result = ret_ast->evaluate(eval_env ,file_buffer);
+		print_ast(file_buffer);
+		return result;
+	}
+	
 }
 
 bool Return_Ast::successor_found(){
@@ -385,7 +411,7 @@ void Comparison_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Comparison_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-
+	// cout<<"in here"<<endl;	
 	Eval_Result & lhs_result = lhs->evaluate(eval_env, file_buffer);
 	Eval_Result & rhs_result = rhs->evaluate(eval_env, file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
@@ -473,6 +499,7 @@ Data_Type Arithmetic_Ast::get_data_type()
 // todo
 bool Arithmetic_Ast::check_ast(int line)
 {
+	// cout<<"hy ethe "<<lhs->get_data_type()<<"  "<<rhs->get_data_type()<<endl;
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
 		//Default data type of comparison is int, true is 1 and false is 0
@@ -756,4 +783,78 @@ Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buff
 
 bool If_Ast::successor_found(){
 	return true;	
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function_call_Ast::function_call_Ast (string fName, list<Ast *> * AList){
+	fn_name = fName;
+	argList = *AList;
+}
+function_call_Ast::~function_call_Ast(){
+	list<Ast *>::iterator i;
+	for (i = argList.begin(); i != argList.end(); i++)
+		delete (*i);
+}
+
+Data_Type function_call_Ast::get_data_type(){
+	
+	Procedure * curP =  program_object.get_procedure_map(fn_name);
+	// cout<<"idhar aaya "<<curP->get_return_type()<<endl;
+	return curP->get_return_type();
+}
+
+void function_call_Ast::print_ast(ostream & file_buffer){
+	file_buffer<<"\n"<<AST_SPACE<<"FN CALL: fn(";
+	list<Ast*>::iterator it;
+	for(it=argList.begin(); it!=argList.end(); it++){
+		file_buffer<<"\n"<<AST_NODE_SPACE;
+		(*it)->print_ast(file_buffer);
+	}
+	file_buffer<<")";
+}
+
+Eval_Result & function_call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+	Procedure * curP =  program_object.get_procedure_map(fn_name);
+	if(curP == NULL){
+		cout<<"Process does not exist!!"<<endl;
+		exit(0);
+	}
+	list<string> args = curP->get_arg_string_list();
+	if(args.size() != argList.size()){
+		cout<<"Wrong number of arguments"<<endl;
+		exit(0);
+	}
+	 // = *new Eval_Result_Value_Int();
+	Local_Environment & proc_local_env = curP->get_local_env();
+	list<Ast*>::iterator it1;
+	list<string>::iterator it2;
+// cout<<"hey there "<<argList.size()<<endl;
+	result_value_type sVal;
+	for(it1=argList.begin(),it2=args.begin(); it1!=argList.end(); it1++,it2++){
+		//change the buffer later
+		Eval_Result & tempResult = (*it1)->evaluate(eval_env, file_buffer);
+		// cout<<"look at me "<<(tempResult.get_value()).float_val<<endl
+		if(tempResult.get_result_enum() == proc_local_env.get_variable_value(*it2)->get_result_enum()){
+			if(tempResult.get_result_enum() == int_result){
+				Eval_Result_Value & arg_val = *new Eval_Result_Value_Int();
+				sVal.int_val = tempResult.get_value().int_val;
+				arg_val.set_value(sVal);
+				proc_local_env.put_variable_value(arg_val,*it2);
+			}
+			else{
+				Eval_Result_Value & arg_val = *new Eval_Result_Value_Float();
+				sVal.float_val = tempResult.get_value().float_val;
+				arg_val.set_value(sVal);
+				proc_local_env.put_variable_value(arg_val,*it2);
+			}
+			
+		}
+		else{
+			cout<<"incompatible arguments"<<endl;
+			exit(0);
+		}
+	}
+
+	return curP->evaluate_in_env(file_buffer,proc_local_env);
 }

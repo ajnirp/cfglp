@@ -28,6 +28,7 @@
 #include<map>
 #include<list>
 #include<typeinfo>
+#include "ast.hh"
 
 #define BB_SPACE "      "
 

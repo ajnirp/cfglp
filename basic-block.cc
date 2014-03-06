@@ -56,8 +56,12 @@ void Basic_Block::print_bb(ostream & file_buffer)
 	file_buffer << "\n" << BB_SPACE << "Basic_Block " << id_number;
 
 	list<Ast *>::iterator i;
+	// cout<<"size is "<<statement_list.size()<<endl;
+	// int k = 1;
 	for(i = statement_list.begin(); i != statement_list.end(); i++){
+		// cout<<k<<endl;
 		(*i)->print_ast(file_buffer);
+		// k++;
 	}
 }
 

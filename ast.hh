@@ -24,12 +24,14 @@
 #ifndef AST_HH
 #define AST_HH
 
-#include<string>
+#include<string>    
 
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "
 
 using namespace std;
+
+
 
 //TODO_DONE
 typedef enum
@@ -119,9 +121,9 @@ public:
 
 class Return_Ast:public Ast
 {
-
+	Ast * ret_ast;
 public:
-	Return_Ast();
+	Return_Ast(Ast * r_ast);
 	~Return_Ast();
 
 	void print_ast(ostream & file_buffer);
@@ -222,6 +224,22 @@ class UnaryMinus_Ast:public Ast
 public:
 	UnaryMinus_Ast(Ast * a);
 	~UnaryMinus_Ast();
+
+	Data_Type get_data_type();
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+class function_call_Ast:public Ast
+{
+	string fn_name;
+	list<Ast *> argList;
+
+public:
+	function_call_Ast(string fName, list<Ast *> * AList);
+	~function_call_Ast();
 
 	Data_Type get_data_type();
 

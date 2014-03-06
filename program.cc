@@ -38,7 +38,6 @@ using namespace std;
 #include"program.hh"
 
 
-Program program_object;
 Local_Environment interpreter_global_table;
 
 Program::Program()
@@ -62,7 +61,22 @@ void Program::set_global_table(Symbol_Table & new_global_table)
 
 void Program::set_procedure_map(Procedure & proc)
 {
+	// cout<<"setting procedure size "<<proc.get_proc_name()<<"  "<<procedure_map.size()<<endl;
+	// map<string, Procedure *>::iterator it;
+	// 	for(it = procedure_map.begin(); it!=procedure_map.end(); it++){
+	// 		cout<<it->first<<"  ";
+	// 		// (it->second)->print_ast(ast_buffer);
+	// 	}
+	// 	cout<<endl;
 	procedure_map[proc.get_proc_name()] = &proc;
+}
+
+Procedure * Program::get_procedure_map(string proc_name){
+	// cout<<"size is  "<<procedure_map.size()<<endl;
+	if(procedure_map.find(proc_name) != procedure_map.end()){
+		return procedure_map[proc_name];
+	}
+	else return NULL;
 }
 
 bool Program::variable_in_symbol_list_check(string variable)
@@ -77,7 +91,7 @@ Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 
 void Program::variable_in_proc_map_check(string variable, int line)
 {
-	if(procedure_map[variable] != NULL)
+	if(procedure_map.find(variable) != procedure_map.end())
 		report_error("Variable name cannot be same as procedure name", line);
 }
 
@@ -85,7 +99,7 @@ Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
 	map<string, Procedure *>::iterator i;
 	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
-	{
+	{	
 		if (i->second != NULL && i->second->get_proc_name() == "main")
 				return i->second;
 	}
@@ -107,16 +121,20 @@ void Program::print_ast()
 	else
 	{
 		ast_buffer<<setprecision(2)<<fixed;
-		main->print_ast(ast_buffer);
+		map<string, Procedure *>::iterator it;
+		for(it = procedure_map.begin(); it!=procedure_map.end(); it++){
+			(it->second)->print_ast(ast_buffer);
+
+		}
 	}
 }
 
 Eval_Result & Program::evaluate()
 {
+
 	Procedure * main = get_main_procedure(command_options.get_output_buffer());
 	if (main == NULL)
 		report_error("No main function found in the program", NOLINE);
-
 	global_symbol_table.create(interpreter_global_table);
 
 	command_options.create_output_buffer();

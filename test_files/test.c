@@ -1,12 +1,9 @@
-main()
+int fn(int a)
 {
-	int a = 3;
-	int b = 5;
-
-	fn();
+	return 2;
 }
 
-fn()
+main()
 {
-	int c = 4;
+	int b = fn(3);
 }

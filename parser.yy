@@ -54,7 +54,9 @@
 %token ASSIGN_OP NE EQ LT LE GT GE
 
 %type <symbol_table> declaration_statement_list
+%type <symbol_table> parameter_list
 %type <symbol_entry> declaration_statement
+%type <symbol_entry> parameter
 %type <basic_block_list> basic_block_list
 %type <basic_block> basic_block
 %type <ast_list> executable_statement_list
@@ -97,13 +99,22 @@ program:
 ;
 
 procedure_declaration:
-	INTEGER procedure_name ';'
+	INTEGER  procedure_name ';' {
+		current_procedure->set_data_type(int_data_type);
+	}
+
 |
-	FLOAT procedure_name ';'
+	FLOAT procedure_name ';' {
+		current_procedure->set_data_type(float_data_type);
+	}
 |
-	DOUBLE procedure_name ';'
+	DOUBLE procedure_name ';' {
+		current_procedure->set_data_type(float_data_type);
+	}
 |
-	VOID procedure_name ';'
+	VOID procedure_name ';' {
+		current_procedure->set_data_type(void_data_type);
+	}
 ;
 
 procedure_declaration_list:
@@ -122,79 +133,9 @@ procedure_definition:
 	procedure_name procedure_body
 ;
 
-parameter_list:
-	parameter_list ',' parameter
-|
-	parameter
-;
-
-parameter:
-	INTEGER NAME
-|
-	FLOAT NAME
-|
-	DOUBLE NAME
-;
-
-procedure_name:
-	NAME '(' parameter_list ')'
-	{
-		#if 0
-		current_procedure = new Procedure(void_data_type, *$1);
-		#endif
-		
-	}
-|
-	NAME '(' ')'
-;
-
-procedure_body:
-	'{' declaration_statement_list
-	{
-		#if 0
-		current_procedure->set_local_list(*$2);
-		delete $2;
-		#endif
-	
-	}
-	basic_block_list '}'
-	{
-		
-		#if 0
-		if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
-		
-		current_procedure->set_basic_block_list(*$4);
-
-		delete $4;
-		#endif
-	}
-|
-	'{' basic_block_list '}'
-	{
-		
-		#if 0
-		if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
-		
-		current_procedure->set_basic_block_list(*$2);
-
-		delete $2;
-		#endif
-	}
-;
-
-declaration_statement_list:
-	declaration_statement
-	{
-		
-		#if 0
+parameter_list
+:	parameter {
+		//if
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
@@ -207,13 +148,178 @@ declaration_statement_list:
 
 		$$ = new Symbol_Table();
 		$$->push_symbol($1);
-		#endif
+		current_procedure->addArg($1->get_variable_name());
+		//end
+	}
+|	parameter_list ',' parameter {
+		//if
+		// if declaration is local then no need to check in global list
+		// if declaration is global then this list is global list
+
+		int line = get_line_number();
+		program_object.variable_in_proc_map_check($3->get_variable_name(), line);
+
+		string var_name = $3->get_variable_name();
+		if (current_procedure && current_procedure->get_proc_name() == var_name)
+		{
+			int line = get_line_number();
+			report_error("Variable name cannot be same as procedure name", line);
+		}
+
+		if ($1 != NULL)
+		{
+			if($1->variable_in_symbol_list_check(var_name))
+			{
+				int line = get_line_number();
+				report_error("Variable is declared twice", line);
+			}
+
+			$$ = $1;
+		}
+
+		else
+			$$ = new Symbol_Table();
+
+		$$->push_symbol($3);
+		current_procedure->addArg($3->get_variable_name());
+		//end
+	}
+;
+
+parameter:
+	INTEGER NAME {
+		//if
+		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+		delete $2;
+		//end
+	}
+|
+	FLOAT NAME {
+		//if
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+		delete $2;
+		//end
+	}
+|
+	DOUBLE NAME {
+		//if
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+		delete $2;
+		//end
+	}
+;
+
+procedure_name:
+	NAME '(' {
+			//if
+			if(program_object.get_procedure_map(*$1) == NULL){
+			//cout<<"KHKJHKKJHHKJHK"<<endl;
+				current_procedure = new Procedure(void_data_type, *$1);
+				//current_procedure->set_arg_list(*$3);
+				//current_procedure->set_name(*$1);
+				//exit(0);
+				program_object.set_procedure_map(*current_procedure);
+			}
+			else{
+				current_procedure = program_object.get_procedure_map(*$1);
+				//current_procedure->set_arg_list(*$3);
+			}
+			//end
+		}
+	parameter_list ')'
+	{
+		//if
+		current_procedure->set_arg_list(*$4);
+		//end
+	}
+|
+	NAME '(' ')' {
+		//if
+		if(program_object.get_procedure_map(*$1) == NULL){
+			current_procedure = new Procedure(void_data_type, *$1);
+			//current_procedure->set_name(*$1);
+			current_procedure->set_arg_list(*(new Symbol_Table()));
+			program_object.set_procedure_map(*current_procedure);
+		}
+		else{
+			current_procedure = program_object.get_procedure_map(*$1);
+			//current_procedure->set_arg_list(*(new Symbol_Table()));
+		}
+		//end
+	}
+;
+
+procedure_body:
+	'{' declaration_statement_list
+	{
+		//if
+		current_procedure->set_local_list(*$2);
+		delete $2;
+		//end
+	
+	}
+	basic_block_list '}'
+	{
+		
+		//if
+		if (return_statement_used_flag == false)
+		{
+			int line = get_line_number();
+			report_error("Atleast 1 basic block should have a return statement", line);
+		}
+		
+		current_procedure->set_basic_block_list(*$4);
+
+		delete $4;
+		//end
+	}
+|
+	'{' basic_block_list '}'
+	{
+		
+		//if
+		if (return_statement_used_flag == false)
+		{
+			int line = get_line_number();
+			report_error("Atleast 1 basic block should have a return statement", line);
+		}
+		
+		current_procedure->set_basic_block_list(*$2);
+
+		delete $2;
+		//end
+	}
+;
+
+declaration_statement_list:
+	declaration_statement
+	{
+		
+		//if
+		int line = get_line_number();
+		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
+
+		string var_name = $1->get_variable_name();
+		if (current_procedure && current_procedure->get_proc_name() == var_name)
+		{
+			int line = get_line_number();
+			report_error("Variable name cannot be same as procedure name", line);
+		}
+
+		if(current_procedure->variable_in_arg_list_check(var_name))
+		{
+			int line = get_line_number();
+			report_error("Variable is declared twice", line);
+		}
+		$$ = new Symbol_Table();
+		$$->push_symbol($1);
+		//end
 	}
 |
 	declaration_statement_list declaration_statement
 	{
 		
-		#if 0
+		//if
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
 
@@ -241,40 +347,46 @@ declaration_statement_list:
 		else
 			$$ = new Symbol_Table();
 
+		if(current_procedure->variable_in_arg_list_check(var_name))
+		{
+			int line = get_line_number();
+			report_error("Variable is declared twice", line);
+		}
+
 		$$->push_symbol($2);
-		#endif
+		//end
 	}
 ;
 
 declaration_statement:
 	INTEGER NAME ';'
 	{
-		#if 0
+		//if
 		$$ = new Symbol_Table_Entry(*$2, int_data_type);
 
 		delete $2;
-		#endif
+		//end
 	
 	}
 |
 	FLOAT NAME ';'
 	{
-		#if 0
+		//if
 		$$ = new Symbol_Table_Entry(*$2, float_data_type);
 
 		delete $2;
-		#endif
+		//end
 	
 	}
 |
 	DOUBLE NAME ';'
 	{
-		#if 0
+		//if
 		
 		$$ = new Symbol_Table_Entry(*$2, float_data_type);
 
 		delete $2;
-		#endif
+		//end
 	
 	}
 ;
@@ -282,7 +394,7 @@ declaration_statement:
 basic_block_list:
 	basic_block_list basic_block
 	{
-		#if 0
+		//if
 		if (!$2)
 		{
 			int line = get_line_number();
@@ -292,12 +404,12 @@ basic_block_list:
 
 		$$ = $1;
 		$$->push_back($2);
-		#endif
+		//end
 	}
 |
 	basic_block
 	{
-		#if 0
+		//if
 		if (!$1)
 		{
 			int line = get_line_number();
@@ -306,7 +418,7 @@ basic_block_list:
 
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
-		#endif
+		//end
 	}
 	
 ;
@@ -315,7 +427,7 @@ basic_block_list:
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
 	{
-		#if 0
+		//if
 		if ($3 != NULL){
 			$$ = new Basic_Block($1, *$3);
 		}
@@ -325,22 +437,22 @@ basic_block:
 			$$ = new Basic_Block($1, *ast_list);
 		}
 		bb_made.insert($1);
-		#endif
+		//end
 	}
 ;
 
 executable_statement_list:
 	assignment_or_function_call_list
 	{
-		#if 0
+		//if
 		$$ = $1;
-		#endif
+		//end
 	}
 |
 	assignment_or_function_call_list return_stmt ';'
 	{
-		#if 0
-		Ast * ret = new Return_Ast();
+		//if
+		//Ast * ret = new Return_Ast();
 
 		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
@@ -350,14 +462,14 @@ executable_statement_list:
 		else
 			$$ = new list<Ast *>;
 
-		$$->push_back(ret);
-		#endif
+		$$->push_back($2);
+		//end
 	}
 |
 	assignment_or_function_call_list goto_statement ';'
 	{
 	
-		#if 0
+		//if
 
 		if ($1 != NULL)
 			$$ = $1;
@@ -366,12 +478,12 @@ executable_statement_list:
 			$$ = new list<Ast *>;
 
 		$$->push_back($2);
-		#endif
+		//end
 	}
 |
 	assignment_or_function_call_list if_statement
 	{
-		#if 0
+		//if
 		
 		if ($1 != NULL)
 			$$ = $1;
@@ -380,7 +492,7 @@ executable_statement_list:
 			$$ = new list<Ast *>;
 
 		$$->push_back($2);
-		#endif
+		//end
 	}
 ;
 
@@ -388,28 +500,28 @@ executable_statement_list:
 if_statement:
 	IF '(' h_comparison_expr ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 		
-		#if 0
+		//if
 		bb_requested.push_back($6);
 		bb_requested.push_back($10);
 		$$ = new If_Ast($3,$6,$10);
-		#endif
+		//end
 	}
 |
 	IF '(' comparison_expr ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
-		#if 0
+		//if
 		bb_requested.push_back($6);
 		bb_requested.push_back($10);
 		$$ = new If_Ast($3,$6,$10);
-		#endif
+		//end
 	}
 |	IF '(' var_const ')' GOTO BASIC_BLOCK ';' ELSE GOTO BASIC_BLOCK ';'{
 	
-		#if 0
+		//if
 		bb_requested.push_back($6);
 		bb_requested.push_back($10);
 		$$ = new If_Ast($3,$6,$10);
-		#endif
+		//end
 	}
 ;
 	
@@ -417,23 +529,23 @@ if_statement:
 goto_statement
 :	GOTO BASIC_BLOCK {
 		
-		#if 0
+		//if
 		$$ = new Goto_Ast($2);
 		bb_requested.push_back($2);
-		#endif
+		//end
 	}
 ;
 
 assignment_or_function_call_list:
 	{
-		#if 0
+		//if
 		$$ = NULL;
-		#endif
+		//end
 	}
 |
 	assignment_or_function_call_list assignment_statement
 	{
-		#if 0
+		//if
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
 
@@ -441,12 +553,12 @@ assignment_or_function_call_list:
 			$$ = $1;
 
 		$$->push_back($2);
-		#endif
+		//end
 	}
 |
 	assignment_or_function_call_list function_call ';'
 	{
-		#if 0
+		//if
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
 
@@ -454,51 +566,52 @@ assignment_or_function_call_list:
 			$$ = $1;
 
 		$$->push_back($2);
-		#endif
+		//end
 	}
 ;
 
 function_call
-:	variable '(' argumentList ')' {
-	
+:	NAME '(' argumentList ')' {
+		//program_object.get_procedure_map(*$1).get_return_type()
+		$$ = new function_call_Ast(*$1,$3);
 	}
-|	variable '(' ')' {
-	
+|	NAME '(' ')' {
+		$$ = new function_call_Ast(*$1,new list<Ast *>);
 	}
 ;
 
 argumentList
 :	var_const {
-		#if 0
+		//if
 		$$ = new list<Ast *>;
-		#endif
+		$$->push_back($1);
+		//end
 	}
 | 	all_expr {
-		#if 0
+		//if
 		$$ = new list<Ast *>;
-		#endif
+		$$->push_back($1);
+		//end
 	}
 |	argumentList ',' var_const {
-		#if 0
+		//if
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
-
 		else
 			$$ = $1;
 
 		$$->push_back($3);
-		#endif
+		//end
 	}
 |	argumentList ',' all_expr {
-		#if 0
+		//if
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
-
 		else
 			$$ = $1;
 
 		$$->push_back($3);
-		#endif
+		//end
 	}
 ;
 
@@ -506,549 +619,536 @@ argumentList
 assignment_statement:
 	variable ASSIGN_OP var_const ';'
 	{
-		#if 0
+		//if
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |
 	variable ASSIGN_OP h_comparison_expr ';'
 	{
 	
-		#if 0
+		//if
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |
 	variable ASSIGN_OP comparison_expr ';'	{
 	
-		#if 0
+		//if
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |
 	variable ASSIGN_OP arithmetic_expr ';'	{
 		
-		#if 0
+		//if
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	
 	}
 |
 	variable ASSIGN_OP mul_div_expr ';'	{
 		
-		#if 0
+		//if
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
 		
-		#endif
+		//end
 	}
 ;
 
 equality_op
 :	NE	{
-		#if 0
+		//if
 		$$ = NE_OP; 
-		#endif
+		//end
 	}
 |	EQ	{
-		#if 0
+		//if
 		$$ = EQ_OP; 
-		#endif
+		//end
 	}
 ;
 
 comparison_op
 :	GE	{
-		#if 0
+		//if
 		$$ = GE_OP; 
-		#endif
+		//end
 	}
 |	LE	{
-		#if 0
+		//if
 		$$ = LE_OP; 
-		#endif
+		//end
 	}
 |	LT	{
-		#if 0
+		//if
 		$$ = LT_OP; 
-		#endif
+		//end
 	}
 |	GT	{
-		#if 0
+		//if
 		$$ = GT_OP; 
-		#endif
+		//end
 	}
 ;
 
 plus_minus
 :	'+' {
-		#if 0
+		//if
 		$$ = PLUS_OP;
-		#endif
+		//end
 	}
 | 	'-' {
-		#if 0
+		//if
 		$$ = MINUS_OP;
-		#endif
+		//end
 	}
 ;
 
 mul_div
 : 	'/' {
-		#if 0
+		//if
 		$$ = DIV_OP;
-		#endif
+		//end
 	}
 |	'*' {
-		#if 0
+		//if
 		$$ = MUL_OP;
-		#endif
+		//end
 	}
 
 ;
 
 typecast
 :	'(' INTEGER ')' {
-		#if 0
+		//if
 		$$ = int_data_type;
-		#endif
+		//end
 	}
 |	'(' FLOAT ')' {
-		#if 0
+		//if
 		$$ = float_data_type;
-		#endif
+		//end
 	}
 |	'(' DOUBLE ')' {
-		#if 0
+		//if
 		$$ = float_data_type;
-		#endif
+		//end
 	}
 ;
 
 h_comparison_expr
 :	var_const equality_op var_const 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	var_const equality_op comparison_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	var_const equality_op arithmetic_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	var_const equality_op mul_div_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	comparison_expr equality_op var_const 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	comparison_expr equality_op comparison_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	comparison_expr equality_op arithmetic_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	comparison_expr equality_op mul_div_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	mul_div_expr equality_op var_const 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	mul_div_expr equality_op comparison_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	mul_div_expr equality_op arithmetic_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	mul_div_expr equality_op mul_div_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	arithmetic_expr equality_op comparison_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	arithmetic_expr equality_op var_const 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	arithmetic_expr equality_op arithmetic_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	arithmetic_expr equality_op mul_div_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	h_comparison_expr equality_op comparison_expr 	{
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	h_comparison_expr equality_op arithmetic_expr {
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	h_comparison_expr equality_op var_const {
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 |	h_comparison_expr equality_op mul_div_expr {
-		#if 0
+		//if
 		$$ = new Comparison_Ast($1,$2,$3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		#endif
+		//end
 	}
 ;
 
 
 comparison_expr
 : var_const comparison_op var_const {
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | var_const comparison_op mul_div_expr {
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | var_const comparison_op arithmetic_expr {
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | arithmetic_expr comparison_op var_const{
 	//level2
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | arithmetic_expr comparison_op mul_div_expr{
 	//level2
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | arithmetic_expr comparison_op arithmetic_expr{
 	//level2
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | mul_div_expr comparison_op var_const{
 	//level2
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | mul_div_expr comparison_op mul_div_expr{
 	//level2
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | mul_div_expr comparison_op arithmetic_expr{
 	//level2
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | comparison_expr comparison_op var_const {
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | comparison_expr comparison_op mul_div_expr {
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 | comparison_expr comparison_op arithmetic_expr {
-	#if 0
+	//if
 	$$ = new Comparison_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 ;
 
 mul_div_expr
 :	var_const mul_div var_const{
-	#if 0
+	//if
 	$$ = new Arithmetic_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 |	mul_div_expr mul_div var_const {
-	#if 0
+	//if
 	$$ = new Arithmetic_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 ;
 
 
 arithmetic_expr
 :	var_const plus_minus var_const{
-	#if 0
+	//if
 	$$ = new Arithmetic_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 |	var_const plus_minus mul_div_expr{
-	#if 0
+	//if
 	$$ = new Arithmetic_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 |	mul_div_expr plus_minus var_const{
-	#if 0
+	//if
 	$$ = new Arithmetic_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 |	mul_div_expr plus_minus mul_div_expr{
-	#if 0
+	//if
 	$$ = new Arithmetic_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 |	arithmetic_expr plus_minus var_const{
-	#if 0
+	//if
 	$$ = new Arithmetic_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 |	arithmetic_expr plus_minus mul_div_expr{
-	#if 0
+	//if
 	$$ = new Arithmetic_Ast($1,$2,$3);
 	int line = get_line_number();
 	$$->check_ast(line);
-	#endif
+	//end
 }
 ;
 
 var_const:
 	var_const_plain{
-		#if 0
+		//if
 		$$ = $1;
-		#endif
+		//end
 	}
 |	typecast var_const_plain {
-		#if 0
+		//if
 		$$ = new Typecast_Ast($1, $2);
-		#endif
+		//end
 	}
 |	'-' typecast var_const_plain {
-		#if 0
+		//if
 		$$ = new Typecast_Ast($2, new UnaryMinus_Ast($3));
-		#endif
+		//end
 	}
 | '-' var_const_plain {
-	#if 0
+	//if
 	$$ = new UnaryMinus_Ast($2);
-	#endif
+	//end
 }
 ;
 
 
 var_const_plain
 :	variable {
-	#if 0
+	//if
 	$$ = $1;
-	#endif
+	//end
 }
 |	constant {
-	#if 0
+	//if
 	$$ = $1;
-	#endif
+	//end
 }	
 | function_call{
-	
+	//if
+	$$ = $1;
+	//end
 }
-| '(' h_comparison_expr ')' {
-	#if 0
+| '(' all_expr ')' {
+	//if
 	$$ = $2;
-	#endif
-}
-| '(' comparison_expr ')' {
-	#if 0
-	$$ = $2;
-	#endif
-}
-| '(' arithmetic_expr ')' {
-	#if 0
-	$$ = $2;
-	#endif
-}
-| '(' mul_div_expr ')' {
-	#if 0
-	$$ = $2;
-	#endif
+	//end
 }
 | '(' var_const ')' {
-	#if 0
+	//if
 	$$ = $2;
-	#endif
+	//end
 }
 ;
 
 return_stmt
 :	RETURN {
-		#if 0
-		$$ = new Return_Ast();
-		#endif
+		//if
+		$$ = new Return_Ast(NULL);
+		//end
 	}
 |	RETURN var_const {
-		#if 0
-		$$ = new Return_Ast();
-		#endif
+		//if
+		$$ = new Return_Ast($2);
+		//end
 }
 |	RETURN all_expr {
-		#if 0
-		$$ = new Return_Ast();
-		#endif
+		//if
+		$$ = new Return_Ast($2);
+		//end
 }
 ;
 
 all_expr
 :	mul_div_expr {
-		#if 0
+		//if
 		$$ = $1;
-		#endif
+		//end
 	}
 |	arithmetic_expr {
-		#if 0
+		//if
 		$$ = $1;
-		#endif
+		//end
 	}
 |	comparison_expr {
-		#if 0
+		//if
 		$$ = $1;
-		#endif
+		//end
 	}
 |	h_comparison_expr {
-		#if 0
+		//if
 		$$ = $1;
-		#endif
+		//end
 	}
 ;
 
 variable:
 	NAME
 	{
-		#if 0
+		//if
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
@@ -1066,22 +1166,22 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
-		#endif
+		//end
 	}
 ;
 
 constant:
 	INTEGER_NUMBER
 	{
-		#if 0
+		//if
 		$$ = new Number_Ast<int>($1, int_data_type);
-		#endif	
+		//end	
 	}
 |	
 	FLOAT_NUMBER
 	{
-		#if 0
+		//if
 		$$ = new Number_Ast<float>($1, float_data_type);	
-		#endif
+		//end
 	}
 ;
