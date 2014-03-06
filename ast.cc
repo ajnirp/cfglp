@@ -319,7 +319,7 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 		Eval_Result & result = *new Eval_Result_Value_Int();
 		result.set_result_enum(skip_result);
 		result_value_type sVal;
-		sVal.int_val == -1;
+		sVal.int_val == 2678;
 		result.set_value(sVal);
 		print_ast(file_buffer);
 		return result;
@@ -327,7 +327,18 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 	else{
 		Eval_Result & result = ret_ast->evaluate(eval_env ,file_buffer);
 		print_ast(file_buffer);
-		return result;
+		if(result.get_result_enum() == int_result){
+			Eval_Result & res = *new Eval_Result_Value_Int();
+			res.set_value(result.get_value());
+			res.set_result_enum(skip_result);
+			return res;
+		}
+		else{
+			Eval_Result & res = *new Eval_Result_Value_Float();
+			res.set_value(result.get_value());
+			res.set_result_enum(skip_result);
+			return res;
+		}
 	}
 	
 }
@@ -722,7 +733,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 	result_value_type sVal;
 	sVal.int_val = bb_number;
 	result.set_value(sVal);
-	result.set_result_enum(skip_result);
+	result.set_result_enum(goto_result);
 	file_buffer <<"\n"<<AST_SPACE<< "GOTO (BB "<<bb_number<<")\n";
 	return result;
 }
@@ -765,7 +776,7 @@ Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buff
 		Eval_Result & condition_result = condition->evaluate(eval_env, file_buffer);
 
 		Eval_Result & result = *new Eval_Result_Value_Int();
-		result.set_result_enum(skip_result);
+		result.set_result_enum(goto_result);
 		if(condition_result.get_value().int_val){
 			file_buffer <<"\n"<<AST_SPACE<<"Condition True : Goto (BB "<<true_bb_number<<")\n";
 			result_value_type sVal;
@@ -855,6 +866,16 @@ Eval_Result & function_call_Ast::evaluate(Local_Environment & eval_env, ostream 
 			exit(0);
 		}
 	}
-
-	return curP->evaluate_in_env(file_buffer,proc_local_env);
+	Eval_Result & ret_res = curP->evaluate_in_env(file_buffer,proc_local_env);
+	Data_Type ret_data_type = curP->get_return_type();
+	if(ret_data_type == int_data_type){
+		ret_res.set_result_enum(int_result);
+	}
+	else if(ret_data_type == float_data_type){
+		ret_res.set_result_enum(float_result);
+	}
+	else if(ret_data_type == void_data_type){
+		ret_res.set_result_enum(void_result);
+	}
+	return ret_res;
 }

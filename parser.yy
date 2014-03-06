@@ -1111,6 +1111,7 @@ var_const_plain
 return_stmt
 :	RETURN {
 		//if
+
 		$$ = new Return_Ast(NULL);
 		//end
 	}

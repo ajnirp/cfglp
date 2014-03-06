@@ -147,6 +147,7 @@ Local_Environment::~Local_Environment()
 void Local_Environment::print(ostream & file_buffer)
 {
 	map<string, Eval_Result_Value *>::iterator i;
+
 	for (i = variable_table.begin(); i != variable_table.end(); i++)
 	{
 		Eval_Result_Value * vi = variable_table[(*i).first];
@@ -162,6 +163,9 @@ void Local_Environment::print(ostream & file_buffer)
 					break;
 				case float_result:
 					file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_value().float_val << "\n";	
+					break;
+				default:
+					//cout<<"hey there"<<endl;
 					break;
 				}		
 			}

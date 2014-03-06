@@ -189,13 +189,19 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
 		//TODO_DONE
-		if(result->get_result_enum() == skip_result){
-			if(result->get_value().int_val == -1) break;
+		// if(result->get_result_enum() == skip_result){
+		// 	if(result->get_value().int_val == -1) break;
+		// 	current_bb = get_jump_bb(result->get_value().int_val);
+		// 	continue;
+		// }
+		if(result->get_result_enum() == skip_result) break;
+		if(result->get_result_enum() == goto_result){
 			current_bb = get_jump_bb(result->get_value().int_val);
 			continue;
 		}
 		current_bb = get_next_bb(*current_bb);		
 	}
+
 
 	list<Basic_Block *>::reverse_iterator last;
 	last = basic_block_list.rbegin();
@@ -204,6 +210,15 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	file_buffer << "\n\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << "<<name<<" >>\n";
 	eval_env.print(file_buffer);
+	// if((name=="main" && result->get_result_enum() == skip_result) && result->get_value().int_val != 31636368){
+	// 	file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().int_val<<"\n";
+	// }
+	if(return_type == int_data_type){
+		file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().int_val<<"\n";
+	}
+	else if(return_type == float_data_type){
+		file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().float_val<<"\n";
+	}
 
 	return *result;
 }
@@ -229,8 +244,13 @@ Eval_Result & Procedure::evaluate_in_env(ostream & file_buffer,Local_Environment
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
 		//TODO_DONE
-		if(result->get_result_enum() == skip_result){
-			if(result->get_value().int_val == -1) break;
+		// if(result->get_result_enum() == skip_result){
+		// 	if(result->get_value().int_val == -1) break;
+		// 	current_bb = get_jump_bb(result->get_value().int_val);
+		// 	continue;
+		// }
+		if(result->get_result_enum() == skip_result) break;
+		if(result->get_result_enum() == goto_result){
 			current_bb = get_jump_bb(result->get_value().int_val);
 			continue;
 		}
@@ -241,16 +261,21 @@ Eval_Result & Procedure::evaluate_in_env(ostream & file_buffer,Local_Environment
 	last = basic_block_list.rbegin();
 	(*last)->successor_found();
 
-	file_buffer << "\n\n";
+	file_buffer << "\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << "<<name<<" >>\n";
 	eval_env.print(file_buffer);
-	if(return_type == int_data_type){
+	if((name=="main" && result->get_result_enum() != skip_result) || return_type == int_data_type){
 		file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().int_val<<"\n";
+		result->set_result_enum(int_result);
 	}
-	else{
+	else if(return_type == float_data_type){
 		file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().float_val<<"\n";
+		result->set_result_enum(float_result);
 	}
-	
+	else if(return_type == void_data_type){
+		file_buffer <<"\n"<<LOC_VAR_SPACE<<PROC_SPACE<<"RETURN <NOTHING>\n";
+		result->set_result_enum(void_result);
+	}
 
 	return *result;
 }

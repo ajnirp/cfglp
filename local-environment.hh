@@ -37,8 +37,10 @@ typedef enum
 	int_result,
 	float_result, // submission 3b
 	void_result,
-	skip_result
+	skip_result,
+	goto_result
 } Result_Enum;
+
 
 union result_value_type{
 	int int_val;
