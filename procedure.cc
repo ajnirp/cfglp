@@ -36,10 +36,9 @@ using namespace std;
 Procedure::Procedure(Data_Type proc_return_type, string proc_name)
 {
 	return_type = proc_return_type;
-	// cout<<"hey there "<<proc_name<<endl;
 	name = proc_name;
-	// cout<<"hey thee"<<endl;
 	arg_string_list = *(new list<string>);
+	local_arg_table = *(new Symbol_Table());
 }
 
 void Procedure::set_data_type(Data_Type r_type){

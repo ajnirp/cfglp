@@ -1,9 +1,6 @@
-int fn(int a)
-{
-	return 2;
-}
+int glo;
 
 main()
 {
-	int b = fn(3);
+	
 }

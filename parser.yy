@@ -89,11 +89,17 @@
 %%
 
 program:
-	declaration_statement_list procedure_declaration_list procedure_definition_list
+	declaration_statement_list procedure_declaration_list {
+		program_object.set_global_table(*$1);
+	}
+	procedure_definition_list
 |
 	procedure_declaration_list procedure_definition_list
 |
-	declaration_statement_list procedure_definition_list
+	declaration_statement_list {
+		program_object.set_global_table(*$1);
+	} 
+	procedure_definition_list
 |
 	procedure_definition_list
 ;
@@ -102,7 +108,6 @@ procedure_declaration:
 	INTEGER  procedure_name ';' {
 		current_procedure->set_data_type(int_data_type);
 	}
-
 |
 	FLOAT procedure_name ';' {
 		current_procedure->set_data_type(float_data_type);
@@ -210,7 +215,7 @@ parameter:
 ;
 
 procedure_name:
-	NAME '(' {
+	NAME '(' {	
 			//if
 			if(program_object.get_procedure_map(*$1) == NULL){
 			//cout<<"KHKJHKKJHHKJHK"<<endl;
@@ -294,7 +299,6 @@ procedure_body:
 declaration_statement_list:
 	declaration_statement
 	{
-		
 		//if
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
@@ -306,11 +310,12 @@ declaration_statement_list:
 			report_error("Variable name cannot be same as procedure name", line);
 		}
 
-		if(current_procedure->variable_in_arg_list_check(var_name))
+		if(current_procedure != NULL && current_procedure->variable_in_arg_list_check(var_name))
 		{
 			int line = get_line_number();
 			report_error("Variable is declared twice", line);
 		}
+			
 		$$ = new Symbol_Table();
 		$$->push_symbol($1);
 		//end
@@ -318,7 +323,6 @@ declaration_statement_list:
 |
 	declaration_statement_list declaration_statement
 	{
-		
 		//if
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
@@ -347,7 +351,7 @@ declaration_statement_list:
 		else
 			$$ = new Symbol_Table();
 
-		if(current_procedure->variable_in_arg_list_check(var_name))
+		if(current_procedure != NULL && current_procedure->variable_in_arg_list_check(var_name))
 		{
 			int line = get_line_number();
 			report_error("Variable is declared twice", line);
