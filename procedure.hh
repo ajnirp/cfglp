@@ -69,6 +69,8 @@ public:
 
 	bool variable_in_symbol_list_check(string variable);
 	bool variable_in_arg_list_check(string variable);
+	bool match_arg_types(list<Ast * > * argList);
+	void match_arg_list(Symbol_Table & arg_table, int line);
 	Local_Environment & get_local_env();
 	Eval_Result & evaluate_in_env(ostream & file_buffer,Local_Environment & eval_env);
 };

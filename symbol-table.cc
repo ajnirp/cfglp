@@ -81,6 +81,10 @@ bool Symbol_Table::variable_in_symbol_list_check(string variable)
 	return false;
 }
 
+list<Symbol_Table_Entry *> & Symbol_Table::get_var_table(){
+	return variable_table;
+}
+
 Symbol_Table_Entry & Symbol_Table::get_symbol_table_entry(string variable_name)
 {
 	list<Symbol_Table_Entry *>::iterator i;

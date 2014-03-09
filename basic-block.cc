@@ -81,7 +81,7 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 		result = &((*i)->evaluate(eval_env, file_buffer));
 		//TODO_DONE
 
-		if(result->get_result_enum() == skip_result || result->get_result_enum() == goto_result){
+		if(result->get_result_enum() == skip_result || result->get_result_enum() == goto_result || result->get_result_enum() == skip_result_val){
 
 			break;
 		}

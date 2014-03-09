@@ -91,6 +91,7 @@
 program:
 	declaration_statement_list procedure_declaration_list {
 		program_object.set_global_table(*$1);
+
 	}
 	procedure_definition_list
 |
@@ -105,19 +106,19 @@ program:
 ;
 
 procedure_declaration:
-	INTEGER  procedure_name ';' {
+	INTEGER  procedure_name_decl ';' {
 		current_procedure->set_data_type(int_data_type);
 	}
 |
-	FLOAT procedure_name ';' {
+	FLOAT procedure_name_decl ';' {
 		current_procedure->set_data_type(float_data_type);
 	}
 |
-	DOUBLE procedure_name ';' {
+	DOUBLE procedure_name_decl ';' {
 		current_procedure->set_data_type(float_data_type);
 	}
 |
-	VOID procedure_name ';' {
+	VOID procedure_name_decl ';' {
 		current_procedure->set_data_type(void_data_type);
 	}
 ;
@@ -214,21 +215,14 @@ parameter:
 	}
 ;
 
-procedure_name:
+procedure_name_decl:
 	NAME '(' {	
 			//if
-			if(program_object.get_procedure_map(*$1) == NULL){
-			//cout<<"KHKJHKKJHHKJHK"<<endl;
-				current_procedure = new Procedure(void_data_type, *$1);
-				//current_procedure->set_arg_list(*$3);
-				//current_procedure->set_name(*$1);
-				//exit(0);
-				program_object.set_procedure_map(*current_procedure);
+			if(program_object.variable_in_symbol_list_check(*$1)){
+				report_error("Variable name cannot be same as procedure name", get_line_number());
 			}
-			else{
-				current_procedure = program_object.get_procedure_map(*$1);
-				//current_procedure->set_arg_list(*$3);
-			}
+			current_procedure = new Procedure(void_data_type, *$1);
+			program_object.set_procedure_map(*current_procedure);
 			//end
 		}
 	parameter_list ')'
@@ -240,16 +234,63 @@ procedure_name:
 |
 	NAME '(' ')' {
 		//if
+		if(program_object.variable_in_symbol_list_check(*$1)){
+			report_error("Variable name cannot be same as procedure name", get_line_number());
+		}
 		if(program_object.get_procedure_map(*$1) == NULL){
 			current_procedure = new Procedure(void_data_type, *$1);
-			//current_procedure->set_name(*$1);
 			current_procedure->set_arg_list(*(new Symbol_Table()));
 			program_object.set_procedure_map(*current_procedure);
 		}
+		//end
+	}
+;
+
+procedure_name:
+	NAME '(' {	
+			//if
+			if(program_object.variable_in_symbol_list_check(*$1)){
+				report_error("Variable name cannot be same as procedure name", get_line_number());
+			}
+			if(program_object.get_procedure_map(*$1) == NULL){
+				if(*$1 == "main"){
+					current_procedure = new Procedure(void_data_type, *$1);
+					program_object.set_procedure_map(*current_procedure);
+				}
+				else{
+					report_error("Procedure corresponding to the name is not found", get_line_number());
+				}
+			}
+			else{
+				current_procedure = program_object.get_procedure_map(*$1);
+			}
+			//end
+		}
+	parameter_list ')'
+	{
+		//if
+		current_procedure->match_arg_list(*$4, get_line_number());
+		//end
+	}
+|
+	NAME '(' ')' {
+		//if
+		if(program_object.variable_in_symbol_list_check(*$1)){
+			report_error("Variable name cannot be same as procedure name", get_line_number());
+		}
+		if(program_object.get_procedure_map(*$1) == NULL){
+			if(*$1 == "main"){
+				current_procedure = new Procedure(void_data_type, *$1);
+				program_object.set_procedure_map(*current_procedure);
+			}
+			else{
+				report_error("Procedure corresponding to the name is not found", get_line_number());
+			}
+		}
 		else{
 			current_procedure = program_object.get_procedure_map(*$1);
-			//current_procedure->set_arg_list(*(new Symbol_Table()));
 		}
+		current_procedure->match_arg_list(*(new Symbol_Table()), get_line_number());
 		//end
 	}
 ;
@@ -576,10 +617,22 @@ assignment_or_function_call_list:
 
 function_call
 :	NAME '(' argumentList ')' {
-		//program_object.get_procedure_map(*$1).get_return_type()
+		Procedure * called_proc = program_object.get_procedure_map(*$1);
+		if(called_proc == NULL){
+			report_error("Procedure corresponding to the name is not found",get_line_number());
+		}
+		if(called_proc->get_arg_string_list().size() != $3->size()){
+			report_error("Actual and formal parameter count do not match",get_line_number());
+		}
+		if(!called_proc->match_arg_types($3)){
+			report_error("Actual and formal parameters data types are not matching", get_line_number());
+		}
 		$$ = new function_call_Ast(*$1,$3);
 	}
 |	NAME '(' ')' {
+		if(program_object.get_procedure_map(*$1)->get_arg_string_list().size() != 0){
+			report_error("Actual and formal parameter count do not match",get_line_number());
+		}
 		$$ = new function_call_Ast(*$1,new list<Ast *>);
 	}
 ;

@@ -58,10 +58,11 @@ public:
 	void set_table_scope(Table_Scope list_scope);
 
 	void push_symbol(Symbol_Table_Entry * variable);
-
+	list<Symbol_Table_Entry *> & get_var_table();
 	bool variable_in_symbol_list_check(string variable);
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 	void global_list_in_proc_map_check(int line);
+	bool match_symbol_table(Symbol_Table & sym_tab);
 
 	void create(Local_Environment & local_global_variables_table);
 };

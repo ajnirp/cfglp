@@ -74,8 +74,41 @@ void Procedure::set_arg_list(Symbol_Table & new_list)
 	local_arg_table.set_table_scope(local);
 }
 
+void Procedure::match_arg_list(Symbol_Table & arg_table, int line){
+	list<Symbol_Table_Entry *> & t1 = local_arg_table.get_var_table();
+	list<Symbol_Table_Entry *> & t2 = arg_table.get_var_table();
+
+	if(t1.size() != t2.size()){
+		report_error("Formal parameter list of the procedure and its prototype should match", line);
+	}
+
+	list<Symbol_Table_Entry *>::iterator it1;
+	list<Symbol_Table_Entry *>::iterator it2;
+
+	for(it1 = t1.begin(), it2 = t2.begin(); it1 != t1.end(); it1++,it2++){
+		if((*it1)->get_data_type() != (*it2)->get_data_type()){
+			report_error("Return type of one of the parameters of the procedure and its prototype doesn't match",line);
+		}
+		if((*it1)->get_variable_name() != (*it2)->get_variable_name()){
+			report_error("Variable name of one of the parameters of the procedre and its prototypes doesn't match",line);
+		}
+	}
+}
+
 list<string> & Procedure::get_arg_string_list(){
 	return arg_string_list;
+}
+
+bool Procedure::match_arg_types(list<Ast * > * argList){
+	if(argList->size() == 0) return true;
+	list<Ast*>:: iterator it;
+	list<string>:: iterator it_1 = arg_string_list.begin();
+	int i = 0;
+	for(it = argList->begin(); it != argList->end(); it++){
+		if((*it)->get_data_type() != local_arg_table.get_symbol_table_entry(*it_1).get_data_type()) return false;
+		it_1++;
+	}
+	return true;
 }
 
 void Procedure::addArg(string arg_name){
@@ -188,12 +221,6 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
-		//TODO_DONE
-		// if(result->get_result_enum() == skip_result){
-		// 	if(result->get_value().int_val == -1) break;
-		// 	current_bb = get_jump_bb(result->get_value().int_val);
-		// 	continue;
-		// }
 		if(result->get_result_enum() == skip_result) break;
 		if(result->get_result_enum() == goto_result){
 			current_bb = get_jump_bb(result->get_value().int_val);
@@ -209,17 +236,24 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 
 	file_buffer << "\n\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << "<<name<<" >>\n";
-	eval_env.print(file_buffer);
-	// if((name=="main" && result->get_result_enum() == skip_result) && result->get_value().int_val != 31636368){
-	// 	file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().int_val<<"\n";
-	// }
-	if(return_type == int_data_type){
-		file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().int_val<<"\n";
+	
+
+	if(result->get_result_enum() == skip_result){
+		Eval_Result_Value_Int ret_val;
+		ret_val.set_value(result->get_value());
+		eval_env.put_variable_value(ret_val,"return");
+	}
+	else if(return_type == int_data_type){
+		Eval_Result_Value_Int ret_val;
+		ret_val.set_value(result->get_value());
+		eval_env.put_variable_value(ret_val,"return");
 	}
 	else if(return_type == float_data_type){
-		file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().float_val<<"\n";
+		Eval_Result_Value_Float ret_val;
+		ret_val.set_value(result->get_value());
+		eval_env.put_variable_value(ret_val,"return");
 	}
-
+	eval_env.print(file_buffer);
 	return *result;
 }
 
@@ -243,12 +277,6 @@ Eval_Result & Procedure::evaluate_in_env(ostream & file_buffer,Local_Environment
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
-		//TODO_DONE
-		// if(result->get_result_enum() == skip_result){
-		// 	if(result->get_value().int_val == -1) break;
-		// 	current_bb = get_jump_bb(result->get_value().int_val);
-		// 	continue;
-		// }
 		if(result->get_result_enum() == skip_result) break;
 		if(result->get_result_enum() == goto_result){
 			current_bb = get_jump_bb(result->get_value().int_val);
@@ -263,20 +291,18 @@ Eval_Result & Procedure::evaluate_in_env(ostream & file_buffer,Local_Environment
 
 	file_buffer << "\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << "<<name<<" >>\n";
-	eval_env.print(file_buffer);
-	if((name=="main" && result->get_result_enum() != skip_result) || return_type == int_data_type){
-		file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().int_val<<"\n";
-		result->set_result_enum(int_result);
+	
+	if(return_type == int_data_type){
+		Eval_Result_Value_Int ret_val;
+		ret_val.set_value(result->get_value());
+		eval_env.put_variable_value(ret_val,"return");
 	}
 	else if(return_type == float_data_type){
-		file_buffer << LOC_VAR_SPACE<<PROC_SPACE<<"return : "<<result->get_value().float_val<<"\n";
-		result->set_result_enum(float_result);
+		Eval_Result_Value_Float ret_val;
+		ret_val.set_value(result->get_value());
+		eval_env.put_variable_value(ret_val,"return");
 	}
-	else if(return_type == void_data_type){
-		file_buffer <<"\n"<<LOC_VAR_SPACE<<PROC_SPACE<<"RETURN <NOTHING>\n";
-		result->set_result_enum(void_result);
-	}
-
+	eval_env.print(file_buffer);
 	return *result;
 }
 

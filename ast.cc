@@ -317,7 +317,7 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 {
 	if(ret_ast == NULL){
 		Eval_Result & result = *new Eval_Result_Value_Int();
-		result.set_result_enum(skip_result);
+		result.set_result_enum(skip_result_val);
 		result_value_type sVal;
 		sVal.int_val == 2678;
 		result.set_value(sVal);
@@ -771,12 +771,15 @@ void If_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-		print_ast(file_buffer);
+		file_buffer << "\n" AST_SPACE <<  "If_Else statement:";	
+		condition->print_ast(file_buffer);
 
 		Eval_Result & condition_result = condition->evaluate(eval_env, file_buffer);
 
 		Eval_Result & result = *new Eval_Result_Value_Int();
 		result.set_result_enum(goto_result);
+		file_buffer <<"\n"<<AST_NODE_SPACE<<"True Successor: "<<true_bb_number;
+		file_buffer <<"\n"<<AST_NODE_SPACE<<"False Successor: "<<false_bb_number;
 		if(condition_result.get_value().int_val){
 			file_buffer <<"\n"<<AST_SPACE<<"Condition True : Goto (BB "<<true_bb_number<<")\n";
 			result_value_type sVal;
@@ -816,7 +819,7 @@ Data_Type function_call_Ast::get_data_type(){
 }
 
 void function_call_Ast::print_ast(ostream & file_buffer){
-	file_buffer<<"\n"<<AST_SPACE<<"FN CALL: fn(";
+	file_buffer<<"\n"<<AST_SPACE<<"FN CALL: "<<fn_name<<"(";
 	list<Ast*>::iterator it;
 	for(it=argList.begin(); it!=argList.end(); it++){
 		file_buffer<<"\n"<<AST_NODE_SPACE;
@@ -832,10 +835,6 @@ Eval_Result & function_call_Ast::evaluate(Local_Environment & eval_env, ostream 
 		exit(0);
 	}
 	list<string> args = curP->get_arg_string_list();
-	if(args.size() != argList.size()){
-		cout<<"Wrong number of arguments"<<endl;
-		exit(0);
-	}
 	 // = *new Eval_Result_Value_Int();
 	Local_Environment & proc_local_env = curP->get_local_env();
 	list<Ast*>::iterator it1;
@@ -862,8 +861,7 @@ Eval_Result & function_call_Ast::evaluate(Local_Environment & eval_env, ostream 
 			
 		}
 		else{
-			cout<<"incompatible arguments"<<endl;
-			exit(0);
+			report_error("Actual and formal parameters data types are not matching", NOLINE);
 		}
 	}
 	Eval_Result & ret_res = curP->evaluate_in_env(file_buffer,proc_local_env);

@@ -1,6 +1,5 @@
-
-main()
-{
-	float a = 10.687;
-	return a;
+float x;
+main(){
+	x = 1-1;
+	return;
 }

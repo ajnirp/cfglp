@@ -113,9 +113,9 @@ then
 	for words in $x
 	do
 		echo "testing $words"
-		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/$words > f1
-		./cfglp -d -tokens $TEST_DIR/$words > f0
-		diff -b f1 f0
+		./$REFERENCE_CFGLP -d -eval $TEST_DIR/$words > f1
+		./cfglp -d -eval $TEST_DIR/$words > f0
+		diff -b -B f1 f0
 		rm f0 f1
 	done;
 
