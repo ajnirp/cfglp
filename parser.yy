@@ -177,7 +177,7 @@ parameter_list
 			if($1->variable_in_symbol_list_check(var_name))
 			{
 				int line = get_line_number();
-				report_error("Variable is declared twice", line);
+				report_error("Formal Parameter declared twice", line);
 			}
 
 			$$ = $1;
@@ -219,7 +219,7 @@ procedure_name_decl:
 	NAME '(' {	
 			//if
 			if(program_object.variable_in_symbol_list_check(*$1)){
-				report_error("Variable name cannot be same as procedure name", get_line_number());
+				report_error("Procedure name cannot be same as global variable", get_line_number());
 			}
 			current_procedure = new Procedure(void_data_type, *$1);
 			program_object.set_procedure_map(*current_procedure);
@@ -235,7 +235,7 @@ procedure_name_decl:
 	NAME '(' ')' {
 		//if
 		if(program_object.variable_in_symbol_list_check(*$1)){
-			report_error("Variable name cannot be same as procedure name", get_line_number());
+			report_error("Procedure name cannot be same as global variable", get_line_number());
 		}
 		if(program_object.get_procedure_map(*$1) == NULL){
 			current_procedure = new Procedure(void_data_type, *$1);
@@ -250,7 +250,7 @@ procedure_name:
 	NAME '(' {	
 			//if
 			if(program_object.variable_in_symbol_list_check(*$1)){
-				report_error("Variable name cannot be same as procedure name", get_line_number());
+				report_error("Procedure name cannot be same as global variable", get_line_number());
 			}
 			if(program_object.get_procedure_map(*$1) == NULL){
 				if(*$1 == "main"){
@@ -270,13 +270,14 @@ procedure_name:
 	{
 		//if
 		current_procedure->match_arg_list(*$4, get_line_number());
+		return_statement_used_flag = false;
 		//end
 	}
 |
 	NAME '(' ')' {
 		//if
 		if(program_object.variable_in_symbol_list_check(*$1)){
-			report_error("Variable name cannot be same as procedure name", get_line_number());
+			report_error("Procedure name cannot be same as global variable", get_line_number());
 		}
 		if(program_object.get_procedure_map(*$1) == NULL){
 			if(*$1 == "main"){
@@ -291,6 +292,7 @@ procedure_name:
 			current_procedure = program_object.get_procedure_map(*$1);
 		}
 		current_procedure->match_arg_list(*(new Symbol_Table()), get_line_number());
+		return_statement_used_flag = false;
 		//end
 	}
 ;
@@ -308,10 +310,10 @@ procedure_body:
 	{
 		
 		//if
-		if (return_statement_used_flag == false)
+		if (return_statement_used_flag == false && current_procedure->get_return_type() != void_data_type)
 		{
 			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
+			report_error("Return type of procedure and its prototype should match", line);
 		}
 		
 		current_procedure->set_basic_block_list(*$4);
@@ -324,10 +326,10 @@ procedure_body:
 	{
 		
 		//if
-		if (return_statement_used_flag == false)
+		if (return_statement_used_flag == false && current_procedure->get_return_type() != void_data_type)
 		{
 			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
+			report_error("Return type of procedure and its prototype should match", line);
 		}
 		
 		current_procedure->set_basic_block_list(*$2);
@@ -354,7 +356,7 @@ declaration_statement_list:
 		if(current_procedure != NULL && current_procedure->variable_in_arg_list_check(var_name))
 		{
 			int line = get_line_number();
-			report_error("Variable is declared twice", line);
+			report_error("Formal parameter and local variable name cannot be same", line);
 		}
 			
 		$$ = new Symbol_Table();
@@ -383,7 +385,7 @@ declaration_statement_list:
 			if($1->variable_in_symbol_list_check(var_name))
 			{
 				int line = get_line_number();
-				report_error("Variable is declared twice", line);
+				report_error("Formal parameter and local variable name cannot be same", line);
 			}
 
 			$$ = $1;
@@ -499,7 +501,6 @@ executable_statement_list:
 		//if
 		//Ast * ret = new Return_Ast();
 
-		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
 		if ($1 != NULL)
 			$$ = $1;
@@ -1164,17 +1165,37 @@ var_const_plain
 return_stmt
 :	RETURN {
 		//if
+		if(current_procedure->get_return_type() == void_data_type){
+			return_statement_used_flag = true;
+		}
+		if(current_procedure->get_proc_name() == "main"){
 
+		}
+		else check_return_data_types(void_data_type,current_procedure->get_return_type());
 		$$ = new Return_Ast(NULL);
 		//end
 	}
 |	RETURN var_const {
 		//if
+		if(current_procedure->get_return_type() == $2->get_data_type()){
+			return_statement_used_flag = true;
+		}
+		if(current_procedure->get_proc_name() == "main"){
+			
+		}
+		else check_return_data_types($2->get_data_type(),current_procedure->get_return_type());
 		$$ = new Return_Ast($2);
 		//end
 }
 |	RETURN all_expr {
 		//if
+		if(current_procedure->get_return_type() == $2->get_data_type()){
+			return_statement_used_flag = true;
+		}
+		if(current_procedure->get_proc_name() == "main"){
+
+		}
+		else check_return_data_types($2->get_data_type(),current_procedure->get_return_type());
 		$$ = new Return_Ast($2);
 		//end
 }

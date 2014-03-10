@@ -11,7 +11,7 @@ fact(int a)
 
 main()
 {
-	int a = 1;
+	int a = 10;
 	prod = 1;
 	fact(a);
 }

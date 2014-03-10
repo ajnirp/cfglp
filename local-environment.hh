@@ -38,6 +38,7 @@ typedef enum
 	float_result, // submission 3b
 	void_result,
 	skip_result,
+	skip_result_float,
 	skip_result_val,
 	goto_result
 } Result_Enum;

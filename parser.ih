@@ -91,4 +91,15 @@ inline void Parser::bb_strictly_increasing_order_check(list<Basic_Block *> * bb_
 
 ///////////////////////////////////////////////////////////////////
 
+inline void Parser::check_return_data_types(Data_Type d1, Data_Type d2){
+  if(d2 == void_data_type && d1 != void_data_type){
+    report_error("Last return statement type, of procedure, and its prototype should match", get_line_number());
+  }
+  if((d1 == int_data_type && d2 == float_data_type) || (d1 == float_data_type && d2 == int_data_type)){
+    report_error("Two or more types of return values", get_line_number());
+  }
+}
+
+///////////////////////////////////////////////////////////////////
+
 #endif

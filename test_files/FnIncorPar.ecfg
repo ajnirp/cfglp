@@ -1,5 +1,6 @@
 
-fn(int a, )
+void fn(int a);
+fn(int a,)
 {
 }
 

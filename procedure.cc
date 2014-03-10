@@ -221,7 +221,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
-		if(result->get_result_enum() == skip_result) break;
+		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_val || result->get_result_enum() == skip_result_float) break;
 		if(result->get_result_enum() == goto_result){
 			current_bb = get_jump_bb(result->get_value().int_val);
 			continue;
@@ -238,20 +238,46 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << "<<name<<" >>\n";
 	
 
-	if(result->get_result_enum() == skip_result){
-		Eval_Result_Value_Int ret_val;
-		ret_val.set_value(result->get_value());
-		eval_env.put_variable_value(ret_val,"return");
+	if(result->get_result_enum() == skip_result_val){
+		
 	}
-	else if(return_type == int_data_type){
-		Eval_Result_Value_Int ret_val;
-		ret_val.set_value(result->get_value());
-		eval_env.put_variable_value(ret_val,"return");
-	}
-	else if(return_type == float_data_type){
-		Eval_Result_Value_Float ret_val;
-		ret_val.set_value(result->get_value());
-		eval_env.put_variable_value(ret_val,"return");
+	else{
+		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_float){
+
+			if(return_type == int_data_type){
+				Eval_Result_Value_Int ret_val;
+				ret_val.set_value(result->get_value());
+				eval_env.put_variable_value(ret_val,"return");
+			}
+			else if(return_type == float_data_type){
+				Eval_Result_Value_Float ret_val;
+				ret_val.set_value(result->get_value());
+				eval_env.put_variable_value(ret_val,"return");
+			}
+			else if(name == "main"){
+				if(result->get_result_enum() == skip_result){
+					Eval_Result_Value_Int ret_val;
+					ret_val.set_value(result->get_value());
+					eval_env.put_variable_value(ret_val,"return");
+				}
+				else if(result->get_result_enum() == skip_result_float){
+					Eval_Result_Value_Float ret_val;
+					ret_val.set_value(result->get_value());
+					eval_env.put_variable_value(ret_val,"return");
+				}
+				
+			}
+		}
+		else if(return_type == int_data_type){
+			Eval_Result_Value_Int ret_val;
+			ret_val.set_value(result->get_value());
+			eval_env.put_variable_value(ret_val,"return");
+		}
+		else if(return_type == float_data_type){
+			Eval_Result_Value_Float ret_val;
+			ret_val.set_value(result->get_value());
+			eval_env.put_variable_value(ret_val,"return");
+		}
 	}
 	eval_env.print(file_buffer);
 	return *result;
@@ -277,7 +303,10 @@ Eval_Result & Procedure::evaluate_in_env(ostream & file_buffer,Local_Environment
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
-		if(result->get_result_enum() == skip_result) break;
+		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_val || result->get_result_enum() == skip_result_float) {
+			
+			break;
+		}
 		if(result->get_result_enum() == goto_result){
 			current_bb = get_jump_bb(result->get_value().int_val);
 			continue;
@@ -291,16 +320,34 @@ Eval_Result & Procedure::evaluate_in_env(ostream & file_buffer,Local_Environment
 
 	file_buffer << "\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << "<<name<<" >>\n";
-	
-	if(return_type == int_data_type){
-		Eval_Result_Value_Int ret_val;
-		ret_val.set_value(result->get_value());
-		eval_env.put_variable_value(ret_val,"return");
+	/*check for return result and function prototype datatype match*/
+	if(result->get_result_enum() == skip_result_val){
+		
 	}
-	else if(return_type == float_data_type){
-		Eval_Result_Value_Float ret_val;
-		ret_val.set_value(result->get_value());
-		eval_env.put_variable_value(ret_val,"return");
+	else{
+		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_float){
+
+			if(return_type == int_data_type){
+				Eval_Result_Value_Int ret_val;
+				ret_val.set_value(result->get_value());
+				eval_env.put_variable_value(ret_val,"return");
+			}
+			else if(return_type == float_data_type){
+				Eval_Result_Value_Float ret_val;
+				ret_val.set_value(result->get_value());
+				eval_env.put_variable_value(ret_val,"return");
+			}
+		}
+		else if(return_type == int_data_type){
+			Eval_Result_Value_Int ret_val;
+			ret_val.set_value(result->get_value());
+			eval_env.put_variable_value(ret_val,"return");
+		}
+		else if(return_type == float_data_type){
+			Eval_Result_Value_Float ret_val;
+			ret_val.set_value(result->get_value());
+			eval_env.put_variable_value(ret_val,"return");
+		}
 	}
 	eval_env.print(file_buffer);
 	return *result;
