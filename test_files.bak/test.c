@@ -1,12 +1,9 @@
+
 main()
 {
 	int a = 3;
-	int b = 5;
-
-	fn();
+	float b = 5.4;
+	return (float)b;
 }
 
-fn()
-{
-	int c = 4;
-}
+

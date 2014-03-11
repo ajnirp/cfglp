@@ -1,3 +1,8 @@
+void fn();
+void fn(int a);
+void fn(float b);
+void fn(int a, float b);
+
 fn()
 {
 	int a;
