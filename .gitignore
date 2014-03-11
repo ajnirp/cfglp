@@ -6,3 +6,5 @@ parser.yy.output
 parserbase.h
 scanner.cc
 scannerbase.h
+test_files/*.cfg
+test_files/*.ecfg

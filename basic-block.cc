@@ -86,12 +86,26 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 		}
 	}
 
-	if (result == NULL)
-		report_internal_error("Atleast one of true, false, direct successors should be set");
+	if (result == NULL) {
+		if (statement_list.size() > 0) {
+			report_internal_error("Atleast one of true, false, direct successors should be set");
+		}
+		else {
+			result = new Eval_Result_Value_Int();
+			// result->set_result_enum(skip_result_val);
+			result_value_type sVal;
+			sVal.int_val == 2678;
+			result->set_value(sVal);
+		}
+	}
 	return *result;
 }
 
 void Basic_Block::successor_found(){
+	if (statement_list.size() == 0) {
+		return;
+	}
+
 	list<Ast *>::reverse_iterator i = statement_list.rbegin();
 	if(i != statement_list.rend()){
 		if(!((*i)->successor_found())){

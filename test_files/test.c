@@ -1,9 +1,21 @@
+void fn()
+{
+	int a;
+	return;
+	a = 1;
+	return;
+}
+
 
 main()
 {
-	int a = 3;
-	float b = 5.4;
-	return (float)b;
+	int a;
+	int b;
+	a = 1;
+	return;
+	b = 2;
+	fn();
+	return;
 }
 
 

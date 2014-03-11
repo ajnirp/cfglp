@@ -118,7 +118,11 @@ then
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
-
+elif [ $1 == "clean" ]
+then
+	make -f Makefile.cfg clean
+	make -f Makefile.cfglp clean
+	cd test_files;make clean;cd ..
 else
 	# test all
 	./check.sh c
