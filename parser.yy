@@ -256,6 +256,7 @@ procedure_name:
 				if(*$1 == "main"){
 					current_procedure = new Procedure(void_data_type, *$1);
 					program_object.set_procedure_map(*current_procedure);
+					last_return_type = 0;
 				}
 				else{
 					report_error("Procedure corresponding to the name is not found", get_line_number());
@@ -281,6 +282,7 @@ procedure_name:
 		}
 		if(program_object.get_procedure_map(*$1) == NULL){
 			if(*$1 == "main"){
+				last_return_type = 0;
 				current_procedure = new Procedure(void_data_type, *$1);
 				program_object.set_procedure_map(*current_procedure);
 			}
@@ -1181,7 +1183,12 @@ return_stmt
 			return_statement_used_flag = true;
 		}
 		if(current_procedure->get_proc_name() == "main"){
-			
+			if(last_return_type == 0){
+				last_return_type = $2->get_data_type();
+			}
+			else if(last_return_type != $2->get_data_type()){
+				report_error("Two or more types of return values", get_line_number());
+			}
 		}
 		else check_return_data_types($2->get_data_type(),current_procedure->get_return_type());
 		$$ = new Return_Ast($2);
@@ -1193,7 +1200,12 @@ return_stmt
 			return_statement_used_flag = true;
 		}
 		if(current_procedure->get_proc_name() == "main"){
-
+			if(last_return_type == 0){
+				last_return_type = $2->get_data_type();
+			}
+			else if(last_return_type != $2->get_data_type()){
+				report_error("Two or more types of return values", get_line_number());
+			}
 		}
 		else check_return_data_types($2->get_data_type(),current_procedure->get_return_type());
 		$$ = new Return_Ast($2);
