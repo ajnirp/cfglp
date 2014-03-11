@@ -248,19 +248,13 @@ procedure_name_decl:
 
 procedure_name:
 	NAME '(' {	
+
 			//if
 			if(program_object.variable_in_symbol_list_check(*$1)){
 				report_error("Procedure name cannot be same as global variable", get_line_number());
 			}
 			if(program_object.get_procedure_map(*$1) == NULL){
-				if(*$1 == "main"){
-					current_procedure = new Procedure(void_data_type, *$1);
-					program_object.set_procedure_map(*current_procedure);
-					last_return_type = 0;
-				}
-				else{
-					report_error("Procedure corresponding to the name is not found", get_line_number());
-				}
+				report_error("Procedure corresponding to the name is not found", get_line_number());
 			}
 			else{
 				current_procedure = program_object.get_procedure_map(*$1);
@@ -281,14 +275,7 @@ procedure_name:
 			report_error("Procedure name cannot be same as global variable", get_line_number());
 		}
 		if(program_object.get_procedure_map(*$1) == NULL){
-			if(*$1 == "main"){
-				last_return_type = 0;
-				current_procedure = new Procedure(void_data_type, *$1);
-				program_object.set_procedure_map(*current_procedure);
-			}
-			else{
-				report_error("Procedure corresponding to the name is not found", get_line_number());
-			}
+			report_error("Procedure corresponding to the name is not found", get_line_number());
 		}
 		else{
 			current_procedure = program_object.get_procedure_map(*$1);
@@ -398,7 +385,7 @@ declaration_statement_list:
 
 		if(current_procedure != NULL && current_procedure->variable_in_arg_list_check(var_name))
 		{
-			int line = get_line_number();
+			int line = get_line_number();ma
 			report_error("Variable is declared twice", line);
 		}
 
@@ -1170,10 +1157,7 @@ return_stmt
 		if(current_procedure->get_return_type() == void_data_type){
 			return_statement_used_flag = true;
 		}
-		if(current_procedure->get_proc_name() == "main"){
-
-		}
-		else check_return_data_types(void_data_type,current_procedure->get_return_type());
+		check_return_data_types(void_data_type,current_procedure->get_return_type());
 		$$ = new Return_Ast(NULL);
 		//end
 	}
@@ -1182,15 +1166,7 @@ return_stmt
 		if(current_procedure->get_return_type() == $2->get_data_type()){
 			return_statement_used_flag = true;
 		}
-		if(current_procedure->get_proc_name() == "main"){
-			if(last_return_type == 0){
-				last_return_type = $2->get_data_type();
-			}
-			else if(last_return_type != $2->get_data_type()){
-				report_error("Two or more types of return values", get_line_number());
-			}
-		}
-		else check_return_data_types($2->get_data_type(),current_procedure->get_return_type());
+		check_return_data_types($2->get_data_type(),current_procedure->get_return_type());
 		$$ = new Return_Ast($2);
 		//end
 }
@@ -1199,15 +1175,7 @@ return_stmt
 		if(current_procedure->get_return_type() == $2->get_data_type()){
 			return_statement_used_flag = true;
 		}
-		if(current_procedure->get_proc_name() == "main"){
-			if(last_return_type == 0){
-				last_return_type = $2->get_data_type();
-			}
-			else if(last_return_type != $2->get_data_type()){
-				report_error("Two or more types of return values", get_line_number());
-			}
-		}
-		else check_return_data_types($2->get_data_type(),current_procedure->get_return_type());
+		check_return_data_types($2->get_data_type(),current_procedure->get_return_type());
 		$$ = new Return_Ast($2);
 		//end
 }

@@ -336,7 +336,7 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 		else{
 			Eval_Result & res = *new Eval_Result_Value_Float();
 			res.set_value(result.get_value());
-			res.set_result_enum(skip_result_float);
+			res.set_result_enum(skip_result);
 			return res;
 		}
 	}

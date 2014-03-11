@@ -221,7 +221,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
-		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_val || result->get_result_enum() == skip_result_float) break;
+		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_val) break;
 		if(result->get_result_enum() == goto_result){
 			current_bb = get_jump_bb(result->get_value().int_val);
 			continue;
@@ -242,8 +242,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 		
 	}
 	else{
-		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_float){
-
+		if(result->get_result_enum() == skip_result){
 			if(return_type == int_data_type){
 				Eval_Result_Value_Int ret_val;
 				ret_val.set_value(result->get_value());
@@ -253,19 +252,6 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 				Eval_Result_Value_Float ret_val;
 				ret_val.set_value(result->get_value());
 				eval_env.put_variable_value(ret_val,"return");
-			}
-			else if(name == "main"){
-				if(result->get_result_enum() == skip_result){
-					Eval_Result_Value_Int ret_val;
-					ret_val.set_value(result->get_value());
-					eval_env.put_variable_value(ret_val,"return");
-				}
-				else if(result->get_result_enum() == skip_result_float){
-					Eval_Result_Value_Float ret_val;
-					ret_val.set_value(result->get_value());
-					eval_env.put_variable_value(ret_val,"return");
-				}
-				
 			}
 		}
 		else if(return_type == int_data_type){
@@ -303,7 +289,7 @@ Eval_Result & Procedure::evaluate_in_env(ostream & file_buffer,Local_Environment
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
-		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_val || result->get_result_enum() == skip_result_float) {
+		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_val) {
 			
 			break;
 		}
@@ -325,7 +311,7 @@ Eval_Result & Procedure::evaluate_in_env(ostream & file_buffer,Local_Environment
 		
 	}
 	else{
-		if(result->get_result_enum() == skip_result || result->get_result_enum() == skip_result_float){
+		if(result->get_result_enum() == skip_result){
 
 			if(return_type == int_data_type){
 				Eval_Result_Value_Int ret_val;
