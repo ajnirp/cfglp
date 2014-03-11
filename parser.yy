@@ -385,7 +385,7 @@ declaration_statement_list:
 
 		if(current_procedure != NULL && current_procedure->variable_in_arg_list_check(var_name))
 		{
-			int line = get_line_number();ma
+			int line = get_line_number();
 			report_error("Variable is declared twice", line);
 		}
 

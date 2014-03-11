@@ -1,5 +1,5 @@
-Changes made for submission 1a
-=============================
+Changes made for submission 2a
+==============================
 
 The following is a list of files, each followed by the changes we made to that particular file.
 
@@ -41,8 +41,8 @@ parser.yy
 5. Added commented-out actions for some of the rules to prevent type-association and type-clash warnings while running bisonc++ on the parser.yy file.
 
 
-Changes made for submission 1b
-=============================
+Changes made for submission 2b
+==============================
 
 This is a list of files. Below each file we have listed the changes made to that file.
 
@@ -101,8 +101,8 @@ procedure.hh and procedure.cc
 2. Modified the 'evaluate' function to account for skip_result being returned from an Ast. In such a case, we use 'get_jump_bb' to jump to the requested block.
 
 
-Changes made for submission 2a
-=============================
+Changes made for submission 3a
+==============================
 
 In this submission we added support for tokens for 'float' and 'double' data types, and for arithmetic operators +, -, / and * as well as unary minus. Below is a list of files, and below each file is a list of changes we made to that file.
 
@@ -135,36 +135,119 @@ ast.hh
 1. Added an Enum for arithmetic operators called Arith_Op_Enum. It can take any one of the values PLUS_OP, MINUS_OP, DIV_OP, MUL_OP.
 
 
-Changes made for submission 2b
-=============================
+Changes made for submission 3b
+==============================
 
-Ast.hh and Ast.cc
+
+ast.hh and ast.cc
 ------------------
 
 1. Wrote the Ast classes for following:
-	a). Arithmetic_Ast --- Ast class for arithmetic expressions
-	a). Typecast_Ast --- Ast class for type-casting variables and expression values
-	a). UnaryMinus_Ast --- Ast class for applying Unary minus operator to any value.
+	a. Arithmetic_Ast --- Ast class for arithmetic expressions
+	b. Typecast_Ast --- Ast class for type-casting variables and expression values
+	c. UnaryMinus_Ast --- Ast class for applying Unary minus operator to any value.
 
 2. Added features to check for compatibility of lhs and rhs operands before the operation and raise appropirate error.
 
 3. Modified evaluate function of Return_Ast to exit the program normally.
 
+4. Added a template class for Number_Ast<float>
+
+
 local-evironment.cc and local-environment.hh
 ---------------------------------------------
 
-1. One nice problem that we faced was that an instance of Eval_Result or any of its derived class could only return an intger as a result. But since we also had to deal with single precision floats in addition to ints, we needed a generic return type to return the result value according to the context. So we modified the Eval_result class and its derivatives to provide the result as a "Union" object. Thus, result for any calculation can now be calculated and its integer and float variants can be extracted out according the situation.
+1. One nice problem that we faced was that an instance of Eval_Result or any of its derived class could only return an intger as a result. But since we also had to deal with single precision floats in addition to ints, we needed a generic return type to return the result value according to the context. So we modified the Eval_result class and its derivatives to provide the result as a union. The union has two fields, 'int_val' and 'float_val'. Thus, result for any calculation can now be calculated and its integer and float variants can be extracted out according the situation.
 
-Program.cc
+
+program.cc
 -----------
 
 1. Set the precision of output stream as fixed 2 digits after decimal to print out the floats correctly.
 
-Parser.yy
+
+parser.yy
 -----------
 
 1. Added actions routines for all the required non terminals in this file and integrated them to work correctly.
 	New actions added for:
-	a). Arithmetic_expr
-	b). mul_div_expr
-	c). Typecast of expressions, variables and constants etc.
+	a. arithmetic_expr
+	b. mul_div_expr
+	c. Typecast of expressions, variables and constants etc.
+
+
+Changes made for submission 4a
+==============================
+
+
+In this part we added support for tokenization of programs that contain function declaration, definition and calling.
+
+
+scanner.ll
+----------
+
+1. Commas are now meta characters, as they can appear when we are declaration, defining or calling a function. So we added ',' to the list of meta characters. Previously they were treated as illegal characters.
+
+2. To support void functions we added 'void' as a token.
+
+parser.yy
+---------
+
+1. The lexer can return 'void' tokens, so we added a new token name "VOID".
+
+2. Previously, 'program' was just a declaration statement list followed by the 'main' procedure. But now since we have multiple procedures, a program looks like this:
+
+	<global variable declaration>* <procedure declaration>* <procedure_definition>+
+
+So we changed the expansion for the 'program' nonterminal, and added other nonterminals to support the new program structure.
+
+3. Until now, we only had the main function, which was a void function. So the return statement could only ever be 'return ;'. But now that we have procedures with different return types we need to capture return statements of the form:
+	
+	return <expression>? ;
+
+So we created a nonterminal for return statements and wrote appropriate expansions.
+
+
+Changes made for submission 4b
+==============================
+
+Parser.yy
+----------
+
+1. Few more non-terminals(function_call, parameter, parameter_list etc.) to parse function prototypes, parameter arguments and definitions added.
+2. Correct actions embedded at correct positions in the language definition.
+3. Actions for some existing non-terminals( return_stmt, declaration, function etc.) modified to integrate the newly added functionality correctly.
+4. Appropirate messages to be shown on detection of errors related with functions,their calls, declaration etc. added.
+
+Ast.hh and Ast.cc
+------------------
+
+1. One new ast for funciton_call i.e. "function_call_Ast" added and defined.
+2. Evaluate and print_ast of some other ast's(return_Ast, if_Ast) modified accordingly to deal with the new implementations.
+
+local_environment.hh and local_environment.cc
+----------------------------------------------
+
+1. One more result "goto_result" type added in "Result_Enum" list. Now the evaluation results for goto_statement and skip_results are clearly separated.
+
+Procedure.hh and Procedure.cc
+-----------------------------
+
+1. Evaluate function of a procedure modified.
+2. New function "evaluate_in_env(args)" added which basically evaluates a procedure given the environment as an argument. This function is used to evaluate the results for function calls in the program. We create a suitable environent required by a funtion call and provide it as an argument to this function.
+3.Two data members, "local_arg_table" which is a symbol table of procedure arguments and "arg_string_list" which is a list of argument parameter strings added.
+4.Some member functions added. (match_arg_types(args), match_arg_list(args) etc.)
+
+Parser.h and Parser.ih
+-------------------------
+
+1. One method "check_return_data_types(args)" added.
+
+Program.cc
+-----------
+
+1. The member method get_procedure_map(args) modified.
+
+
+
+
