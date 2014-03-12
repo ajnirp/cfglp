@@ -44,6 +44,7 @@ class Procedure
 	list<Basic_Block *> basic_block_list;
 	Symbol_Table local_arg_table;
 	list<string> arg_string_list;
+	bool defined;
 
 public:
 	Procedure(Data_Type proc_return_type, string proc_name);
@@ -73,6 +74,8 @@ public:
 	void match_arg_list(Symbol_Table & arg_table, int line);
 	Local_Environment & get_local_env();
 	Eval_Result & evaluate_in_env(ostream & file_buffer,Local_Environment & eval_env);
+	void set_defined();
+	bool is_defined();
 };
 
 #endif

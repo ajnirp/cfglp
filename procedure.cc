@@ -39,10 +39,19 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name)
 	name = proc_name;
 	arg_string_list = *(new list<string>);
 	local_arg_table = *(new Symbol_Table());
+	defined = false;
 }
 
 void Procedure::set_data_type(Data_Type r_type){
 	return_type = r_type;
+}
+
+void Procedure::set_defined(){
+	defined = true;
+}
+
+bool Procedure::is_defined(){
+	return defined;
 }
 
 Procedure::~Procedure()

@@ -79,6 +79,8 @@ class Parser: public ParserBase
   vector<int> bb_requested;
 	void bb_strictly_increasing_order_check(list<Basic_Block *> * bb_list, int bb_number); 
   void check_return_data_types(Data_Type d1, Data_Type d2);
+  void check_undefined_functions();
+  set<string> function_call_set;
         
 	void executeAction(int ruleNr);
         void errorRecovery();

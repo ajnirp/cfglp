@@ -93,16 +93,24 @@ program:
 		program_object.set_global_table(*$1);
 
 	}
-	procedure_definition_list
+	procedure_definition_list {
+		check_undefined_functions();
+	}
 |
-	procedure_declaration_list procedure_definition_list
+	procedure_declaration_list procedure_definition_list {
+		check_undefined_functions();
+	}
 |
 	declaration_statement_list {
 		program_object.set_global_table(*$1);
 	} 
-	procedure_definition_list
+	procedure_definition_list {
+		check_undefined_functions();
+	}
 |
-	procedure_definition_list
+	procedure_definition_list {
+		check_undefined_functions();
+	}
 ;
 
 procedure_declaration:
@@ -265,6 +273,7 @@ procedure_name:
 	{
 		//if
 		current_procedure->match_arg_list(*$4, get_line_number());
+		current_procedure->set_defined();
 		return_statement_used_flag = false;
 		//end
 	}
@@ -281,6 +290,7 @@ procedure_name:
 			current_procedure = program_object.get_procedure_map(*$1);
 		}
 		current_procedure->match_arg_list(*(new Symbol_Table()), get_line_number());
+		current_procedure->set_defined();
 		return_statement_used_flag = false;
 		//end
 	}
@@ -611,6 +621,7 @@ function_call
 		if(called_proc == NULL){
 			report_error("Procedure corresponding to the name is not found",get_line_number());
 		}
+		function_call_set.insert(*$1);
 		if(called_proc->get_arg_string_list().size() != $3->size()){
 			report_error("Actual and formal parameter count do not match",get_line_number());
 		}
@@ -620,7 +631,13 @@ function_call
 		$$ = new function_call_Ast(*$1,$3);
 	}
 |	NAME '(' ')' {
-		if(program_object.get_procedure_map(*$1)->get_arg_string_list().size() != 0){
+
+		Procedure * called_proc = program_object.get_procedure_map(*$1);
+		if(called_proc == NULL){
+			report_error("Procedure corresponding to the name is not found",get_line_number());
+		}
+		function_call_set.insert(*$1);
+		if(called_proc->get_arg_string_list().size() != 0){
 			report_error("Actual and formal parameter count do not match",get_line_number());
 		}
 		$$ = new function_call_Ast(*$1,new list<Ast *>);

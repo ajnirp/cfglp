@@ -102,4 +102,13 @@ inline void Parser::check_return_data_types(Data_Type d1, Data_Type d2){
 
 ///////////////////////////////////////////////////////////////////
 
+inline void Parser::check_undefined_functions(){
+  set<string>::iterator it;
+  for(it = function_call_set.begin(); it!=function_call_set.end(); it++){
+    if(!program_object.get_procedure_map(*it)->is_defined()){
+      report_error("Called procedure is not defined", -1);
+    }
+  }
+}
+
 #endif
