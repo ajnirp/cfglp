@@ -1,0 +1,11 @@
+
+void fn(int a);
+fn(int a,)
+{
+}
+
+main()
+{
+	int a = 3;
+	fn(a);
+}

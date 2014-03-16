@@ -1,0 +1,114 @@
+
+/*********************************************************************************************
+
+                                cfglp : A CFG Language Processor
+                                --------------------------------
+
+           About:
+
+           Implemented   by  Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
+           Khedker    (http://www.cse.iitb.ac.in/~uday)  for the courses
+           cs302+cs306: Language  Processors  (theory and  lab)  at  IIT
+           Bombay.
+
+           Release  date  Jan  15, 2013.  Copyrights  reserved  by  Uday
+           Khedker. This  implemenation  has been made  available purely
+           for academic purposes without any warranty of any kind.
+
+           Documentation (functionality, manual, and design) and related
+           tools are  available at http://www.cse.iitb.ac.in/~uday/cfglp
+
+
+***********************************************************************************************/
+
+#ifndef PARSER_IH
+#define PARSER_IH
+
+#include "local-environment.hh"
+#include "error-display.hh"
+#include "user-options.hh"
+
+#include "symbol-table.hh"
+
+#include "ast.hh"
+#include "basic-block.hh"
+#include "procedure.hh"
+#include "program.hh"
+
+#include "parser.h"
+
+////////////////////// cfglp Parser functions ///////////////////////
+
+bool bb_repeat_check(list<Basic_Block *> * bb_list, int bb_number);
+
+Procedure * current_procedure;
+
+//////////////////////////////////////////////////////////////////////
+
+inline void Parser::error(char const *msg)
+{
+    std::cerr << msg << '\n';
+}
+
+inline int Parser::lex()
+{
+    return d_scanner.lex();
+}
+
+inline void Parser::print()         
+{
+////////////////// cfglp print tokens ///////////////////////////////
+
+	if (command_options.is_show_tokens_selected())
+		d_scanner.display_token(d_token__);
+
+////////////////////////////////////////////////////////////////////
+}
+
+///////////////// Line Number /////////////////////////////////////
+
+int Parser::get_line_number()
+{
+	return d_scanner.get_scan_line_number();
+}
+
+///////////////////////////////////////////////////////////////////
+
+////////////////// Parser bb_check function ////////////////////////
+
+inline void Parser::bb_strictly_increasing_order_check(list<Basic_Block *> * bb_list, int bb_number)
+{
+	list<Basic_Block *>::iterator i;
+	for(i = bb_list->begin(); i != bb_list->end(); i++)
+	{
+		if ((*i)->get_bb_number() >= bb_number)
+		{
+			int line = get_line_number();
+			report_error("basic_block should be in strictly increasing order", get_line_number());
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////
+
+inline void Parser::check_return_data_types(Data_Type d1, Data_Type d2){
+  if(d2 == void_data_type && d1 != void_data_type){
+    report_error("Last return statement type, of procedure, and its prototype should match", get_line_number());
+  }
+  if((d1 == int_data_type && d2 == float_data_type) || (d1 == float_data_type && d2 == int_data_type)){
+    report_error("Two or more types of return values", get_line_number());
+  }
+}
+
+///////////////////////////////////////////////////////////////////
+
+inline void Parser::check_undefined_functions(){
+  set<string>::iterator it;
+  for(it = function_call_set.begin(); it!=function_call_set.end(); it++){
+    if(!program_object.get_procedure_map(*it)->is_defined()){
+      report_error("Called procedure is not defined", -1);
+    }
+  }
+}
+
+#endif
