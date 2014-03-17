@@ -303,9 +303,13 @@ void Machine_Description::validate_init_local_register_mapping()
 	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
 	{
 		Register_Descriptor * reg_desc = i->second;
-		if (reg_desc->get_use_category() == gp_data)
+		if(reg_desc->get_use_category() == gp_data && !reg_desc->is_free()){
+			cout<<"REGISTER NUMBER "<<i->first<<endl;
+		}
+		if (reg_desc->get_use_category() == gp_data){
 			CHECK_INVARIANT(reg_desc->is_free(), 
 					"GP data registers should be free at the start of a basic block");
+		}
 	}
 }
 
@@ -316,6 +320,7 @@ void Machine_Description::clear_local_register_mappings()
 	{
 		Register_Descriptor * reg_desc = i->second;
 		reg_desc->clear_lra_symbol_list();
+		reg_desc->reset_use_for_expr_result(false);
 	}
 
 	/* 

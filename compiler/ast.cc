@@ -779,9 +779,8 @@ Code_For_Ast & Comparison_Ast::create_set_stmt(Register_Descriptor* reg1, Regist
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	ic_list.push_back(set_stmt);
-
+	result_register->reset_use_for_expr_result(false);
 	Code_For_Ast & set_code = *new Code_For_Ast(ic_list, result_register);
-
 	return set_code;
 
 	//TODO
@@ -829,7 +828,9 @@ bool Goto_Ast::successor_found(){
 Code_For_Ast & Goto_Ast::compile()
 {
 	string s = "label";
-	s += bb_number;
+	char str_bb_num[10];
+	sprintf(str_bb_num, "%d", bb_number);
+	s += str_bb_num;
 	Ics_Opd * label = new Const_Opd<string>(s);
 	Move_IC_Stmt_3 * goto_stmt = new Move_IC_Stmt_3(_goto,label);	
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
@@ -918,13 +919,13 @@ Code_For_Ast & If_Ast::compile()
 	char str_bb_num[10];
 	sprintf(str_bb_num, "%d", true_bb_number);
 	s += str_bb_num;
-	cout<<"true label is "<<s<<endl;
 	Ics_Opd * label = new Const_Opd<string>(s);
 
-	s = "zero";
-	Ics_Opd * zero = new Const_Opd<string>(s);
+	// s = "zero";
+	// Ics_Opd * zero = new Const_Opd<string>(s);
+	Ics_Opd * zero_op = new Register_Addr_Opd(machine_dscr_object.spim_register_table[zero]);
 
-	Move_IC_Stmt_2 * bne_stmt = new Move_IC_Stmt_2(bne, register_opd, zero, label);
+	Move_IC_Stmt_2 * bne_stmt = new Move_IC_Stmt_2(bne, register_opd, zero_op, label);
 	ic_list.push_back(bne_stmt);
 
 	s = "label";

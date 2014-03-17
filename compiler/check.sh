@@ -1,7 +1,7 @@
 #bin/bash
 
 TEST_DIR="test_files"
-REFERENCE_CFGLP="cfglp64_l1"
+REFERENCE_CFGLP="cfglp64_l0"
 
 if [ $1 == c ]
 then
@@ -14,6 +14,20 @@ then
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
 		./$REFERENCE_CFGLP -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
 		./cfglp -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
+		diff -b -B f1 f0
+		rm f0 f1
+	done;
+elif [ $1 == icode ]
+then
+	cd $TEST_DIR; x="$(ls *.c)"
+	cd ..
+	echo -e "\nCHECKING ICODE\n"
+	for words in $x
+	do
+	echo "testing $words"
+		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
+		./$REFERENCE_CFGLP -d -icode $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
+		./cfglp64 -d -icode $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -125,6 +139,7 @@ then
 		echo "making" $words "ka cfg"
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null
 	done;
+
 elif [ $1 == "clean" ]
 then
 	make -f Makefile.cfg clean

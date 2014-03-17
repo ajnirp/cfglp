@@ -2,10 +2,15 @@ int a;
 int b;
 main()
 {
-	int c = 10;
-	int f = 3;
-	int d = 6;
-	int e = 8;
+	int c;
+	int f;
+	int d;
+	int e;
+
+	c = 10;
+	f = 3;
+	d - 6;
+	e = 8;
 
 	a = f < d;
 	b = d <= c;
