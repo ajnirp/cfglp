@@ -1,0 +1,6 @@
+Changes we made for enhancing the compiler from level 0 to level 1
+
+Makefile.cfglp
+--------------
+
+1. Removed the lines 'rm Makefile.*' and 'rm test_files ....'

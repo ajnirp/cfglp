@@ -344,7 +344,7 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 }
 
 bool Return_Ast::successor_found(){
-	return true;	
+	return true;
 }
 
 /////////////////////////////////////////////////////////////////
