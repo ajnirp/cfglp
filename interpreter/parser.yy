@@ -314,6 +314,21 @@ procedure_body:
 			int line = get_line_number();
 			report_error("Return type of procedure and its prototype should match", line);
 		}
+
+		int i = 0;
+		while(i < bb_requested.size() && bb_made.find(bb_requested[i]) != bb_made.end()){
+			i++;
+		}
+
+		if(i < bb_requested.size()){
+			//error
+			stringstream ss;
+			ss << bb_requested[i];
+			string error = "bb ";
+			error += ss.str();
+			error += " doesn't exist";
+			report_error(error, -1);
+		}
 		
 		current_procedure->set_basic_block_list(*$4);
 
@@ -329,6 +344,21 @@ procedure_body:
 		{
 			int line = get_line_number();
 			report_error("Return type of procedure and its prototype should match", line);
+		}
+
+		int i = 0;
+		while(i < bb_requested.size() && bb_made.find(bb_requested[i]) != bb_made.end()){
+			i++;
+		}
+
+		if(i < bb_requested.size()){
+			//error
+			stringstream ss;
+			ss << bb_requested[i];
+			string error = "bb ";
+			error += ss.str();
+			error += " doesn't exist";
+			report_error(error, -1);
 		}
 		
 		current_procedure->set_basic_block_list(*$2);

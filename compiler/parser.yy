@@ -147,6 +147,22 @@ procedure_definition:
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 		CHECK_INVARIANT((bb_list != NULL), "Basic block list cannot be null");
 
+		int i = 0;
+		while(i < bb_requested.size() && bb_made.find(bb_requested[i]) != bb_made.end()){
+			i++;
+		}
+		
+		if(i < bb_requested.size()){
+			//error
+			stringstream ss;
+			ss << bb_requested[i];
+			string error = "bb ";
+			error += ss.str();
+			error += " doesn't exist";
+			CHECK_INVARIANT(false, error)
+			//report_error(error, -1);
+		}
+
 		current_procedure->set_basic_block_list(*bb_list);
 	}
 	}
@@ -320,6 +336,7 @@ basic_block:
 		}
 
 		$$ = bb;
+		bb_made.insert($1);
 	}
 	}
 ;

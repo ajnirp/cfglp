@@ -35,6 +35,7 @@
 #include<vector>
 #include<list>
 #include<map>
+#include<set>
 #include <string.h>
 
 using namespace std;
@@ -78,6 +79,7 @@ class Parser: public ParserBase
         void error(char const *msg);
         int lex();
 
+    set<int> bb_made;
   	vector<int> bb_requested;
 	void bb_strictly_increasing_order_check(list<Basic_Block *> * bb_list, int bb_number); 
         
