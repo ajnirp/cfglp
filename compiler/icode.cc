@@ -285,6 +285,179 @@ void Move_IC_Stmt::print_assembly(ostream & file_buffer)
 	}
 }
 
+/*************************** Class Move_IC_Stmt_2 *****************************/
+
+Move_IC_Stmt_2::Move_IC_Stmt_2(Tgt_Op op, Ics_Opd * o1, Ics_Opd * o2, Ics_Opd * res)
+{
+	CHECK_INVARIANT((machine_dscr_object.spim_instruction_table[op] != NULL),
+			"Instruction description in spim table cannot be null");
+
+	op_desc = *(machine_dscr_object.spim_instruction_table[op]);
+	opd1 = o1;   
+	opd2 = o2;   
+	result = res; 
+}
+
+Ics_Opd * Move_IC_Stmt_2::get_opd1()          { return opd1; }
+Ics_Opd * Move_IC_Stmt_2::get_opd2()          { return opd2; }
+Ics_Opd * Move_IC_Stmt_2::get_result()        { return result; }
+
+void Move_IC_Stmt_2::set_opd1(Ics_Opd * io)   { opd1 = io; }
+void Move_IC_Stmt_2::set_opd2(Ics_Opd * io)   { opd2 = io; }
+void Move_IC_Stmt_2::set_result(Ics_Opd * io) { result = io; }
+
+Move_IC_Stmt_2& Move_IC_Stmt_2::operator=(const Move_IC_Stmt_2& rhs)
+{
+	op_desc = rhs.op_desc;
+	opd1 = rhs.opd1;
+	opd2 = rhs.opd2;
+	result = rhs.result; 
+	return *this;
+}
+
+void Move_IC_Stmt_2::print_icode(ostream & file_buffer)
+{
+	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a move IC Stmt");
+	CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a move IC Stmt");
+	CHECK_INVARIANT (result, "Result cannot be NULL for a move IC Stmt");
+
+	string operation_name = op_desc.get_name();
+
+	Icode_Format ic_format = op_desc.get_ic_format();
+
+	switch (ic_format)
+	{
+	case i_r_o1_op_o2: 
+			file_buffer << " " << operation_name << ":\t";
+			result->print_ics_opd(file_buffer);
+			file_buffer << " <- ";
+			opd1->print_ics_opd(file_buffer);
+			file_buffer << " , ";
+			opd2->print_ics_opd(file_buffer);
+			file_buffer << "\n";
+
+			break; 
+
+	case i_op_o1_col_o2: 
+			file_buffer << " " << operation_name << ":\t ";
+			opd1->print_ics_opd(file_buffer);
+			file_buffer << " , ";
+			opd2->print_ics_opd(file_buffer);
+			file_buffer << " : goto ";
+			result->print_ics_opd(file_buffer);
+			file_buffer << "\n";
+
+			break; 
+
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
+				"Intermediate code format not supported");
+		break;
+	}
+}
+
+void Move_IC_Stmt_2::print_assembly(ostream & file_buffer)
+{
+	CHECK_INVARIANT (opd1, "Opd1 cannot be NULL for a move IC Stmt");
+	CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a move IC Stmt");
+	CHECK_INVARIANT (result, "Result cannot be NULL for a move IC Stmt");
+	string op_name = op_desc.get_mnemonic();
+
+	Assembly_Format assem_format = op_desc.get_assembly_format();
+	switch (assem_format)
+	{
+	case a_op_r_o1_o2: 
+			file_buffer << "\t" << op_name << ", ";
+			result->print_asm_opd(file_buffer);
+			file_buffer << ", ";
+			opd1->print_asm_opd(file_buffer);
+			file_buffer << ", ";
+			opd2->print_asm_opd(file_buffer);
+			file_buffer << "\n";
+
+			break; 
+
+	case i_op_o1_col_o2: 
+			file_buffer << "\t" << op_name << " ";
+			opd1->print_asm_opd(file_buffer);
+			file_buffer << ", ";
+			opd2->print_asm_opd(file_buffer);
+			file_buffer << ", ";
+			result->print_asm_opd(file_buffer);
+			file_buffer << "\n";
+			break; 
+			
+	
+
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Intermediate code format not supported");
+		break;
+	}
+}
+
+/*************************** Class Move_IC_Stmt_3 *****************************/
+
+Move_IC_Stmt_3::Move_IC_Stmt_3(Tgt_Op op, Ics_Opd * o)
+{
+	CHECK_INVARIANT((machine_dscr_object.spim_instruction_table[op] != NULL),
+			"Instruction description in spim table cannot be null");
+
+	op_desc = *(machine_dscr_object.spim_instruction_table[op]);
+	opd = o; 
+}
+
+Ics_Opd * Move_IC_Stmt_3::get_opd()          { return opd; }
+
+void Move_IC_Stmt_3::set_opd(Ics_Opd * io)   { opd = io;}
+
+Move_IC_Stmt_3& Move_IC_Stmt_3::operator=(const Move_IC_Stmt_3& rhs)
+{
+	op_desc = rhs.op_desc;
+	opd = rhs.opd;
+	return *this;
+}
+
+void Move_IC_Stmt_3::print_icode(ostream & file_buffer)
+{
+	CHECK_INVARIANT (opd, "Opd cannot be NULL for a move IC Stmt");
+
+	string operation_name = op_desc.get_name();
+
+	Icode_Format ic_format = op_desc.get_ic_format();
+
+	switch (ic_format)
+	{
+	case i_op_o1: 
+			file_buffer << " " << operation_name;
+			file_buffer << " ";
+			opd->print_ics_opd(file_buffer);
+			file_buffer << "\n";
+			break; 
+
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
+				"Intermediate code format not supported");
+		break;
+	}
+}
+
+void Move_IC_Stmt_3::print_assembly(ostream & file_buffer)
+{
+	CHECK_INVARIANT (opd, "Opd cannot be NULL for a move IC Stmt");
+	string op_name = op_desc.get_mnemonic();
+
+	Assembly_Format assem_format = op_desc.get_assembly_format();
+	switch (assem_format)
+	{
+	case a_op_o1: 
+			file_buffer << "\t" << op_name;
+			file_buffer << " ";
+			opd->print_asm_opd(file_buffer);
+			file_buffer << "\n";
+			break;
+
+	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Intermediate code format not supported");
+		break;
+	}
+}
+
 /******************************* Class Code_For_Ast ****************************/
 
 Code_For_Ast::Code_For_Ast()
@@ -354,3 +527,4 @@ Instruction_Descriptor::Instruction_Descriptor()
 }
 
 template class Const_Opd<int>;
+template class Const_Opd<string>;

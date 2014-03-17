@@ -355,7 +355,8 @@ executable_statement_list:
 |	assignment_statement_list goto_statement ';'
 	{
 	
-		#if 0
+		if (NOT_ONLY_PARSE)
+	{
 
 		if ($1 != NULL)
 			$$ = $1;
@@ -364,12 +365,13 @@ executable_statement_list:
 			$$ = new list<Ast *>;
 
 		$$->push_back($2);
-		#endif
+		}
 	}
 |
 	assignment_statement_list if_statement
 	{
-		#if 0
+		if (NOT_ONLY_PARSE)
+	{
 		
 		if ($1 != NULL)
 			$$ = $1;
@@ -378,7 +380,7 @@ executable_statement_list:
 			$$ = new list<Ast *>;
 
 		$$->push_back($2);
-		#endif
+		}
 	}
 ;
 
@@ -447,151 +449,191 @@ assignment_statement:
 		$$ = assign;
 	}
 	}
+|
+	variable ASSIGN_OP h_comparison_expr ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		Ast * assign = new Assignment_Ast($1, $3,get_line_number());
+
+		assign->check_ast();
+		$$ = assign;
+	}
+	}
+|
+	variable ASSIGN_OP comparison_expr ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		Ast * assign = new Assignment_Ast($1, $3,get_line_number());
+		assign->check_ast();
+		$$ = assign;
+	}
+	}
 ;
 
 if_statement:
 	IF '(' h_comparison_expr ')' GOTO BBNUM ';' ELSE GOTO BBNUM ';'{
 		
-		#if 0
+		if (NOT_ONLY_PARSE)
+	{
 		bb_requested.push_back($6);
 		bb_requested.push_back($10);
-		$$ = new If_Ast($3,$6,$10);
-		#endif
+		$$ = new If_Ast($3,$6,$10,get_line_number());
+		}
 	}
 |
 	IF '(' comparison_expr ')' GOTO BBNUM ';' ELSE GOTO BBNUM ';'{
 	
-		#if 0
+		if (NOT_ONLY_PARSE)
+	{
 		bb_requested.push_back($6);
 		bb_requested.push_back($10);
-		$$ = new If_Ast($3,$6,$10);
-		#endif
+		$$ = new If_Ast($3,$6,$10,get_line_number());
+		}
 	}
 |	IF '(' var_const ')' GOTO BBNUM ';' ELSE GOTO BBNUM ';'{
 	
-		#if 0
+		if (NOT_ONLY_PARSE)
+	{
 		bb_requested.push_back($6);
 		bb_requested.push_back($10);
-		$$ = new If_Ast($3,$6,$10);
-		#endif
+		$$ = new If_Ast($3,$6,$10,get_line_number());
+		}
 	}
 ;
 
 goto_statement
 :	GOTO BBNUM {
 		
-		#if 0
-		$$ = new Goto_Ast($2);
+		if (NOT_ONLY_PARSE)
+	{
+		$$ = new Goto_Ast($2,get_line_number());
 		bb_requested.push_back($2);
-		#endif
+		}
 	}
 ;
 
 h_comparison_expr
 :	var_const equality_op var_const 	{
-		#if 0
-		$$ = new Comparison_Ast($1,$2,$3);
+		if (NOT_ONLY_PARSE)
+	{
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		int line = get_line_number();
-		$$->check_ast(line);
-		#endif
+		$$->check_ast();
+		}
 	}
 |	var_const equality_op comparison_expr 	{
-		#if 0
-		$$ = new Comparison_Ast($1,$2,$3);
+		if (NOT_ONLY_PARSE)
+	{
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		int line = get_line_number();
-		$$->check_ast(line);
-		#endif
+		$$->check_ast();
+		}
 	}
 |	comparison_expr equality_op var_const 	{
-		#if 0
-		$$ = new Comparison_Ast($1,$2,$3);
+		if (NOT_ONLY_PARSE)
+	{
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		int line = get_line_number();
-		$$->check_ast(line);
-		#endif
+		$$->check_ast();
+		}
 	}
 |	comparison_expr equality_op comparison_expr 	{
-		#if 0
-		$$ = new Comparison_Ast($1,$2,$3);
+		if (NOT_ONLY_PARSE)
+	{
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		int line = get_line_number();
-		$$->check_ast(line);
-		#endif
+		$$->check_ast();
+		}
 	}
 |	h_comparison_expr equality_op comparison_expr 	{
-		#if 0
-		$$ = new Comparison_Ast($1,$2,$3);
+		if (NOT_ONLY_PARSE)
+	{
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		int line = get_line_number();
-		$$->check_ast(line);
-		#endif
+		$$->check_ast();
+		}
 	}
 |	h_comparison_expr equality_op var_const {
-		#if 0
-		$$ = new Comparison_Ast($1,$2,$3);
+		if (NOT_ONLY_PARSE)
+	{
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		int line = get_line_number();
-		$$->check_ast(line);
-		#endif
+		$$->check_ast();
+		}
 	}
 ;
 
 
 comparison_expr
 : var_const comparison_op var_const {
-	#if 0
-	$$ = new Comparison_Ast($1,$2,$3);
+	if (NOT_ONLY_PARSE)
+	{
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 	int line = get_line_number();
-	$$->check_ast(line);
-	#endif
+	$$->check_ast();
+	}
 }
 | comparison_expr comparison_op var_const {
-	#if 0
-	$$ = new Comparison_Ast($1,$2,$3);
+	if (NOT_ONLY_PARSE)
+	{
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 	int line = get_line_number();
-	$$->check_ast(line);
-	#endif
+	$$->check_ast();
+	}
 }
 ;
 
 var_const:
 	var_const_plain{
-		#if 0
+		if (NOT_ONLY_PARSE)
+	{
 		$$ = $1;
-		#endif
+		}
 	}
 ;
 
 
 var_const_plain
 :	variable {
-	#if 0
+	if (NOT_ONLY_PARSE)
+	{
 	$$ = $1;
-	#endif
+	}
 }
 |	constant {
-	#if 0
+	if (NOT_ONLY_PARSE)
+	{
 	$$ = $1;
-	#endif
+	}
 }
 | '(' all_expr ')' {
-	#if 0
+	if (NOT_ONLY_PARSE)
+	{
 	$$ = $2;
-	#endif
+	}
 }
 | '(' var_const ')' {
-	#if 0
+	if (NOT_ONLY_PARSE)
+	{
 	$$ = $2;
-	#endif
+	}
 }
 ;
 
 all_expr
 :	comparison_expr {
-		#if 0
+		if (NOT_ONLY_PARSE)
+	{
 		$$ = $1;
-		#endif
+		}
 	}
 |	h_comparison_expr {
-		#if 0
+		if (NOT_ONLY_PARSE)
+	{
 		$$ = $1;
-		#endif
+		}
 	}
 ;
 

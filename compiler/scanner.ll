@@ -99,13 +99,25 @@ goto	{
 "<bb "[[:digit:]]+">"	{
 				store_token_name("BASIC BLOCK");
 
-				string bb_num_str = matched().substr(4, matched().length() - 2);
-				CHECK_INPUT_AND_ABORT((atoi(bb_num_str.c_str()) >= 2), "Illegal basic block lable", lineNr());
-
 				ParserBase::STYPE__ * val = getSval();
-				val->integer_value = atoi(bb_num_str.c_str());
-
-				return Parser::BBNUM;
+			char num[10];
+			string str = matched();
+			for(int i = 4 ; i<str.length(); i++){
+				if(str[i] == '>'){
+					num[i-4] = '\0';
+					break;
+				}
+				else{
+					num[i-4] = str[i];
+				}
+			}
+			if(atoi(num)<2){
+				int line = lineNr();
+				check_invariant_underlying_function(true,"Illegal basic block lable" );
+			}
+			//cout<<"foung basic block "<<num<<endl;
+			val->integer_value = atoi(num);
+			return Parser::BBNUM;
 			}
 
 [<>:{}();=!]	{
