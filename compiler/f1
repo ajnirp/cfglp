@@ -20,7 +20,7 @@ label3:
  goto label5
 
 label4:
- iLoad:	v0 <- 6
+ iLoad:	v0 <- 3
  store:	a <- v0
 
 label5:
@@ -67,7 +67,7 @@ label3:
 	j label5
 
 label4:
-	li, $v0, 6
+	li, $v0, 3
 	sw, $v0, 8($fp)
 
 label5:

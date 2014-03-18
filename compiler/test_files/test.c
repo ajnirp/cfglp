@@ -6,7 +6,9 @@ main()
 
 	if (c > (a > b) ? 0 : 21)
 		while (a < 2)
-			a = 6;
+			do {
+				a = 3;
+			} while (b > b);
 	else
 		b = 6;
 }
