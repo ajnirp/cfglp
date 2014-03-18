@@ -1,0 +1,269 @@
+Line: 1 	Token Name: NAME 	Token: main 	Token Code: 
+Line: 1 	Token Name: META CHAR 	Token: ( 	Token Code: 
+Line: 1 	Token Name: META CHAR 	Token: ) 	Token Code: 
+Line: 2 	Ignored NEWLINE character
+Line: 2 	Token Name: META CHAR 	Token: { 	Token Code: 
+Line: 3 	Ignored NEWLINE character
+Line: 3 	Ignored lexeme: ' '
+Line: 3 	Ignored lexeme: ' '
+Line: 3 	Ignored lexeme: ' '
+Line: 3 	Token Name: INTEGER 	Token: int 	Token Code: 
+Line: 3 	Ignored lexeme: ' '
+Line: 3 	Token Name: NAME 	Token: d 	Token Code: 
+Line: 3 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 4 	Ignored NEWLINE character
+Line: 4 	Ignored lexeme: ' '
+Line: 4 	Ignored lexeme: ' '
+Line: 4 	Ignored lexeme: ' '
+Line: 4 	Token Name: INTEGER 	Token: int 	Token Code: 
+Line: 4 	Ignored lexeme: ' '
+Line: 4 	Token Name: NAME 	Token: c 	Token Code: 
+Line: 4 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 5 	Ignored NEWLINE character
+Line: 5 	Ignored lexeme: ' '
+Line: 5 	Ignored lexeme: ' '
+Line: 5 	Ignored lexeme: ' '
+Line: 5 	Token Name: INTEGER 	Token: int 	Token Code: 
+Line: 5 	Ignored lexeme: ' '
+Line: 5 	Token Name: NAME 	Token: b 	Token Code: 
+Line: 5 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 6 	Ignored NEWLINE character
+Line: 6 	Ignored lexeme: ' '
+Line: 6 	Ignored lexeme: ' '
+Line: 6 	Ignored lexeme: ' '
+Line: 6 	Token Name: INTEGER 	Token: int 	Token Code: 
+Line: 6 	Ignored lexeme: ' '
+Line: 6 	Token Name: NAME 	Token: a 	Token Code: 
+Line: 6 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 7 	Ignored NEWLINE character
+Line: 7 	Ignored lexeme: ' '
+Line: 7 	Ignored lexeme: ' '
+Line: 7 	Ignored lexeme: ' '
+Line: 7 	Token Name: INTEGER 	Token: int 	Token Code: 
+Line: 7 	Ignored lexeme: ' '
+Line: 7 	Token Name: NAME 	Token: z 	Token Code: 
+Line: 7 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 8 	Ignored NEWLINE character
+Line: 9 	Ignored NEWLINE character
+Line: 9 	Token Name: BASIC BLOCK 	Token: <bb 2> 	Token Code: 
+Line: 9 	Token Name: META CHAR 	Token: : 	Token Code: 
+Line: 10 	Ignored NEWLINE character
+Line: 10 	Ignored lexeme: '	'
+Line: 10 	Token Name: NAME 	Token: a 	Token Code: 
+Line: 10 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 
+Line: 10 	Token Name: NUM 	Token: 2 	Token Code: 
+Line: 10 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 11 	Ignored NEWLINE character
+Line: 11 	Ignored lexeme: '	'
+Line: 11 	Token Name: NAME 	Token: b 	Token Code: 
+Line: 11 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 
+Line: 11 	Token Name: NUM 	Token: 4 	Token Code: 
+Line: 11 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 12 	Ignored NEWLINE character
+Line: 12 	Ignored lexeme: '	'
+Line: 12 	Token Name: NAME 	Token: c 	Token Code: 
+Line: 12 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 
+Line: 12 	Token Name: NUM 	Token: -1 	Token Code: 
+Line: 12 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 13 	Ignored NEWLINE character
+Line: 13 	Ignored lexeme: '	'
+Line: 13 	Token Name: NAME 	Token: d 	Token Code: 
+Line: 13 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 
+Line: 13 	Token Name: NUM 	Token: 130 	Token Code: 
+Line: 13 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 14 	Ignored NEWLINE character
+Line: 14 	Ignored lexeme: '	'
+Line: 14 	Token Name: NAME 	Token: z 	Token Code: 
+Line: 14 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 
+Line: 14 	Token Name: NUM 	Token: 45 	Token Code: 
+Line: 14 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 15 	Ignored NEWLINE character
+Line: 15 	Ignored lexeme: ' '
+Line: 15 	Ignored lexeme: ' '
+Line: 15 	Ignored lexeme: ' '
+Line: 15 	Token Name: IF 	Token: if 	Token Code: 
+Line: 15 	Token Name: META CHAR 	Token: ( 	Token Code: 
+Line: 15 	Token Name: NAME 	Token: a 	Token Code: 
+Line: 15 	Ignored lexeme: ' '
+Line: 15 	Token Name: GT 	Token: > 	Token Code: 
+Line: 15 	Ignored lexeme: ' '
+Line: 15 	Token Name: NAME 	Token: b 	Token Code: 
+Line: 15 	Token Name: META CHAR 	Token: ) 	Token Code: 
+Line: 16 	Ignored NEWLINE character
+Line: 16 	Ignored lexeme: ' '
+Line: 16 	Ignored lexeme: ' '
+Line: 16 	Ignored lexeme: ' '
+Line: 16 	Ignored lexeme: ' '
+Line: 16 	Ignored lexeme: ' '
+Line: 16 	Ignored lexeme: ' '
+Line: 16 	Token Name: GOTO 	Token: goto 	Token Code: 
+Line: 16 	Ignored lexeme: ' '
+Line: 16 	Token Name: BASIC BLOCK 	Token: <bb 3> 	Token Code: 
+Line: 16 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 17 	Ignored NEWLINE character
+Line: 17 	Ignored lexeme: ' '
+Line: 17 	Ignored lexeme: ' '
+Line: 17 	Ignored lexeme: ' '
+Line: 17 	Token Name: ELSE 	Token: else 	Token Code: 
+Line: 18 	Ignored NEWLINE character
+Line: 18 	Ignored lexeme: ' '
+Line: 18 	Ignored lexeme: ' '
+Line: 18 	Ignored lexeme: ' '
+Line: 18 	Ignored lexeme: ' '
+Line: 18 	Ignored lexeme: ' '
+Line: 18 	Ignored lexeme: ' '
+Line: 18 	Token Name: GOTO 	Token: goto 	Token Code: 
+Line: 18 	Ignored lexeme: ' '
+Line: 18 	Token Name: BASIC BLOCK 	Token: <bb 4> 	Token Code: 
+Line: 18 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 19 	Ignored NEWLINE character
+Line: 20 	Ignored NEWLINE character
+Line: 20 	Token Name: BASIC BLOCK 	Token: <bb 3> 	Token Code: 
+Line: 20 	Token Name: META CHAR 	Token: : 	Token Code: 
+Line: 21 	Ignored NEWLINE character
+Line: 21 	Ignored lexeme: ' '
+Line: 21 	Ignored lexeme: ' '
+Line: 21 	Ignored lexeme: ' '
+Line: 21 	Token Name: IF 	Token: if 	Token Code: 
+Line: 21 	Token Name: META CHAR 	Token: ( 	Token Code: 
+Line: 21 	Token Name: NAME 	Token: b 	Token Code: 
+Line: 21 	Ignored lexeme: ' '
+Line: 21 	Token Name: EQ 	Token: == 	Token Code: 
+Line: 21 	Ignored lexeme: ' '
+Line: 21 	Token Name: NAME 	Token: c 	Token Code: 
+Line: 21 	Token Name: META CHAR 	Token: ) 	Token Code: 
+Line: 22 	Ignored NEWLINE character
+Line: 22 	Ignored lexeme: ' '
+Line: 22 	Ignored lexeme: ' '
+Line: 22 	Ignored lexeme: ' '
+Line: 22 	Ignored lexeme: ' '
+Line: 22 	Ignored lexeme: ' '
+Line: 22 	Ignored lexeme: ' '
+Line: 22 	Token Name: GOTO 	Token: goto 	Token Code: 
+Line: 22 	Ignored lexeme: ' '
+Line: 22 	Token Name: BASIC BLOCK 	Token: <bb 5> 	Token Code: 
+Line: 22 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 23 	Ignored NEWLINE character
+Line: 23 	Ignored lexeme: ' '
+Line: 23 	Ignored lexeme: ' '
+Line: 23 	Ignored lexeme: ' '
+Line: 23 	Token Name: ELSE 	Token: else 	Token Code: 
+Line: 24 	Ignored NEWLINE character
+Line: 24 	Ignored lexeme: ' '
+Line: 24 	Ignored lexeme: ' '
+Line: 24 	Ignored lexeme: ' '
+Line: 24 	Ignored lexeme: ' '
+Line: 24 	Ignored lexeme: ' '
+Line: 24 	Ignored lexeme: ' '
+Line: 24 	Token Name: GOTO 	Token: goto 	Token Code: 
+Line: 24 	Ignored lexeme: ' '
+Line: 24 	Token Name: BASIC BLOCK 	Token: <bb 4> 	Token Code: 
+Line: 24 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 25 	Ignored NEWLINE character
+Line: 26 	Ignored NEWLINE character
+Line: 26 	Token Name: BASIC BLOCK 	Token: <bb 4> 	Token Code: 
+Line: 26 	Token Name: META CHAR 	Token: : 	Token Code: 
+Line: 27 	Ignored NEWLINE character
+Line: 27 	Ignored lexeme: ' '
+Line: 27 	Ignored lexeme: ' '
+Line: 27 	Ignored lexeme: ' '
+Line: 27 	Token Name: IF 	Token: if 	Token Code: 
+Line: 27 	Token Name: META CHAR 	Token: ( 	Token Code: 
+Line: 27 	Token Name: NAME 	Token: a 	Token Code: 
+Line: 27 	Ignored lexeme: ' '
+Line: 27 	Token Name: EQ 	Token: == 	Token Code: 
+Line: 27 	Ignored lexeme: ' '
+Line: 27 	Token Name: NAME 	Token: b 	Token Code: 
+Line: 27 	Ignored lexeme: ' '
+Line: 27 	Token Name: GE 	Token: >= 	Token Code: 
+Line: 27 	Ignored lexeme: ' '
+Line: 27 	Token Name: NAME 	Token: d 	Token Code: 
+Line: 27 	Token Name: META CHAR 	Token: ) 	Token Code: 
+Line: 28 	Ignored NEWLINE character
+Line: 28 	Ignored lexeme: ' '
+Line: 28 	Ignored lexeme: ' '
+Line: 28 	Ignored lexeme: ' '
+Line: 28 	Ignored lexeme: ' '
+Line: 28 	Ignored lexeme: ' '
+Line: 28 	Ignored lexeme: ' '
+Line: 28 	Token Name: GOTO 	Token: goto 	Token Code: 
+Line: 28 	Ignored lexeme: ' '
+Line: 28 	Token Name: BASIC BLOCK 	Token: <bb 5> 	Token Code: 
+Line: 28 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 29 	Ignored NEWLINE character
+Line: 29 	Ignored lexeme: ' '
+Line: 29 	Ignored lexeme: ' '
+Line: 29 	Ignored lexeme: ' '
+Line: 29 	Token Name: ELSE 	Token: else 	Token Code: 
+Line: 30 	Ignored NEWLINE character
+Line: 30 	Ignored lexeme: ' '
+Line: 30 	Ignored lexeme: ' '
+Line: 30 	Ignored lexeme: ' '
+Line: 30 	Ignored lexeme: ' '
+Line: 30 	Ignored lexeme: ' '
+Line: 30 	Ignored lexeme: ' '
+Line: 30 	Token Name: GOTO 	Token: goto 	Token Code: 
+Line: 30 	Ignored lexeme: ' '
+Line: 30 	Token Name: BASIC BLOCK 	Token: <bb 6> 	Token Code: 
+Line: 30 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 31 	Ignored NEWLINE character
+Line: 32 	Ignored NEWLINE character
+Line: 32 	Token Name: BASIC BLOCK 	Token: <bb 5> 	Token Code: 
+Line: 32 	Token Name: META CHAR 	Token: : 	Token Code: 
+Line: 33 	Ignored NEWLINE character
+Line: 33 	Ignored lexeme: ' '
+Line: 33 	Ignored lexeme: ' '
+Line: 33 	Ignored lexeme: ' '
+Line: 33 	Token Name: NAME 	Token: z 	Token Code: 
+Line: 33 	Ignored lexeme: ' '
+Line: 33 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 
+Line: 33 	Ignored lexeme: ' '
+Line: 33 	Token Name: NUM 	Token: 1 	Token Code: 
+Line: 33 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 34 	Ignored NEWLINE character
+Line: 34 	Ignored lexeme: ' '
+Line: 34 	Ignored lexeme: ' '
+Line: 34 	Ignored lexeme: ' '
+Line: 34 	Token Name: GOTO 	Token: goto 	Token Code: 
+Line: 34 	Ignored lexeme: ' '
+Line: 34 	Token Name: BASIC BLOCK 	Token: <bb 7> 	Token Code: 
+Line: 34 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 35 	Ignored NEWLINE character
+Line: 36 	Ignored NEWLINE character
+Line: 36 	Token Name: BASIC BLOCK 	Token: <bb 6> 	Token Code: 
+Line: 36 	Token Name: META CHAR 	Token: : 	Token Code: 
+Line: 37 	Ignored NEWLINE character
+Line: 37 	Ignored lexeme: ' '
+Line: 37 	Ignored lexeme: ' '
+Line: 37 	Ignored lexeme: ' '
+Line: 37 	Token Name: NAME 	Token: z 	Token Code: 
+Line: 37 	Ignored lexeme: ' '
+Line: 37 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 
+Line: 37 	Ignored lexeme: ' '
+Line: 37 	Token Name: NUM 	Token: 0 	Token Code: 
+Line: 37 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 38 	Ignored NEWLINE character
+Line: 39 	Ignored NEWLINE character
+Line: 39 	Token Name: BASIC BLOCK 	Token: <bb 7> 	Token Code: 
+Line: 39 	Token Name: META CHAR 	Token: : 	Token Code: 
+Line: 40 	Ignored NEWLINE character
+Line: 40 	Ignored lexeme: ' '
+Line: 40 	Ignored lexeme: ' '
+Line: 40 	Ignored lexeme: ' '
+Line: 40 	Token Name: NAME 	Token: d 	Token Code: 
+Line: 40 	Ignored lexeme: ' '
+Line: 40 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 
+Line: 40 	Ignored lexeme: ' '
+Line: 40 	Token Name: NAME 	Token: z 	Token Code: 
+Line: 40 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 41 	Ignored NEWLINE character
+Line: 41 	Ignored lexeme: ' '
+Line: 41 	Ignored lexeme: ' '
+Line: 41 	Ignored lexeme: ' '
+Line: 41 	Token Name: RETURN 	Token: return 	Token Code: 
+Line: 41 	Token Name: META CHAR 	Token: ; 	Token Code: 
+Line: 42 	Ignored NEWLINE character
+Line: 43 	Ignored NEWLINE character
+Line: 43 	Token Name: META CHAR 	Token: } 	Token Code: 
+Line: 44 	Ignored NEWLINE character
+Line: 44 	Token Name: META CHAR 	Token:  	Token Code: -1

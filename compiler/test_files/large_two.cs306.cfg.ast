@@ -1,0 +1,22 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         If_Else statement:
+            Condition: GE
+               LHS (Name : a)
+               RHS (Name : b)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 3
+         Asgn:
+            LHS (Name : l)
+            RHS (Name : a)
+         Goto statement:
+            Successor: 5
+      Basic_Block 4
+         Asgn:
+            LHS (Name : l)
+            RHS (Name : b)
+      Basic_Block 5
+         Return <NOTHING>

@@ -1,0 +1,149 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 2)
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 5)
+         Asgn:
+            LHS (Name : d)
+            RHS (Num : 254)
+         Asgn:
+            LHS (Name : e)
+            RHS (Num : 56)
+         Asgn:
+            LHS (Name : f)
+            RHS (Num : -432)
+         Asgn:
+            LHS (Name : g)
+            RHS (Num : -45)
+         Asgn:
+            LHS (Name : h)
+            RHS (Num : 453)
+         Asgn:
+            LHS (Name : i)
+            RHS (Num : 453)
+         Asgn:
+            LHS (Name : v)
+            RHS (
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Name : d))
+               RHS (Name : e))
+               RHS (Name : f))
+               RHS (Name : g))
+               RHS (Name : h))
+               RHS (Name : i))
+         Asgn:
+            LHS (Name : x)
+            RHS (
+            Condition: LT
+               LHS (
+            Condition: LT
+               LHS (
+            Condition: LT
+               LHS (
+            Condition: LT
+               LHS (
+            Condition: LT
+               LHS (
+            Condition: LT
+               LHS (
+            Condition: LT
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Name : d))
+               RHS (Name : e))
+               RHS (Name : f))
+               RHS (Name : g))
+               RHS (Name : h))
+               RHS (Name : i))
+         Asgn:
+            LHS (Name : y)
+            RHS (
+            Condition: LE
+               LHS (
+            Condition: LE
+               LHS (
+            Condition: LE
+               LHS (
+            Condition: LE
+               LHS (
+            Condition: LE
+               LHS (
+            Condition: LE
+               LHS (
+            Condition: LE
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Name : d))
+               RHS (Name : e))
+               RHS (Name : f))
+               RHS (Name : g))
+               RHS (Name : h))
+               RHS (Name : i))
+         Asgn:
+            LHS (Name : z)
+            RHS (
+            Condition: GE
+               LHS (
+            Condition: GE
+               LHS (
+            Condition: GE
+               LHS (
+            Condition: GE
+               LHS (
+            Condition: GE
+               LHS (
+            Condition: GE
+               LHS (
+            Condition: GE
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Name : d))
+               RHS (Name : e))
+               RHS (Name : f))
+               RHS (Name : g))
+               RHS (Name : h))
+               RHS (Name : i))
+         Asgn:
+            LHS (Name : w)
+            RHS (
+            Condition: EQ
+               LHS (
+            Condition: EQ
+               LHS (
+            Condition: EQ
+               LHS (
+            Condition: EQ
+               LHS (
+            Condition: EQ
+               LHS (
+            Condition: EQ
+               LHS (
+            Condition: EQ
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Name : d))
+               RHS (Name : e))
+               RHS (Name : f))
+               RHS (Name : g))
+               RHS (Name : h))
+               RHS (Name : i))
+         Return <NOTHING>

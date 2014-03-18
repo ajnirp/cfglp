@@ -1,0 +1,49 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : x)
+            RHS (Num : 1)
+         Asgn:
+            LHS (Name : y)
+            RHS (Num : 2)
+         Asgn:
+            LHS (Name : z)
+            RHS (Num : 3)
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 10)
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 1)
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: NE
+               LHS (
+            Condition: NE
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (
+            Condition: GE
+               LHS (Name : c)
+               RHS (Num : 0)))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 3
+         Asgn:
+            LHS (Name : x)
+            RHS (Name : y)
+         Asgn:
+            LHS (Name : y)
+            RHS (Name : z)
+         Asgn:
+            LHS (Name : z)
+            RHS (Name : x)
+      Basic_Block 4
+         Return <NOTHING>

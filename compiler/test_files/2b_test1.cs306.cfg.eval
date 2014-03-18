@@ -1,0 +1,74 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         x : undefined
+         y : undefined
+         z : undefined
+      Basic Block: 2
+         Asgn:
+            LHS (Name : x)
+            RHS (Num : 1)
+         x : 1
+         Asgn:
+            LHS (Name : y)
+            RHS (Num : 2)
+         y : 2
+         Asgn:
+            LHS (Name : z)
+            RHS (Num : 3)
+         z : 3
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10)
+         a : 10
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 10)
+         b : 10
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 1)
+         c : 1
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: NE
+               LHS (
+            Condition: NE
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (
+            Condition: GE
+               LHS (Name : c)
+               RHS (Num : 0)))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 4
+         Condition True : Goto (BB 3)
+      Basic Block: 3
+         Asgn:
+            LHS (Name : x)
+            RHS (Name : y)
+         x : 2
+         Asgn:
+            LHS (Name : y)
+            RHS (Name : z)
+         y : 3
+         Asgn:
+            LHS (Name : z)
+            RHS (Name : x)
+         z : 2
+      Basic Block: 4
+         Return <NOTHING>
+      Local Variables (after evaluating):
+         a : 10
+         b : 10
+         c : 1
+         x : 2
+         y : 3
+         z : 2
+   Global Variables (after evaluating):
