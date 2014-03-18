@@ -1,6 +1,32 @@
 Changes we made for enhancing the compiler from level 0 to level 1
 
-Makefile.cfglp
---------------
+parser.yy and scanner.ll
+------------------------
 
-1. Removed the lines 'rm Makefile.*' and 'rm test_files ....'
+1. Added the lexemes and tokens that we had added for level 1 while coding the interpreter.
+
+ast.hh and ast.cc
+-----------------
+
+1. Added classes for Goto_Ast, If_Ast and Comparison_Ast. Wrote methods for these classes. Along with the methods that we had written last time for the interpreter, this time we also wrote methods for compile(), which generates Code_for_Ast objects.
+
+icode.cc and icode.hh
+---------------------
+
+1. Added two new intermediate code statement classes Move_IC_Stmt_2 and Move_IC_Stmt_3. The former is for intermediate code statements that have two operands and one result register, like bne, slt, sle, sgt and sge. The latter is for intermediate code statements that have only one operand and no result register. Move_IC_Stmt is for intermediate code statements that have only one operand and one result register.
+
+2. Wrote the methods for the above classes, including print_icode() and print_assembly().
+
+reg-alloc.cc and reg-alloc.hh
+-----------------------------
+
+1. Extended the initialize_instruction_table() method of the Machine_Description class by adding the instructions slt, sgt, sle, sge, seq, bne and goto.
+
+2. Added the clause "!used_for_expr_result" to the is_free() method of the Register_Descriptor class. This checks that the register is not being used anywhere else. Only then can it be allocated.
+
+
+local-environment.cc and local-environment.hh
+---------------------------------------------
+
+1. Added result enums (int_result and goto_result) and evaluation functions that we had written while making the interpreter.
+
