@@ -1,8 +1,0 @@
-Program:
-   Procedure: main
-
-      Basic_Block 2
-         Asgn:
-            LHS (Name : a)
-            RHS (Num : 5)
-         Return <NOTHING>

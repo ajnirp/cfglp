@@ -31,6 +31,19 @@ then
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
+elif [ $1 == icodecfgs ]
+then
+	cd $TEST_DIR; x="$(ls *.cfg)"
+	cd ..
+	echo -e "\nCHECKING ICODE-CFG\n"
+	for words in $x
+	do
+	echo "testing $words"
+		./$REFERENCE_CFGLP -d -icode $TEST_DIR/$words  | awk '{print $2}' > f1
+		./cfglp64 -d -icode $TEST_DIR/$words  | awk '{print $2}' > f0
+		diff -b -B f1 f0
+		rm f0 f1
+	done;
 	# echo -e "\nCHECKING AST\n"
 	# for words in $x
 	# do
