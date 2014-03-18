@@ -1,0 +1,48 @@
+main()
+{
+   int i;
+
+<bb 2>:
+   i = 1;
+
+<bb 3>:
+   if(i == 1)
+      goto <bb 4>;
+   else
+      goto <bb 5>;
+
+
+
+<bb 5>:
+   if(i == 2)
+      goto <bb 6>;
+   else
+      goto <bb 7>;
+
+<bb 6>:
+   i = 3;
+   goto <bb 10>;
+
+<bb 7>:
+   if(i == 3)
+      goto <bb 8>;
+   else
+      goto <bb 9>;
+
+<bb 8>:
+   i = 4;
+   goto <bb 10>;
+
+<bb 9>:
+   i = 5;
+
+<bb 10>:
+   if(i <= 5)
+      goto <bb 3>;
+   else
+      goto <bb 11>;
+
+<bb 11>:
+   return;
+
+}

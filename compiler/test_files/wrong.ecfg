@@ -1,0 +1,20 @@
+int N;
+int N;
+
+main ()
+{
+  int x;
+  int c;
+  int b;
+  int a;
+
+<bb 2>:
+  c = 2;
+  a = b;
+  c = a;
+  x = N;
+  return;
+
+}
+
+

@@ -1,0 +1,22 @@
+main()
+{
+   int z;
+   int y;
+   int x;
+   int m;
+   int l;
+   int k;
+   int c;
+   int b;
+   int a;
+
+<bb 2>:
+   a = 10;
+   b = 5;
+   c = x;
+   k = b < c == a;
+   m = a > b;
+   l = k == m;
+   return;
+
+}

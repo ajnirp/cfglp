@@ -876,28 +876,28 @@ void If_Ast::print(ostream & file_buffer)
 
 Eval_Result & If_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-		file_buffer << "\n" AST_SPACE <<  "If_Else statement:";	
-		condition->print(file_buffer);
+	file_buffer << "\n" AST_SPACE <<  "If_Else statement:";	
+	condition->print(file_buffer);
 
-		Eval_Result & condition_result = condition->evaluate(eval_env, file_buffer);
+	Eval_Result & condition_result = condition->evaluate(eval_env, file_buffer);
 
-		Eval_Result & result = *new Eval_Result_Value_Int();
-		result.set_result_enum(goto_result);
-		file_buffer <<"\n"<<AST_NODE_SPACE<<"True Successor: "<<true_bb_number;
-		file_buffer <<"\n"<<AST_NODE_SPACE<<"False Successor: "<<false_bb_number;
-		if(condition_result.get_value().int_val){
-			file_buffer <<"\n"<<AST_SPACE<<"Condition True : Goto (BB "<<true_bb_number<<")\n";
-			result_value_type sVal;
-			sVal.int_val = true_bb_number;
-			result.set_value(sVal);
-		}
-		else{
-			file_buffer <<"\n"<< AST_SPACE<<"Condition False : Goto (BB "<<false_bb_number<<")\n";
-			result_value_type sVal;
-			sVal.int_val = false_bb_number;
-			result.set_value(sVal);
-		}
-		return result;
+	Eval_Result & result = *new Eval_Result_Value_Int();
+	result.set_result_enum(goto_result);
+	file_buffer <<"\n"<<AST_NODE_SPACE<<"True Successor: "<<true_bb_number;
+	file_buffer <<"\n"<<AST_NODE_SPACE<<"False Successor: "<<false_bb_number;
+	if(condition_result.get_value().int_val){
+		file_buffer <<"\n"<<AST_SPACE<<"Condition True : Goto (BB "<<true_bb_number<<")\n";
+		result_value_type sVal;
+		sVal.int_val = true_bb_number;
+		result.set_value(sVal);
+	}
+	else{
+		file_buffer <<"\n"<< AST_SPACE<<"Condition False : Goto (BB "<<false_bb_number<<")\n";
+		result_value_type sVal;
+		sVal.int_val = false_bb_number;
+		result.set_value(sVal);
+	}
+	return result;
 }
 
 bool If_Ast::successor_found(){
