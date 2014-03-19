@@ -282,8 +282,10 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 	else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
+
 		bool is_int_result = loc_var_val->get_result_enum() == int_result;
 		bool is_float_result = loc_var_val->get_result_enum() == float_result;
+
 		CHECK_INVARIANT(is_int_result || is_float_result, "Result type can only be int and float");
 
 		if (is_int_result)
@@ -294,17 +296,19 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 	else
 	{
+
 		bool is_int_result = glob_var_val->get_result_enum() == int_result;
 		bool is_float_result = glob_var_val->get_result_enum() == float_result;
 		CHECK_INVARIANT(is_int_result || is_float_result, "Result type can only be int and float");
+
 
 		if (glob_var_val == NULL)
 			file_buffer << "0\n";
 		else {
 			if (is_int_result)
-				file_buffer << loc_var_val->get_value().int_val << "\n";
+				file_buffer << glob_var_val->get_value().int_val << "\n";
 			else if (is_float_result)
-				file_buffer << loc_var_val->get_value().float_val << "\n";
+				file_buffer << glob_var_val->get_value().float_val << "\n";
 		}
 	}
 	file_buffer << "\n";
@@ -532,6 +536,7 @@ void Return_Ast::print(ostream & file_buffer)
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+	print(file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	return result;
 }

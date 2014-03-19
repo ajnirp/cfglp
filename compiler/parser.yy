@@ -100,11 +100,13 @@ optional_declaration_list:
 	{
 	if (NOT_ONLY_PARSE)
 	{
+
 		Symbol_Table * global_table = $1;
 
 		CHECK_INVARIANT((global_table != NULL), "Global declarations cannot be null");
 
 		program_object.set_global_table(*global_table);
+
 	}
 	}
 ;

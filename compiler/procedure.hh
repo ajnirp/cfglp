@@ -67,6 +67,7 @@ public:
 	void compile();
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
+	Basic_Block * get_jump_bb(int bb_num);
 
 private:
 	void print_prologue(ostream & file_buffer);
