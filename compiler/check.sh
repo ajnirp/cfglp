@@ -64,6 +64,19 @@ then
 	# 	diff -b f1 f0
 	# 	rm f0 f1
 	# done;
+elif [ $1 == lra ]
+then
+	cd $TEST_DIR; x="$(ls *.cfg)"
+	cd ..
+	echo -e "\nCHECKING LRA\n"
+	for words in $x
+	do
+	echo "testing $words"
+		./$REFERENCE_CFGLP -d -icode -lra $TEST_DIR/$words > f1
+		./cfglp64 -d -icode -lra $TEST_DIR/$words > f0
+		diff -b -B f1 f0
+		rm f0 f1
+	done;
 elif [ $1 == tokens ]
 then
 	cd $TEST_DIR; x="$(ls *.c)"
@@ -75,7 +88,7 @@ then
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
 		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
 		./cfglp -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
-		diff -b f1 f0
+		diff -b -B f1 f0
 		rm f0 f1
 	done;
 elif [ $1 == ecfg ]
@@ -87,8 +100,8 @@ then
 		echo "testing $file"
 		./cfglp -d -tokens $TEST_DIR/"$file" 1> file2 2> file0
 		./$REFERENCE_CFGLP -d -tokens -parse $TEST_DIR/"$file" 1> file3 2> file1
-		diff -b file0 file1
-		diff -b file2 file3
+		diff -b -B file0 file1
+		diff -b -B file2 file3
 		rm file0 file1
 		rm file2 file3
 	done;
@@ -101,10 +114,10 @@ then
 	for file in $x
 	do
 		echo "testing $file"
-		./cfglp -d -ast $TEST_DIR/"$file" 1> file0 2> file2
+		./cfglp64 -d -ast $TEST_DIR/"$file" 1> file0 2> file2
 		./$REFERENCE_CFGLP -d -ast $TEST_DIR/"$file" 1> file1 2> file3
-		diff -b file0 file1
-		diff -b file2 file3
+		diff -b -B file0 file1
+		diff -b -B file2 file3
 		rm file0 file1
 		rm file2 file3
 	done;
@@ -120,11 +133,11 @@ then
 			echo "Skipping testing of $file"
 		else
 			echo "testing $file"
-			./cfglp -d -eval $TEST_DIR/"$file" 1> file0 2> file2
+			./cfglp64 -d -eval $TEST_DIR/"$file" 1> file0 2> file2
 			./$REFERENCE_CFGLP -d -eval $TEST_DIR/"$file" 1> file1 2> file3
 			cat file2 file3
-			diff -b file0 file1
-			diff -b file2 file3
+			diff -b -B file0 file1
+			diff -b -B file2 file3
 			rm file0 file1
 			rm file2 file3
 		fi

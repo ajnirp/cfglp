@@ -61,6 +61,10 @@ Data_Type Ast::get_data_type()
 
 Symbol_Table_Entry & Ast::get_symbol_entry()
 {
+	// force a segfault
+	int * a = NULL;
+	int b = *a;
+
 	stringstream msg;
 	msg << "No get_symbol_entry() function for " << typeid(*this).name();
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
@@ -192,8 +196,6 @@ Code_For_Ast & Assignment_Ast::compile()
 
 	Code_For_Ast store_stmt = lhs->create_store_stmt(load_register);
 
-	// Store the statement in ic_list
-
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
 	if (load_stmt.get_icode_list().empty() == false)
@@ -214,7 +216,12 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
 	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
 
-	lra.optimize_lra(mc_2m, lhs, rhs);
+	if (typeid(*rhs) == typeid(Name_Ast))
+		lra.optimize_lra(mc_2m, lhs, rhs);
+
+	else if (typeid(*rhs) == typeid(Number_Ast<int>))
+		lra.optimize_lra(c2m, lhs, rhs);
+
 	Code_For_Ast load_stmt = rhs->compile_and_optimize_ast(lra);
 
 	Register_Descriptor * result_register = load_stmt.get_reg();
@@ -420,7 +427,7 @@ Code_For_Ast & Name_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 		Ics_Opd * opd = new Mem_Addr_Opd(*variable_symbol_entry);
 
 		load_stmt = new Move_IC_Stmt(load, opd, register_opd);
-			
+
 		ic_list.push_back(load_stmt);
 	}
 
@@ -742,9 +749,54 @@ Code_For_Ast & Comparison_Ast::compile()
 	return *comparison_stmt;
 }
 
+// submission 5b
 Code_For_Ast & Comparison_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
-	//TODO
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+	if (typeid(*lhs) == typeid(Name_Ast))
+		lra.optimize_lra(mc_2r, NULL, lhs);
+	else if (typeid(*lhs) == typeid(Number_Ast<int>))
+		lra.optimize_lra(c2r, NULL, NULL);
+
+	Code_For_Ast & load_lhs_stmt = lhs->compile_and_optimize_ast(lra);
+	Register_Descriptor * load_lhs_register = load_lhs_stmt.get_reg();
+	load_lhs_register->reset_use_for_expr_result(true);
+
+	if (typeid(*rhs) == typeid(Name_Ast))
+		lra.optimize_lra(mc_2r, NULL, rhs);
+	else if (typeid(*rhs) == typeid(Number_Ast<int>))
+		lra.optimize_lra(c2r, NULL, NULL);
+
+	Code_For_Ast & load_rhs_stmt = rhs->compile_and_optimize_ast(lra);
+	Register_Descriptor * load_rhs_register = load_rhs_stmt.get_reg();
+	load_rhs_register->reset_use_for_expr_result(true);
+
+	Code_For_Ast set_stmt = create_set_stmt(load_lhs_register, load_rhs_register);
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (load_lhs_stmt.get_icode_list().empty() == false)
+		ic_list = load_lhs_stmt.get_icode_list();
+	if (load_rhs_stmt.get_icode_list().empty() == false)
+		ic_list.splice(ic_list.end(), load_rhs_stmt.get_icode_list());
+
+	if (set_stmt.get_icode_list().empty() == false)
+		ic_list.splice(ic_list.end(), set_stmt.get_icode_list());
+
+	// register which is being set after comparing the other two
+	Register_Descriptor * set_register = set_stmt.get_reg();
+
+	Code_For_Ast * comparison_stmt;
+	if (ic_list.empty() == false) {
+		comparison_stmt = new Code_For_Ast(ic_list, set_register);
+	}
+
+	load_lhs_register->reset_use_for_expr_result(false);
+	load_rhs_register->reset_use_for_expr_result(false);
+
+	return *comparison_stmt;
 }
 
 Code_For_Ast & Comparison_Ast::create_set_stmt(Register_Descriptor* reg1, Register_Descriptor* reg2)
@@ -780,7 +832,6 @@ Code_For_Ast & Comparison_Ast::create_set_stmt(Register_Descriptor* reg1, Regist
 			set_stmt = new Move_IC_Stmt_2(sne, opd1, opd2, register_opd);		
 			break;
 	}
-	
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 	ic_list.push_back(set_stmt);
@@ -848,7 +899,7 @@ Code_For_Ast & Goto_Ast::compile()
 
 Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
-	//TODO
+	compile();
 }
 
 /////////////////////////////////////////////////////////////////
@@ -947,10 +998,44 @@ Code_For_Ast & If_Ast::compile()
 
 	cond_register->reset_use_for_expr_result(false);
 
-	return *if_stmt;	
+	return *if_stmt;
 }
 
 Code_For_Ast & If_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
-	//TODO
+	Code_For_Ast & condition_stmt = condition->compile_and_optimize_ast(lra);
+	Register_Descriptor * cond_register = condition_stmt.get_reg();
+	cond_register->reset_use_for_expr_result(true);
+	Ics_Opd * register_opd = new Register_Addr_Opd(cond_register);
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	ic_list.splice(ic_list.end(), condition_stmt.get_icode_list());
+
+	string s = "label";
+	char str_bb_num[10];
+	sprintf(str_bb_num, "%d", true_bb_number);
+	s += str_bb_num;
+	Ics_Opd * label = new Const_Opd<string>(s);
+
+	Ics_Opd * zero_op = new Register_Addr_Opd(machine_dscr_object.spim_register_table[zero]);
+
+	Move_IC_Stmt_2 * bne_stmt = new Move_IC_Stmt_2(bne, register_opd, zero_op, label);
+	ic_list.push_back(bne_stmt);
+
+	s = "label";
+	sprintf(str_bb_num, "%d", false_bb_number);
+	s += str_bb_num;
+	label = new Const_Opd<string>(s);
+	Move_IC_Stmt_3 * false_goto_stmt = new Move_IC_Stmt_3(_goto,label);
+	ic_list.push_back(false_goto_stmt);
+
+	Code_For_Ast * if_stmt;
+	if (ic_list.empty() == false) {
+		if_stmt = new Code_For_Ast(ic_list, NULL);
+	}
+
+	cond_register->reset_use_for_expr_result(false);
+
+	return *if_stmt;
 }

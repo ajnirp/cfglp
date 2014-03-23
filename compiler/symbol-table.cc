@@ -238,8 +238,9 @@ Symbol_Table_Entry::~Symbol_Table_Entry()
 
 bool Symbol_Table_Entry::operator==(Symbol_Table_Entry & entry)
 {
-	if (variable_name != entry.get_variable_name())
+	if (variable_name != entry.get_variable_name()) {
 		return false;
+	}
 	else if (variable_data_type != entry.get_data_type())
 		return false;
 	else if (scope != entry.get_symbol_scope())

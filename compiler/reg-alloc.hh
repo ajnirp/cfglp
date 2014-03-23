@@ -119,11 +119,11 @@ class Register_Descriptor
      For each case we outline a step-wise decision process for identifying
      (a) The register, (b) Load, if any
 
-     1. m2m is a typical assginment statemenmt involving memory on lhs
+     1. m2m is a typical assginment statement involving memory on lhs
         as well as RHS. Decision steps
                if (rhs is in a register)
                {
-                   use the register. 
+                   use the register.
                    no load required.
                }
                else if (lhs is in a register)
@@ -202,7 +202,8 @@ typedef enum
 	mc_2r, 
 	r2m, 
 	c2m,
-	r2r
+	r2r,
+  c2r
 } Lra_Scenario;
 
 class Lra_Outcome

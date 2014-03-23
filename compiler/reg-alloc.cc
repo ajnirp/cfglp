@@ -94,6 +94,7 @@ void Register_Descriptor::clear_lra_symbol_list()
 
 void Register_Descriptor::update_symbol_information(Symbol_Table_Entry & sym_entry)
 {
+	// std::cout << &sym_entry << endl;
 	if (find_symbol_entry_in_list(sym_entry) == false)
 		lra_symbol_list.push_back(&sym_entry);
 }
@@ -143,6 +144,8 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	Register_Descriptor * destination_register, * source_register, * result_register;
 	Symbol_Table_Entry * source_symbol_entry, * destination_symbol_entry;
 
+	// std::cout << "is destination_symbol_entry null? " << (destination_symbol_entry == NULL) << endl;
+
 	destination_register = NULL;
 	source_register = NULL;
 	result_register = NULL;
@@ -153,6 +156,8 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	register_move_needed = false;
 	load_needed = false;
 
+	destination_symbol_entry = NULL;
+
 	switch (lcase)
 	{
 	case mc_2m:
@@ -161,6 +166,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		CHECK_INVARIANT(source_memory, 
 			"Sourse ast pointer cannot be NULL for m2m scenario in lra");
 
+		// typeid usage: http://stackoverflow.com/a/1986485/1504267
 		if (typeid(*destination_memory) == typeid(Number_Ast<int>))
 			destination_register = NULL;
 		else
@@ -199,7 +205,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		break;
 
 	case mc_2r:
-		CHECK_INVARIANT(source_memory, "Sourse ast pointer cannot be NULL for m2r scenario in lra");
+		CHECK_INVARIANT(source_memory, "Source ast pointer cannot be NULL for m2r scenario in lra");
 
 		source_symbol_entry = &(source_memory->get_symbol_entry());
 		source_register = source_symbol_entry->get_register(); 
@@ -231,6 +237,37 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 		break;
 
+	case c2r:
+		result_register = machine_dscr_object.get_new_register();
+		is_a_new_register = true;
+		load_needed = true;
+
+		break;
+
+	case c2m:
+		if (typeid(*destination_memory) == typeid(Number_Ast<int>))
+			destination_register = NULL;
+		else
+		{
+			destination_symbol_entry = &(destination_memory->get_symbol_entry());
+			destination_register = destination_symbol_entry->get_register(); 
+		}
+
+		if (destination_register != NULL)
+		{
+			result_register = destination_register;
+			is_a_new_register = false;
+			load_needed = true;
+		}
+		else
+		{
+			result_register = machine_dscr_object.get_new_register();
+			is_a_new_register = true;
+			load_needed = true;
+		}
+
+		break;
+
 	default:
 		CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
 				"Illegal local register allocation scenario");
@@ -241,10 +278,15 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	CHECK_INVARIANT ((result_register != NULL), "Inconsistent information in lra");
 	register_description = result_register;
 
-	if (destination_register)
-		destination_symbol_entry->free_register(destination_register); 
+	if (destination_register) {
+		// std::cout << "in here\n";
+		destination_symbol_entry->free_register(destination_register);
+	}
 
-	destination_symbol_entry->update_register(result_register);
+	if (destination_symbol_entry) {
+		// std::cout << "lcase is " << (lcase == mc_2r ? "mc_2r" : "not mc_2r") << std::endl;
+		destination_symbol_entry->update_register(result_register);
+	}
 }
 
 /******************************* Machine Description *****************************************/
