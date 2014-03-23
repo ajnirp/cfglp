@@ -144,8 +144,6 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	Register_Descriptor * destination_register, * source_register, * result_register;
 	Symbol_Table_Entry * source_symbol_entry, * destination_symbol_entry;
 
-	// std::cout << "is destination_symbol_entry null? " << (destination_symbol_entry == NULL) << endl;
-
 	destination_register = NULL;
 	source_register = NULL;
 	result_register = NULL;
@@ -164,7 +162,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		CHECK_INVARIANT(destination_memory, 
 			"Destination ast pointer cannot be NULL for m2m scenario in lra");
 		CHECK_INVARIANT(source_memory, 
-			"Sourse ast pointer cannot be NULL for m2m scenario in lra");
+			"Source ast pointer cannot be NULL for m2m scenario in lra");
 
 		// typeid usage: http://stackoverflow.com/a/1986485/1504267
 		if (typeid(*destination_memory) == typeid(Number_Ast<int>))
@@ -279,12 +277,10 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	register_description = result_register;
 
 	if (destination_register) {
-		// std::cout << "in here\n";
 		destination_symbol_entry->free_register(destination_register);
 	}
 
 	if (destination_symbol_entry) {
-		// std::cout << "lcase is " << (lcase == mc_2r ? "mc_2r" : "not mc_2r") << std::endl;
 		destination_symbol_entry->update_register(result_register);
 	}
 }

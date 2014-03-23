@@ -77,6 +77,19 @@ then
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
+elif [ $1 == program ]
+then
+	cd $TEST_DIR; x="$(ls *.cfg)"
+	cd ..
+	echo -e "\nCHECKING PROGRAM\n"
+	for words in $x
+	do
+	echo "testing $words"
+		./$REFERENCE_CFGLP -d -program $TEST_DIR/$words > f1
+		./cfglp64 -d -program $TEST_DIR/$words > f0
+		diff -b -B f1 f0
+		rm f0 f1
+	done;
 elif [ $1 == tokens ]
 then
 	cd $TEST_DIR; x="$(ls *.c)"
