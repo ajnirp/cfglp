@@ -90,6 +90,32 @@ then
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
+elif [ $1 == symtab ]
+then
+	cd $TEST_DIR; x="$(ls *.cfg)"
+	cd ..
+	echo -e "\nCHECKING SYMTAB\n"
+	for words in $x
+	do
+	echo "testing $words"
+		./$REFERENCE_CFGLP -d -symtab $TEST_DIR/$words  | awk '{print $2}' > f1
+		./cfglp64 -d -symtab $TEST_DIR/$words  | awk '{print $2}' > f0
+		diff -b -B f1 f0
+		rm f0 f1
+	done;
+elif [ $1 == symtablra ]
+then
+	cd $TEST_DIR; x="$(ls *.cfg)"
+	cd ..
+	echo -e "\nCHECKING SYMTAB LRA\n"
+	for words in $x
+	do
+	echo "testing $words"
+		./$REFERENCE_CFGLP -d -symtab -lra $TEST_DIR/$words  | awk '{print $2}' > f1
+		./cfglp64 -d -symtab -lra $TEST_DIR/$words  | awk '{print $2}' > f0
+		diff -b -B f1 f0
+		rm f0 f1
+	done;
 elif [ $1 == tokens ]
 then
 	cd $TEST_DIR; x="$(ls *.c)"
