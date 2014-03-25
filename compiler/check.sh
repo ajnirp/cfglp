@@ -19,15 +19,15 @@ then
 	done;
 elif [ $1 == icode ]
 then
-	cd $TEST_DIR; x="$(ls *.c)"
+	cd $TEST_DIR; x="$(ls *.cfg)"
 	cd ..
 	echo -e "\nCHECKING ICODE\n"
 	for words in $x
 	do
 	echo "testing $words"
-		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
-		./$REFERENCE_CFGLP -d -icode $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
-		./cfglp64 -d -icode $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
+		# make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
+		./$REFERENCE_CFGLP -d -icode $TEST_DIR/$words > f1
+		./cfglp64 -d -icode $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -72,8 +72,8 @@ then
 	for words in $x
 	do
 	echo "testing $words"
-		./$REFERENCE_CFGLP -d -icode -lra $TEST_DIR/$words > f1
-		./cfglp64 -d -icode -lra $TEST_DIR/$words > f0
+		./$REFERENCE_CFGLP -d -program -lra $TEST_DIR/$words > f1
+		./cfglp64 -d -program -lra $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -87,6 +87,19 @@ then
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -program $TEST_DIR/$words > f1
 		./cfglp64 -d -program $TEST_DIR/$words > f0
+		diff -b -B f1 f0
+		rm f0 f1
+	done;
+elif [ $1 == programlra ]
+then
+	cd $TEST_DIR; x="$(ls *.cfg)"
+	cd ..
+	echo -e "\nCHECKING PROGRAM\n"
+	for words in $x
+	do
+	echo "testing $words"
+		./$REFERENCE_CFGLP -d -program -lra $TEST_DIR/$words > f1
+		./cfglp64 -d -program -lra $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -129,6 +142,34 @@ then
 		./cfglp -d -tokens $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
 		diff -b -B f1 f0
 		rm f0 f1
+	done;
+elif [ $1 == programecfg ]
+then
+	cd $TEST_DIR; x="$(ls *.ecfg)"
+	cd ..
+	for file in $x
+	do
+		echo "testing $file"
+		./cfglp -d -program $TEST_DIR/"$file" 1> file2 2> file0
+		./$REFERENCE_CFGLP -d -program $TEST_DIR/"$file" 1> file3 2> file1
+		diff -b -B file0 file1
+		diff -b -B file2 file3
+		rm file0 file1
+		rm file2 file3
+	done;
+elif [ $1 == programlraecfg ]
+then
+	cd $TEST_DIR; x="$(ls *.ecfg)"
+	cd ..
+	for file in $x
+	do
+		echo "testing $file"
+		./cfglp -d -program -lra $TEST_DIR/"$file" 1> file2 2> file0
+		./$REFERENCE_CFGLP -d -program -lra $TEST_DIR/"$file" 1> file3 2> file1
+		diff -b -B file0 file1
+		diff -b -B file2 file3
+		rm file0 file1
+		rm file2 file3
 	done;
 elif [ $1 == ecfg ]
 then
@@ -202,7 +243,7 @@ then
 	for words in $x
 	do
 		echo "making" $words "ka cfg"
-		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null
+		make -f Makefile.cfg FILE=$words 1> /dev/null
 	done;
 
 elif [ $1 == "clean" ]

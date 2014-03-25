@@ -1,4 +1,7 @@
-Changes we made for enhancing the compiler from level 0 to level 1
+Submission 5a
+=============
+
+Changes we made for enhancing the compiler from level 0 to level 1:
 
 parser.yy and scanner.ll
 ------------------------
@@ -30,3 +33,26 @@ local-environment.cc and local-environment.hh
 
 1. Added result enums (int_result and goto_result) and evaluation functions that we had written while making the interpreter.
 
+
+Submission 5b
+=============
+
+Changes we made for supporting local register allocation for level 1:
+
+
+ast.cc and ast.hh
+-----------------
+
+1. Added compile_and_optimize_ast() functions for each of the classes we added in the previous submission.
+
+
+reg-alloc.cc and reg-alloc.hh
+-----------------------------
+
+1. Added 'c2r' to the Lra_Scenario enum.
+
+2. Added a case for c2r (constant to register) in the optimize_lra() function.
+
+3. Added a function 'get_lra_table_size' that returns the length of the lra_symbol_list for a Register_Descriptor.
+
+4. Modified the 'mc_2m' case to take care of the case when the destination_register already is storing the value for more than one symbol table entry. Specifically, we added another clause in the 'else if' condition which checked that the return value of get_lra_table_size() is <= 1.

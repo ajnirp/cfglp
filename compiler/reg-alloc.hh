@@ -97,6 +97,8 @@ class Register_Descriptor
     void reset_use_for_expr_result(bool used);
 
     bool is_free();
+
+    int get_lra_table_size();
 };
 
 ////////////////////////////// Lra_Outcome ///////////////////////////////////////
@@ -201,7 +203,7 @@ typedef enum
 	mc_2m = 1, 
 	mc_2r, 
 	r2m, 
-	c2m,
+	// c2m,
 	r2r,
   c2r
 } Lra_Scenario;

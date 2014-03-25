@@ -216,21 +216,37 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
 	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
 
-	if (typeid(*rhs) == typeid(Name_Ast))
+	if (typeid(*rhs) == typeid(Name_Ast) || typeid(*rhs) == typeid(Number_Ast<int>))
 		lra.optimize_lra(mc_2m, lhs, rhs);
 
-	else if (typeid(*rhs) == typeid(Number_Ast<int>))
-		lra.optimize_lra(c2m, lhs, rhs);
-
 	Code_For_Ast load_stmt = rhs->compile_and_optimize_ast(lra);
-
 	Register_Descriptor * result_register = load_stmt.get_reg();
 
-	Symbol_Table_Entry * lhs_symtab_entry = &(lhs->get_symbol_entry());
-	Register_Descriptor * current_register = lhs_symtab_entry->get_register();
-	if (current_register)
-		lhs_symtab_entry->free_register(current_register);
-	lhs_symtab_entry->update_register(result_register);
+	// Register_Descriptor * previous_register = NULL;
+	// if (typeid(*rhs) == typeid(Comparison_Ast)) {
+	// 	previous_register = (lhs->get_symbol_entry()).get_register();
+	// }
+	// if (previous_register) {
+	// 	(lhs->get_symbol_entry()).free_register(previous_register);
+	// }
+
+	// if (typeid(*rhs) == typeid(Comparison_Ast)) {
+	// 	(lhs->get_symbol_entry()).update_register(result_register);
+	// }
+
+
+	// cout << typeid(Comparison_Ast).name() << endl;
+	if (typeid(*rhs) == typeid(Comparison_Ast)) {
+		Symbol_Table_Entry * lhs_symtab_entry = &(lhs->get_symbol_entry());
+		Register_Descriptor * current_register = lhs_symtab_entry->get_register();
+		if (current_register) {
+			// cout << current_register->get_name() << " " << result_register->get_name() << endl;
+			lhs_symtab_entry->free_register(current_register);
+		}
+		lhs_symtab_entry->update_register(result_register);
+	}
+
+
 
 	Code_For_Ast store_stmt = lhs->create_store_stmt(result_register);
 

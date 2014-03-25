@@ -107,6 +107,8 @@ bool Register_Descriptor::get_used_for_expr_result(){
 	return used_for_expr_result;
 }
 
+int Register_Descriptor::get_lra_table_size() { return lra_symbol_list.size(); }
+
 
 //////////////////////////////// Lra_Outcome //////////////////////////////////////////
 
@@ -187,7 +189,9 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			is_same_as_source = true;
 			load_needed = false;
 		}
-		else if (destination_register != NULL)
+		// do not set the result register to destination_register if destination_register
+		// is already holding the value for multiple symbol table entries
+		else if (destination_register != NULL and destination_register->get_lra_table_size() <= 1)
 		{
 			result_register = destination_register;
 			is_same_as_destination = true;
@@ -239,30 +243,6 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		result_register = machine_dscr_object.get_new_register();
 		is_a_new_register = true;
 		load_needed = true;
-
-		break;
-
-	case c2m:
-		if (typeid(*destination_memory) == typeid(Number_Ast<int>))
-			destination_register = NULL;
-		else
-		{
-			destination_symbol_entry = &(destination_memory->get_symbol_entry());
-			destination_register = destination_symbol_entry->get_register(); 
-		}
-
-		if (destination_register != NULL)
-		{
-			result_register = destination_register;
-			is_a_new_register = false;
-			load_needed = true;
-		}
-		else
-		{
-			result_register = machine_dscr_object.get_new_register();
-			is_a_new_register = true;
-			load_needed = true;
-		}
 
 		break;
 

@@ -13,6 +13,4 @@ main()
 		num = i;
 		i = 5;
 	}while(i > 9);
-
-	return;
 }
