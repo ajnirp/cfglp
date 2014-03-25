@@ -31,6 +31,7 @@
 using namespace std;
 
 #include "common-classes.hh"
+#include "user-options.hh"
 #include "error-display.hh"
 #include "local-environment.hh"
 #include "icode.hh"
@@ -108,6 +109,11 @@ bool Register_Descriptor::get_used_for_expr_result(){
 }
 
 int Register_Descriptor::get_lra_table_size() { return lra_symbol_list.size(); }
+
+list<Symbol_Table_Entry *> & Register_Descriptor::get_lra_table()
+{
+	return lra_symbol_list;
+}
 
 
 //////////////////////////////// Lra_Outcome //////////////////////////////////////////
@@ -362,6 +368,23 @@ Register_Descriptor * Machine_Description::get_new_register()
 
 		if (reg_desc->is_free())
 			return reg_desc;
+	}
+
+	// if lra is on, it tries to remember registers
+	// so see if some previous register can be freed
+	if (command_options.is_do_lra_selected() == true) {
+		for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+		{
+			reg_desc = i->second;
+
+			if (reg_desc->get_use_category() == gp_data and reg_desc->get_lra_table_size() == 1)
+			{
+				list<Symbol_Table_Entry *>::iterator it;
+				it = reg_desc->get_lra_table().begin();
+				(*it)->free_register(reg_desc);
+				return reg_desc;
+			}
+		}
 	}
 
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 

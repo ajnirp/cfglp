@@ -56,3 +56,7 @@ reg-alloc.cc and reg-alloc.hh
 3. Added a function 'get_lra_table_size' that returns the length of the lra_symbol_list for a Register_Descriptor.
 
 4. Modified the 'mc_2m' case to take care of the case when the destination_register already is storing the value for more than one symbol table entry. Specifically, we added another clause in the 'else if' condition which checked that the return value of get_lra_table_size() is <= 1.
+
+5. Added a function to get a reference to the lra_symbol_list of a Register_Descriptor.
+
+6. Modified the function get_new_register to free a register in case lra option is enabled and there are no free registers left at that point in the program. We only free a register if it is holding exactly one symbol table entry. e.g. see 'test_files/ExhaustTemps.ecfg'.

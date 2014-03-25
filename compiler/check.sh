@@ -2,6 +2,7 @@
 
 TEST_DIR="test_files"
 REFERENCE_CFGLP="cfglp64_l0"
+TEST_CFGLP="cfglp"
 
 if [ $1 == c ]
 then
@@ -13,7 +14,7 @@ then
 	echo "testing $words"
 		make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
 		./$REFERENCE_CFGLP -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f1
-		./cfglp64 -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
+		./$TEST_CFGLP -d -eval $TEST_DIR/"$words"s306.cfg  | awk '{print $2}' > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -27,7 +28,7 @@ then
 	echo "testing $words"
 		# make -f Makefile.cfg FILE=$words 1> /dev/null  2> /dev/null 
 		./$REFERENCE_CFGLP -d -icode $TEST_DIR/$words > f1
-		./cfglp64 -d -icode $TEST_DIR/$words > f0
+		./$TEST_CFGLP -d -icode $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -40,7 +41,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -icode $TEST_DIR/$words  | awk '{print $2}' > f1
-		./cfglp64 -d -icode $TEST_DIR/$words  | awk '{print $2}' > f0
+		./$TEST_CFGLP -d -icode $TEST_DIR/$words  | awk '{print $2}' > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -73,7 +74,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -icode -lra $TEST_DIR/$words > f1
-		./cfglp64 -d -icode -lra $TEST_DIR/$words > f0
+		./$TEST_CFGLP -d -icode -lra $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -86,7 +87,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -program $TEST_DIR/$words > f1
-		./cfglp64 -d -program $TEST_DIR/$words > f0
+		./$TEST_CFGLP -d -program $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -99,7 +100,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -compile $TEST_DIR/$words > f1
-		./cfglp64 -d -compile $TEST_DIR/$words > f0
+		./$TEST_CFGLP -d -compile $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -112,7 +113,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -compile -lra $TEST_DIR/$words > f1
-		./cfglp64 -d -compile -lra $TEST_DIR/$words > f0
+		./$TEST_CFGLP -d -compile -lra $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -125,7 +126,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -program -lra $TEST_DIR/$words > f1
-		./cfglp64 -d -program -lra $TEST_DIR/$words > f0
+		./$TEST_CFGLP -d -program -lra $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -138,7 +139,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -symtab $TEST_DIR/$words  | awk '{print $2}' > f1
-		./cfglp64 -d -symtab $TEST_DIR/$words  | awk '{print $2}' > f0
+		./$TEST_CFGLP -d -symtab $TEST_DIR/$words  | awk '{print $2}' > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -151,7 +152,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -symtab -lra $TEST_DIR/$words  | awk '{print $2}' > f1
-		./cfglp64 -d -symtab -lra $TEST_DIR/$words  | awk '{print $2}' > f0
+		./$TEST_CFGLP -d -symtab -lra $TEST_DIR/$words  | awk '{print $2}' > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -164,7 +165,7 @@ then
 	do
 	echo "testing $words"
 		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/"$words" > f1
-		./cfglp64 -d -tokens $TEST_DIR/"$words" > f0
+		./$TEST_CFGLP -d -tokens $TEST_DIR/"$words" > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -191,7 +192,7 @@ then
 	for file in $x
 	do
 		echo "testing $file"
-		./cfglp64 -d -ast $TEST_DIR/"$file" 1> file0 2> file2
+		./$TEST_CFGLP -d -ast $TEST_DIR/"$file" 1> file0 2> file2
 		./$REFERENCE_CFGLP -d -ast $TEST_DIR/"$file" 1> file1 2> file3
 		diff -b -B file0 file1
 		diff -b -B file2 file3
@@ -210,7 +211,7 @@ then
 			echo "Skipping testing of $file"
 		else
 			echo "testing $file"
-			./cfglp64 -d -eval $TEST_DIR/"$file" 1> file0 2> file2
+			./$TEST_CFGLP -d -eval $TEST_DIR/"$file" 1> file0 2> file2
 			./$REFERENCE_CFGLP -d -eval $TEST_DIR/"$file" 1> file1 2> file3
 			cat file2 file3
 			diff -b -B file0 file1
@@ -250,8 +251,14 @@ then
 	cd test_files;make clean;cd ..
 else
 	# test all
-	./check.sh c
-	./check.sh ast
-	./check.sh eval
-	./check.sh ecfg
+	# ./check.sh c
+	# ./check.sh ast
+	# ./check.sh eval
+	./check.sh tokens
+	./check.sh icode
+	./check.sh icodelra
+	./check.sh program
+	./check.sh programlra
+	./check.sh compile
+	./check.sh compilelra
 fi

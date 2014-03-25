@@ -99,6 +99,7 @@ class Register_Descriptor
     bool is_free();
 
     int get_lra_table_size();
+    list<Symbol_Table_Entry *> & get_lra_table();
 };
 
 ////////////////////////////// Lra_Outcome ///////////////////////////////////////
