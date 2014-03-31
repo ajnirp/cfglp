@@ -320,7 +320,7 @@ void Machine_Description::initialize_register_table()
 void Machine_Description::initialize_instruction_table()
 {
 	spim_instruction_table[store] = new Instruction_Descriptor(store, "store", "sw", "", i_r_op_o1, a_op_o1_r);
-	spim_instruction_table[neg] = new Instruction_Descriptor(neg, "uminus", "neg", "", i_r_op_o1, a_op_o1_r);
+	spim_instruction_table[neg] = new Instruction_Descriptor(neg, "uminus", "neg", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[load] = new Instruction_Descriptor(load, "load", "lw", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[imm_load] = new Instruction_Descriptor(imm_load, "iLoad", "li", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[sgt] = new Instruction_Descriptor(sgt, "sgt", "sgt", "", i_r_o1_op_o2, a_op_r_o1_o2);
@@ -338,6 +338,15 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[mfc1] = new Instruction_Descriptor(mfc1, "mfc1", "mfc1", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[mtc1] = new Instruction_Descriptor(mtc1, "mtc1", "mtc1", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[negd] = new Instruction_Descriptor(negd, "uminus.d", "neg.d", "", i_r_op_o1, a_op_r_o1);
+
+	spim_instruction_table[add] = new Instruction_Descriptor(add, "add", "add", "", i_r_o1_op_o2, a_op_r_o1_o2);
+	spim_instruction_table[sub] = new Instruction_Descriptor(sub, "sub", "sub", "", i_r_o1_op_o2, a_op_r_o1_o2);
+	spim_instruction_table[mul] = new Instruction_Descriptor(mul, "mul", "mul", "", i_r_o1_op_o2, a_op_r_o1_o2);
+	spim_instruction_table[_div] = new Instruction_Descriptor(_div, "div", "div", "", i_r_o1_op_o2, a_op_r_o1_o2);
+	spim_instruction_table[addd] = new Instruction_Descriptor(addd, "add.d", "add.d", "", i_r_o1_op_o2, a_op_r_o1_o2);
+	spim_instruction_table[subd] = new Instruction_Descriptor(subd, "sub.d", "sub.d", "", i_r_o1_op_o2, a_op_r_o1_o2);
+	spim_instruction_table[muld] = new Instruction_Descriptor(muld, "mul.d", "mul.d", "", i_r_o1_op_o2, a_op_r_o1_o2);
+	spim_instruction_table[_divd] = new Instruction_Descriptor(_divd, "div.d", "div.d", "", i_r_o1_op_o2, a_op_r_o1_o2);
 }
 
 void Machine_Description::validate_init_local_register_mapping()

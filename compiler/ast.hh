@@ -235,6 +235,7 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 	Code_For_Ast & compile();
 	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+	Code_For_Ast & create_arithmetic_stmt(Register_Descriptor* reg1, Register_Descriptor* reg2);
 };
 
 class Typecast_Ast:public Ast

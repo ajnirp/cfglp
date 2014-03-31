@@ -96,7 +96,12 @@ typedef enum
 	mfc1,
 	mtc1,
 	neg,
-	negd
+	negd,
+
+	add, addd,
+	sub, subd,
+	mul, muld,
+	_div, _divd
 } Tgt_Op;
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////

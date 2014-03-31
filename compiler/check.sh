@@ -2,7 +2,7 @@
 
 TEST_DIR="test_files"
 REFERENCE_CFGLP="cfglp64_l0"
-TEST_CFGLP="cfglp"
+TEST_CFGLP="cfglp64"
 
 if [ $1 == c ]
 then

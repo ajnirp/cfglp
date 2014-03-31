@@ -405,8 +405,7 @@ Code_For_Ast & Name_Ast::compile()
 	if(get_data_type() == int_data_type){
 		result_register = machine_dscr_object.get_new_register(0);
 	}
-	else{
-
+	else if (get_data_type == float_data_type) {
 		result_register = machine_dscr_object.get_new_register(1);
 	}
 	 
@@ -417,7 +416,7 @@ Code_For_Ast & Name_Ast::compile()
 	 	load_stmt = new Move_IC_Stmt(load, opd, register_opd);
 	}
 	else{
-		cout<<"Name ast ,e aaya "<<endl;
+		// cout<<"Name ast ,e aaya "<<endl;
 		load_stmt = new Move_IC_Stmt(loadd, opd, register_opd);	
 	}
 
@@ -1217,7 +1216,94 @@ Eval_Result & Arithmetic_Ast::evaluate(Local_Environment & eval_env, ostream & f
 }
 
 Code_For_Ast & Arithmetic_Ast::compile(){
-	return *(new Code_For_Ast());
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+	Code_For_Ast & lhs_stmt = lhs->compile();
+	Register_Descriptor * lhs_register = lhs_stmt.get_reg();
+	lhs_register->reset_use_for_expr_result(true);
+
+	Code_For_Ast & rhs_stmt = rhs->compile();
+	Register_Descriptor * rhs_register = rhs_stmt.get_reg();
+	rhs_register->reset_use_for_expr_result(true);
+
+	Code_For_Ast result_stmt = create_arithmetic_stmt(lhs_register, rhs_register);
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (lhs_stmt.get_icode_list().empty() == false)
+		ic_list = lhs_stmt.get_icode_list();
+	if (rhs_stmt.get_icode_list().empty() == false)
+		ic_list.splice(ic_list.end(), rhs_stmt.get_icode_list());
+
+	if (result_stmt.get_icode_list().empty() == false)
+		ic_list.splice(ic_list.end(), result_stmt.get_icode_list());
+
+	Register_Descriptor * result_register = result_stmt.get_reg();
+
+	Code_For_Ast * arithmetic_stmt;
+	if (ic_list.empty() == false) {
+		arithmetic_stmt = new Code_For_Ast(ic_list, result_register);
+	}
+
+	lhs_register->reset_use_for_expr_result(false);
+	rhs_register->reset_use_for_expr_result(false);
+
+	return *arithmetic_stmt;
+}
+
+Code_For_Ast & Arithmetic_Ast::create_arithmetic_stmt(Register_Descriptor* reg1, Register_Descriptor* reg2)
+{
+	CHECK_INVARIANT((reg1 != NULL), "First register cannot be null");
+	CHECK_INVARIANT((reg2 != NULL), "Second register cannot be null");
+
+	Register_Descriptor * result_register;
+	if (get_data_type() == int_data_type)
+		result_register = machine_dscr_object.get_new_register(0);
+	else if (get_data_type() == float_data_type)
+		result_register = machine_dscr_object.get_new_register(1);
+	result_register->reset_use_for_expr_result(true);
+
+	Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
+	Ics_Opd * opd1 = new Register_Addr_Opd(reg1);
+	Ics_Opd * opd2 = new Register_Addr_Opd(reg2);
+	Icode_Stmt * arithmetic_stmt;
+
+	//PLUS_OP, MINUS_OP, DIV_OP, MUL_OP
+	switch(op){
+		case PLUS_OP:
+			if (get_data_type() == int_data_type)
+				arithmetic_stmt = new Move_IC_Stmt_2(add, opd1, opd2, register_opd);
+			else if (get_data_type() == float_data_type)
+				arithmetic_stmt = new Move_IC_Stmt_2(addd, opd1, opd2, register_opd);
+			break;
+		case MINUS_OP:
+			if (get_data_type() == int_data_type)
+				arithmetic_stmt = new Move_IC_Stmt_2(sub, opd1, opd2, register_opd);
+			else if (get_data_type() == float_data_type)
+				arithmetic_stmt = new Move_IC_Stmt_2(subd, opd1, opd2, register_opd);
+			break;
+		case DIV_OP:
+			if (get_data_type() == int_data_type)
+				arithmetic_stmt = new Move_IC_Stmt_2(_div, opd1, opd2, register_opd);
+			else if (get_data_type() == float_data_type)
+				arithmetic_stmt = new Move_IC_Stmt_2(_divd, opd1, opd2, register_opd);
+			break;
+		case MUL_OP:
+			if (get_data_type() == int_data_type)
+				arithmetic_stmt = new Move_IC_Stmt_2(mul, opd1, opd2, register_opd);
+			else if (get_data_type() == float_data_type)
+				arithmetic_stmt = new Move_IC_Stmt_2(muld, opd1, opd2, register_opd);
+			break;
+	}
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	ic_list.push_back(arithmetic_stmt);
+	result_register->reset_use_for_expr_result(false);
+	Code_For_Ast & arithmetic_code = *new Code_For_Ast(ic_list, result_register);
+	return arithmetic_code;
+
+	//TODO
 }
 
 Code_For_Ast & Arithmetic_Ast::compile_and_optimize_ast(Lra_Outcome & lra){
@@ -1300,11 +1386,11 @@ Code_For_Ast & Typecast_Ast::compile(){
 	// Ics_Opd * opd = new Const_Opd<int>(constant);
 
 	Icode_Stmt * type_stmt;
-	if (get_data_type() == int_data_type){
+	if (get_data_type() == int_data_type and ast->get_data_type() == float_data_type) {
 		type_stmt = new Move_IC_Stmt(mfc1, rhs_opd, load_register);
 	}
-	else{
-		type_stmt = new Move_IC_Stmt(mtc1, rhs_opd, load_register);	
+	else if (get_data_type() == float_data_type and ast->get_data_type() == int_data_type) {
+		type_stmt = new Move_IC_Stmt(mtc1, rhs_opd, load_register);
 	}
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
