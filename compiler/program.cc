@@ -125,7 +125,7 @@ void Program::print()
 	}
 
 	*file_buffer << "Program:\n";
-
+	*file_buffer<<setprecision(2)<<fixed;
 	if (command_options.is_show_program_selected() || command_options.is_show_symtab_selected())
 	{
 		*file_buffer << "\nGlobal Declarations:\n";
@@ -147,6 +147,7 @@ Eval_Result & Program::evaluate()
 
 	command_options.create_output_buffer();
 	ostream & file_buffer = command_options.get_output_buffer();
+	file_buffer<<setprecision(2)<<fixed;
 	file_buffer << "Evaluating Program\n";
 	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
 	interpreter_global_table.print(file_buffer);
@@ -180,6 +181,7 @@ void Program::compile()
 			ostream * file_buffer;
 			command_options.create_ic_buffer();
 			file_buffer = &(command_options.get_ic_buffer());
+			*file_buffer<<setprecision(2)<<fixed;
 		
 			i->second->print_icode(*file_buffer);
 		}
@@ -194,6 +196,7 @@ void Program::print_assembly()
 {
 	command_options.create_output_buffer();
 	ostream & file_buffer = command_options.get_output_buffer();
+	file_buffer<<setprecision(2)<<fixed;
 
 	if (!global_symbol_table.is_empty())
 		file_buffer << "\n\t.data\n";

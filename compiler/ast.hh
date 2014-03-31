@@ -41,6 +41,11 @@ typedef enum
 	NE_OP,GE_OP,LE_OP,EQ_OP,LT_OP,GT_OP
 } Comparison_Op_Enum;
 
+typedef enum
+{
+	PLUS_OP, MINUS_OP, DIV_OP, MUL_OP
+} Arith_Op_Enum;
+
 class Ast;
 
 class Ast
@@ -207,6 +212,61 @@ public:
 	Data_Type get_data_type();
 	bool successor_found();
 	void print(ostream & file_buffer);
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+	Code_For_Ast & compile();
+	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
+
+class Arithmetic_Ast:public Ast
+{
+	Ast * lhs;
+	Arith_Op_Enum op;
+	Ast * rhs;
+
+public:
+	Arithmetic_Ast(Ast * temp_lhs, Arith_Op_Enum temp_op, Ast * temp_rhs,int line);
+	~Arithmetic_Ast();
+
+	Data_Type get_data_type();
+	bool check_ast();
+
+	void print(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+	Code_For_Ast & compile();
+	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
+
+class Typecast_Ast:public Ast
+{
+	Data_Type dtype;
+	Ast * ast;
+
+public:
+	Typecast_Ast(Data_Type dt, Ast * a);
+	~Typecast_Ast();
+
+	Data_Type get_data_type();
+
+	void print(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+	Code_For_Ast & compile();
+	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
+
+class UnaryMinus_Ast:public Ast
+{
+	Ast * ast;
+
+public:
+	UnaryMinus_Ast(Ast * a);
+	~UnaryMinus_Ast();
+
+	Data_Type get_data_type();
+
+	void print(ostream & file_buffer);
+
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 	Code_For_Ast & compile();
 	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);

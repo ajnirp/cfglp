@@ -48,12 +48,14 @@ typedef enum
 	gp,	/* global data pointer register */
 	sp,	/* stack pointer register */
 	fp,	/* frame pointer register */
-	ra	/* return address register */
+	ra,	/* return address register */
+  f2,f4,f6,f8,f10,f12 /*floating point registers*/
 } Spim_Register;
 
 typedef enum 
 { 
-	int_num 
+	int_num,
+  float_num
 } Register_Val_Type;
 
 typedef enum 
@@ -87,6 +89,7 @@ class Register_Descriptor
     bool find_symbol_entry_in_list(Symbol_Table_Entry & symbol_entry);
     void remove_symbol_entry_from_list(Symbol_Table_Entry & symbol_entry);
 
+    Register_Val_Type get_val_type();
     Register_Use_Category get_use_category(); 
     Spim_Register get_register();
 
@@ -248,7 +251,7 @@ public:
 	void validate_init_local_register_mapping();
 	void clear_local_register_mappings();
 
-	Register_Descriptor * get_new_register();
+	Register_Descriptor * get_new_register(int val_type);
 };
 
 extern Machine_Description machine_dscr_object;

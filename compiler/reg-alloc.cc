@@ -53,6 +53,7 @@ Register_Descriptor::Register_Descriptor(Spim_Register reg, string s, Register_V
 	used_for_expr_result = false;
 }
 
+Register_Val_Type Register_Descriptor::get_val_type(){ return value_type;}
 Register_Use_Category Register_Descriptor::get_use_category() 	{ return reg_use; }
 Spim_Register Register_Descriptor::get_register()             	{ return reg_id; }
 string Register_Descriptor::get_name()				{ return reg_name; }
@@ -205,7 +206,8 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		}
 		else 
 		{
-			result_register = machine_dscr_object.get_new_register();
+			// change type
+			result_register = machine_dscr_object.get_new_register(0);
 			is_a_new_register = true;
 			load_needed = true;
 		}
@@ -226,7 +228,8 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		}
 		else 
 		{
-			result_register = machine_dscr_object.get_new_register();
+			// change type
+			result_register = machine_dscr_object.get_new_register(0);
 			is_a_new_register = true;
 			load_needed = true;
 		}
@@ -246,7 +249,8 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		break;
 
 	case c2r:
-		result_register = machine_dscr_object.get_new_register();
+		//change type
+		result_register = machine_dscr_object.get_new_register(0);
 		is_a_new_register = true;
 		load_needed = true;
 
@@ -304,11 +308,19 @@ void Machine_Description::initialize_register_table()
 	spim_register_table[sp] = new Register_Descriptor(sp, "sp", int_num, pointer);
 	spim_register_table[fp] = new Register_Descriptor(fp, "fp", int_num, pointer);
 	spim_register_table[ra] = new Register_Descriptor(ra, "ra", int_num, ret_address);
+
+	spim_register_table[f2] = new Register_Descriptor(f2, "f2", float_num, gp_data);
+	spim_register_table[f4] = new Register_Descriptor(f4, "f4", float_num, gp_data);
+	spim_register_table[f6] = new Register_Descriptor(f6, "f6", float_num, gp_data);
+	spim_register_table[f8] = new Register_Descriptor(f8, "f8", float_num, gp_data);
+	spim_register_table[f10] = new Register_Descriptor(f10, "f10", float_num, gp_data);
+	spim_register_table[f12] = new Register_Descriptor(f12, "f12", float_num, gp_data);
 }
 
 void Machine_Description::initialize_instruction_table()
 {
 	spim_instruction_table[store] = new Instruction_Descriptor(store, "store", "sw", "", i_r_op_o1, a_op_o1_r);
+	spim_instruction_table[neg] = new Instruction_Descriptor(neg, "uminus", "neg", "", i_r_op_o1, a_op_o1_r);
 	spim_instruction_table[load] = new Instruction_Descriptor(load, "load", "lw", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[imm_load] = new Instruction_Descriptor(imm_load, "iLoad", "li", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[sgt] = new Instruction_Descriptor(sgt, "sgt", "sgt", "", i_r_o1_op_o2, a_op_r_o1_o2);
@@ -319,6 +331,13 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[sne] = new Instruction_Descriptor(sne, "sne", "sne", "", i_r_o1_op_o2, a_op_r_o1_o2);
 	spim_instruction_table[bne] = new Instruction_Descriptor(bne, "bne", "bne", "", i_op_o1_col_o2, a_op_o1_col_o2);
 	spim_instruction_table[_goto] = new Instruction_Descriptor(_goto, "goto", "j", "", i_op_o1, a_op_o1);
+	
+	spim_instruction_table[stored] = new Instruction_Descriptor(stored, "store.d", "s.d", "", i_r_op_o1, a_op_o1_r);
+	spim_instruction_table[loadd] = new Instruction_Descriptor(loadd, "load.d", "l.d", "", i_r_op_o1, a_op_r_o1);
+	spim_instruction_table[imm_loadd] = new Instruction_Descriptor(imm_loadd, "iLoad.d", "li.d", "", i_r_op_o1, a_op_r_o1);
+	spim_instruction_table[mfc1] = new Instruction_Descriptor(mfc1, "mfc1", "mfc1", "", i_r_op_o1, a_op_r_o1);
+	spim_instruction_table[mtc1] = new Instruction_Descriptor(mtc1, "mtc1", "mtc1", "", i_r_op_o1, a_op_r_o1);
+	spim_instruction_table[negd] = new Instruction_Descriptor(negd, "uminus.d", "neg.d", "", i_r_op_o1, a_op_r_o1);
 }
 
 void Machine_Description::validate_init_local_register_mapping()
@@ -357,7 +376,7 @@ void Machine_Description::clear_local_register_mappings()
 	*/
 }
 
-Register_Descriptor * Machine_Description::get_new_register()
+Register_Descriptor * Machine_Description::get_new_register(int val_type)
 {
 	Register_Descriptor * reg_desc;
 
@@ -366,7 +385,7 @@ Register_Descriptor * Machine_Description::get_new_register()
 	{
 		reg_desc = i->second;
 
-		if (reg_desc->is_free())
+		if (reg_desc->is_free() && reg_desc->get_val_type() == val_type)
 			return reg_desc;
 	}
 
@@ -377,7 +396,7 @@ Register_Descriptor * Machine_Description::get_new_register()
 		{
 			reg_desc = i->second;
 
-			if (reg_desc->get_use_category() == gp_data and reg_desc->get_lra_table_size() == 1)
+			if (reg_desc->get_use_category() == gp_data and reg_desc->get_lra_table_size() == 1 && reg_desc->get_val_type() == val_type)
 			{
 				list<Symbol_Table_Entry *>::iterator it;
 				it = reg_desc->get_lra_table().begin();

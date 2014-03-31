@@ -89,7 +89,14 @@ typedef enum
 	seq,
 	sne,
 	_goto,
-	bne
+	bne,
+	stored,
+	imm_loadd,
+	loadd,
+	mfc1,
+	mtc1,
+	neg,
+	negd
 } Tgt_Op;
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////

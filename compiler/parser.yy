@@ -29,6 +29,7 @@
 %union 
 {
 	int integer_value;
+	float float_value;
 	std::string * string_value;
 	pair<Data_Type, string> * decl;
 	list<Ast *> * ast_list;
@@ -40,11 +41,14 @@
 	Comparison_Op_Enum comparison_op_enum;
 	Data_Type data_type;
 	Procedure * procedure;
+	Arith_Op_Enum arith_op_enum;
 };
 
 %token <integer_value> INTEGER_NUMBER BBNUM
+%token <float_value> FLOAT_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER
+%token RETURN
+%token INTEGER FLOAT DOUBLE
 %token IF ELSE GOTO
 %token ASSIGN_OP NE EQ LT LE GT GE
 
@@ -64,11 +68,16 @@
 
 %type <comparison_op_enum> equality_op
 %type <comparison_op_enum> comparison_op
+%type <data_type> typecast
+%type <arith_op_enum> plus_minus
+%type <arith_op_enum> mul_div
 %type <ast> comparison_expr
 %type <ast> h_comparison_expr
 %type <ast> all_expr
 %type <ast> goto_statement
 %type <ast> if_statement
+%type <ast> mul_div_expr
+%type <ast> arithmetic_expr
 
 %start program
 
@@ -281,6 +290,20 @@ declaration:
 		$$ = declar;
 	}
 	}
+|	FLOAT NAME
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
+
+		string name = *$2;
+		Data_Type type = float_data_type;
+
+		pair<Data_Type, string> * declar = new pair<Data_Type, string>(type, name);
+
+		$$ = declar;
+	}
+	}
 ;
 
 basic_block_list:
@@ -435,24 +458,7 @@ assignment_statement_list:
 ;
 
 assignment_statement:
-	variable ASSIGN_OP variable ';'
-	{
-	if (NOT_ONLY_PARSE)
-	{
-		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
-
-		Ast * lhs = $1;
-		Ast * rhs = $3;
-
-		Ast * assign = new Assignment_Ast(lhs, rhs, get_line_number());
-
-		assign->check_ast();
-
-		$$ = assign;
-	}
-	}
-|
-	variable ASSIGN_OP constant ';'
+	variable ASSIGN_OP var_const ';'
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -481,6 +487,26 @@ assignment_statement:
 	}
 |
 	variable ASSIGN_OP comparison_expr ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		Ast * assign = new Assignment_Ast($1, $3,get_line_number());
+		assign->check_ast();
+		$$ = assign;
+	}
+	}
+|
+	variable ASSIGN_OP arithmetic_expr ';'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		Ast * assign = new Assignment_Ast($1, $3,get_line_number());
+		assign->check_ast();
+		$$ = assign;
+	}
+	}
+|
+	variable ASSIGN_OP mul_div_expr ';'
 	{
 	if (NOT_ONLY_PARSE)
 	{
@@ -533,52 +559,169 @@ goto_statement
 	}
 ;
 
+plus_minus
+:	'+' {
+		if (NOT_ONLY_PARSE){
+		$$ = PLUS_OP;
+		}
+	}
+| 	'-' {
+		if (NOT_ONLY_PARSE){
+		$$ = MINUS_OP;
+		}
+	}
+;
+
+mul_div
+: 	'/' {
+		if (NOT_ONLY_PARSE){
+		$$ = DIV_OP;
+		}
+	}
+|	'*' {
+		if (NOT_ONLY_PARSE){
+		$$ = MUL_OP;
+		}
+	}
+
+;
+
+typecast
+:	'(' INTEGER ')' {
+		if (NOT_ONLY_PARSE){
+		$$ = int_data_type;
+		}
+	}
+|	'(' FLOAT ')' {
+		if (NOT_ONLY_PARSE){
+		$$ = float_data_type;
+		}
+	}
+|	'(' DOUBLE ')' {
+		if (NOT_ONLY_PARSE){
+		$$ = float_data_type;
+		}
+	}
+;
+
 h_comparison_expr
 :	var_const equality_op var_const 	{
-		if (NOT_ONLY_PARSE)
-	{
+		if (NOT_ONLY_PARSE){
 		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
-		int line = get_line_number();
 		$$->check_ast();
 		}
 	}
 |	var_const equality_op comparison_expr 	{
-		if (NOT_ONLY_PARSE)
-	{
+		if (NOT_ONLY_PARSE){
 		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
-		int line = get_line_number();
+		$$->check_ast();
+		}
+	}
+|	var_const equality_op arithmetic_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	var_const equality_op mul_div_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		$$->check_ast();
 		}
 	}
 |	comparison_expr equality_op var_const 	{
-		if (NOT_ONLY_PARSE)
-	{
+		if (NOT_ONLY_PARSE){
 		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
-		int line = get_line_number();
 		$$->check_ast();
 		}
 	}
 |	comparison_expr equality_op comparison_expr 	{
-		if (NOT_ONLY_PARSE)
-	{
+		if (NOT_ONLY_PARSE){
 		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
-		int line = get_line_number();
+		$$->check_ast();
+		}
+	}
+|	comparison_expr equality_op arithmetic_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	comparison_expr equality_op mul_div_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	mul_div_expr equality_op var_const 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	mul_div_expr equality_op comparison_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	mul_div_expr equality_op arithmetic_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	mul_div_expr equality_op mul_div_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	arithmetic_expr equality_op comparison_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	arithmetic_expr equality_op var_const 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	arithmetic_expr equality_op arithmetic_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+		$$->check_ast();
+		}
+	}
+|	arithmetic_expr equality_op mul_div_expr 	{
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		$$->check_ast();
 		}
 	}
 |	h_comparison_expr equality_op comparison_expr 	{
-		if (NOT_ONLY_PARSE)
-	{
+		if (NOT_ONLY_PARSE){
 		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
-		int line = get_line_number();
+		$$->check_ast();
+		}
+	}
+|	h_comparison_expr equality_op arithmetic_expr {
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		$$->check_ast();
 		}
 	}
 |	h_comparison_expr equality_op var_const {
-		if (NOT_ONLY_PARSE)
-	{
+		if (NOT_ONLY_PARSE){
 		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
-		int line = get_line_number();
+		$$->check_ast();
+		}
+	}
+|	h_comparison_expr equality_op mul_div_expr {
+		if (NOT_ONLY_PARSE){
+		$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 		$$->check_ast();
 		}
 	}
@@ -587,32 +730,160 @@ h_comparison_expr
 
 comparison_expr
 : var_const comparison_op var_const {
-	if (NOT_ONLY_PARSE)
-	{
+	if (NOT_ONLY_PARSE){
 	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
-	int line = get_line_number();
+	$$->check_ast();
+	}
+}
+| var_const comparison_op mul_div_expr {
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+| var_const comparison_op arithmetic_expr {
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+| arithmetic_expr comparison_op var_const{
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+| arithmetic_expr comparison_op mul_div_expr{
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+| arithmetic_expr comparison_op arithmetic_expr{
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+| mul_div_expr comparison_op var_const{
+	//level2
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+| mul_div_expr comparison_op mul_div_expr{
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+| mul_div_expr comparison_op arithmetic_expr{
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 	$$->check_ast();
 	}
 }
 | comparison_expr comparison_op var_const {
-	if (NOT_ONLY_PARSE)
-	{
+	if (NOT_ONLY_PARSE){
 	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
-	int line = get_line_number();
+	$$->check_ast();
+	}
+}
+| comparison_expr comparison_op mul_div_expr {
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+| comparison_expr comparison_op arithmetic_expr {
+	if (NOT_ONLY_PARSE){
+	$$ = new Comparison_Ast($1,$2,$3,get_line_number());
 	$$->check_ast();
 	}
 }
 ;
 
-var_const:
-	var_const_plain{
-		if (NOT_ONLY_PARSE)
-	{
-		$$ = $1;
-		}
+
+mul_div_expr
+:	var_const mul_div var_const{
+	if (NOT_ONLY_PARSE){
+	$$ = new Arithmetic_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
 	}
+}
+|	mul_div_expr mul_div var_const {
+	if (NOT_ONLY_PARSE){
+	$$ = new Arithmetic_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
 ;
 
+
+arithmetic_expr
+:	var_const plus_minus var_const{
+	if (NOT_ONLY_PARSE){
+	$$ = new Arithmetic_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+|	var_const plus_minus mul_div_expr{
+	if (NOT_ONLY_PARSE){
+	$$ = new Arithmetic_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+|	mul_div_expr plus_minus var_const{
+	if (NOT_ONLY_PARSE){
+	$$ = new Arithmetic_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+|	mul_div_expr plus_minus mul_div_expr{
+	if (NOT_ONLY_PARSE){
+	$$ = new Arithmetic_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+|	arithmetic_expr plus_minus var_const{
+	if (NOT_ONLY_PARSE){
+	$$ = new Arithmetic_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+|	arithmetic_expr plus_minus mul_div_expr{
+	if (NOT_ONLY_PARSE){
+	$$ = new Arithmetic_Ast($1,$2,$3,get_line_number());
+	$$->check_ast();
+	}
+}
+;
+
+
+var_const:
+	var_const_plain{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	}
+	}
+|	typecast var_const_plain {
+	if (NOT_ONLY_PARSE){
+		$$ = new Typecast_Ast($1, $2);
+	}
+	}
+|	'-' typecast var_const_plain {
+	if (NOT_ONLY_PARSE){
+		$$ = new Typecast_Ast($2, new UnaryMinus_Ast($3));
+	}
+	}
+| '-' var_const_plain {
+	if (NOT_ONLY_PARSE){
+		$$ = new UnaryMinus_Ast($2);
+	}
+	}
+;
 
 var_const_plain
 :	variable {
@@ -642,17 +913,27 @@ var_const_plain
 ;
 
 all_expr
-:	comparison_expr {
-		if (NOT_ONLY_PARSE)
+:	mul_div_expr {
+	if (NOT_ONLY_PARSE){
+		$$ = $1;
+	}
+	}
+|	arithmetic_expr {
+	if (NOT_ONLY_PARSE){
+		$$ = $1;
+	}
+	}
+|	comparison_expr {
+	if (NOT_ONLY_PARSE)
 	{
 		$$ = $1;
-		}
+	}
 	}
 |	h_comparison_expr {
-		if (NOT_ONLY_PARSE)
+	if (NOT_ONLY_PARSE)
 	{
 		$$ = $1;
-		}
+	}
 	}
 ;
 
@@ -691,6 +972,17 @@ constant:
 		int num = $1;
 
 		Ast * num_ast = new Number_Ast<int>(num, int_data_type, get_line_number());
+
+		$$ = num_ast;
+	}
+	}
+|	FLOAT_NUMBER
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		float num = $1;
+
+		Ast * num_ast = new Number_Ast<float>(num, float_data_type, get_line_number());
 
 		$$ = num_ast;
 	}
