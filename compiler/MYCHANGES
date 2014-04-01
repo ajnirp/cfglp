@@ -60,3 +60,67 @@ reg-alloc.cc and reg-alloc.hh
 5. Added a function to get a reference to the lra_symbol_list of a Register_Descriptor.
 
 6. Modified the function get_new_register to free a register in case lra option is enabled and there are no free registers left at that point in the program. We only free a register if it is holding exactly one symbol table entry. e.g. see 'test_files/ExhaustTemps.ecfg'.
+
+
+Submission 6a
+=============
+
+Changes we made for supporting floating point arithmetic and typecasting:
+
+
+scanner.ll
+----------
+
+1. Added tokens for float and double (merged from our earlier work on the interpreter).
+
+2. Also added tokens for arithmetic operators.
+
+
+parser.yy
+---------
+
+1. Added 'float_value' to the union.
+
+2. Added a token for float numbers (FLOAT).
+
+3. Added production rules and enhanced the existing nonterminals' production rules to capture arithmetic, floating point numbers and typecasting.
+
+
+reg-alloc.cc and reg-alloc.hh
+-----------------------------
+
+1. Modified the signature of the get_new_register() method. Now it takes an integer specifying which kind of register it should get, float or int.
+
+2. Added new Register Descriptors to capture floating point numbers.
+
+3. Added new Instruction Descriptors to capture negation, floating point load/store/immediate load/negation and mtc1/mfc1.
+
+
+ast.cc and ast.hh
+-----------------
+
+1. Modified the compile() functions for Name_Ast, Comparison_Ast to account for the fact that the signature of get_new_register() has changed, as well as the new data type 'float'.
+
+2. Added the Arithmetic_Ast class that we wrote while doing the interpreter, as well as the old methods (print(), evaluate() etc.) and also added a compile() function for it. Similarly, added Typecast_Ast, UnaryMinus_Ast.
+
+3. Added the Arith_Op_Enum that we wrote while doing the interpreter to ast.hh.
+
+
+icode.cc and icode.hh
+---------------------
+
+1. Added a template class for float Const_Opd.
+
+2. In the Tgt_Op enum, added load, store and immediate load for floats (i.e. loadd, stored, imm_loadd respectively). Also added neg and negd for unary minus. Also added mfc1 and mtc1 for typecasting between float and int.
+
+
+program.cc and program.hh
+-------------------------
+
+1. Added calls to setprecision() in the printing functions.
+
+
+symbol-table.cc
+---------------
+
+1. Added support for floats in the print() and get_size_of_value_type() methods of Symbol Table.

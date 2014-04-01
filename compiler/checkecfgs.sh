@@ -1,4 +1,4 @@
-#bin/bash
+#!/bin/bash
 
 TEST_DIR="test_files"
 REFERENCE_CFGLP="cfglp64_l0"
