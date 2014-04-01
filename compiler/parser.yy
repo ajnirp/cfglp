@@ -878,11 +878,6 @@ var_const:
 		$$ = new Typecast_Ast($2, new UnaryMinus_Ast($3));
 	}
 	}
-| '-' var_const_plain {
-	if (NOT_ONLY_PARSE){
-		$$ = new UnaryMinus_Ast($2);
-	}
-	}
 ;
 
 var_const_plain
@@ -909,7 +904,12 @@ var_const_plain
 	{
 	$$ = $2;
 	}
-}
+	}
+| '-' var_const_plain {
+	if (NOT_ONLY_PARSE){
+		$$ = new UnaryMinus_Ast($2);
+	}
+	}
 ;
 
 all_expr
@@ -958,7 +958,6 @@ variable:
 			CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable has not been declared");
 
 		Ast * name_ast = new Name_Ast(var_name, *var_table_entry, get_line_number());
-
 		$$ = name_ast;
 	}
 	}

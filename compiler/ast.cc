@@ -601,8 +601,12 @@ void Return_Ast::print(ostream & file_buffer)
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	print(file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
+	result.set_result_enum(skip_result_val);
+	result_value_type sVal;
+	sVal.int_val == 2678;
+	result.set_value(sVal);
+	print(file_buffer);
 	return result;
 }
 

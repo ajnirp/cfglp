@@ -79,11 +79,14 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 
 		CHECK_INVARIANT(((*i) != NULL), "Ast pointer seems to be NULL into the basic block");
 		result = &((*i)->evaluate(eval_env, file_buffer)); 
-		if(result->get_result_enum() == goto_result){
+		if(result->get_result_enum() == goto_result || result->get_result_enum() == skip_result_val){
 			break;
 		}
 	}
 	// exit(0);
+	if(result == NULL){
+		result = new Eval_Result_Value_Int();
+	}
 	return *result;
 }
 

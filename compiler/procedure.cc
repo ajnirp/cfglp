@@ -160,11 +160,18 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 	while (current_bb)
 	{
 		result = &(current_bb->evaluate(eval_env, file_buffer));
+		if(result->get_result_enum() == skip_result_val){
+			break;
+		}
 		if(result->get_result_enum() == goto_result){
 			current_bb = get_jump_bb(result->get_value().int_val);
 			continue;
 		}
 		current_bb = get_next_bb(*current_bb);		
+	}
+
+	if(result->get_result_enum() != skip_result_val){
+		CHECK_INVARIANT(false , "Atleast one of true, false, direct successors should be set");
 	}
 
 	file_buffer << "\n\n";

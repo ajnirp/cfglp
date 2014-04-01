@@ -36,6 +36,8 @@ typedef enum
 	int_result,
 	float_result, // submission 5a
 	void_result,
+	skip_result,
+	skip_result_val,
 	goto_result
 } Result_Enum;
 
