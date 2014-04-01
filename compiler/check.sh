@@ -201,12 +201,12 @@ then
 	done;
 elif [ $1 == eval ]
 then
-	cd $TEST_DIR; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
+	cd $TEST_DIR; x="$(ls *.cfg)"
 	cd ..
 	# x="ContDoWhile.cs306.cfg"
 	for file in $x
 	do
-		if [ $file == "InfiniteLoop.cs306.cfg" ] || [ $file == "NestedLoop.cs306.cfg" ] || [ $file == "complex_expression.cs306.cfg" ]
+		if [ $file == "InfiniteLoop.cs306.cfg" ] || [ $file == "RetInFor.cs306.cfg" ] || [ $file == "NestedLoop.cs306.cfg" ] || [ $file == "complex_expression.cs306.cfg" ]
 		then
 			echo "Skipping testing of $file"
 		else
@@ -252,13 +252,13 @@ then
 else
 	# test all
 	# ./check.sh c
-	# ./check.sh ast
-	# ./check.sh eval
+	./check.sh ast
+	./check.sh eval
 	./check.sh tokens
 	./check.sh icode
-	./check.sh icodelra
+	# ./check.sh icodelra
 	./check.sh program
-	./check.sh programlra
+	# ./check.sh programlra
 	./check.sh compile
-	./check.sh compilelra
+	# ./check.sh compilelra
 fi

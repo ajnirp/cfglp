@@ -315,6 +315,15 @@ void Machine_Description::initialize_register_table()
 	spim_register_table[f8] = new Register_Descriptor(f8, "f8", float_num, gp_data);
 	spim_register_table[f10] = new Register_Descriptor(f10, "f10", float_num, gp_data);
 	spim_register_table[f12] = new Register_Descriptor(f12, "f12", float_num, gp_data);
+	spim_register_table[f14] = new Register_Descriptor(f14, "f14", float_num, gp_data);
+	spim_register_table[f16] = new Register_Descriptor(f16, "f16", float_num, gp_data);
+	spim_register_table[f18] = new Register_Descriptor(f18, "f18", float_num, gp_data);
+	spim_register_table[f20] = new Register_Descriptor(f20, "f20", float_num, gp_data);
+	spim_register_table[f22] = new Register_Descriptor(f22, "f22", float_num, gp_data);
+	spim_register_table[f24] = new Register_Descriptor(f24, "f24", float_num, gp_data);
+	spim_register_table[f26] = new Register_Descriptor(f26, "f26", float_num, gp_data);
+	spim_register_table[f28] = new Register_Descriptor(f28, "f28", float_num, gp_data);
+	spim_register_table[f30] = new Register_Descriptor(f30, "f30", float_num, gp_data);
 }
 
 void Machine_Description::initialize_instruction_table()

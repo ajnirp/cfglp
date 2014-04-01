@@ -3,6 +3,9 @@ main()
 	int a;
 
 <bb 2>:
-	a = 3.4;
+	a = 3;
+
+<bb 2>:			;; Error
+	a = 4;
 	return;
 }

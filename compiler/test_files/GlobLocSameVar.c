@@ -1,8 +1,6 @@
 int a;
 main()
 {
-	int b = 4;
+	int a;
 	a = 3;
-
-	a = a > b;
 }

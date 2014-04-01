@@ -2,7 +2,8 @@ main()
 {
 	int a;
 
-<bb 2>:
-	a = 3.4;
+<bb 3>:
+	a = 3;
+	int b;
 	return;
 }
