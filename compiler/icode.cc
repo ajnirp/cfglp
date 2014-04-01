@@ -239,7 +239,7 @@ void Move_IC_Stmt::print_icode(ostream & file_buffer)
 	switch (ic_format)
 	{
 	case i_r_op_o1: 
-			file_buffer << " " << operation_name << ":\t";
+			file_buffer << "\t" << operation_name << ":\t\t";
 			result->print_ics_opd(file_buffer);
 			file_buffer << " <- ";
 			opd1->print_ics_opd(file_buffer);
@@ -328,7 +328,7 @@ void Move_IC_Stmt_2::print_icode(ostream & file_buffer)
 	switch (ic_format)
 	{
 	case i_r_o1_op_o2: 
-			file_buffer << " " << operation_name << ": ";
+			file_buffer << "\t" << operation_name << ":\t\t";
 			result->print_ics_opd(file_buffer);
 			file_buffer << " <- ";
 			opd1->print_ics_opd(file_buffer);
@@ -339,7 +339,7 @@ void Move_IC_Stmt_2::print_icode(ostream & file_buffer)
 			break; 
 
 	case i_op_o1_col_o2: 
-			file_buffer << " " << operation_name << ": ";
+			file_buffer << "\t" << operation_name << ":\t\t";
 			opd1->print_ics_opd(file_buffer);
 			file_buffer << " , ";
 			opd2->print_ics_opd(file_buffer);
@@ -426,8 +426,8 @@ void Move_IC_Stmt_3::print_icode(ostream & file_buffer)
 	switch (ic_format)
 	{
 	case i_op_o1: 
-			file_buffer << " " << operation_name;
-			file_buffer << " ";
+			file_buffer << "\t" << operation_name;
+			file_buffer << "\t\t";
 			opd->print_ics_opd(file_buffer);
 			file_buffer << "\n";
 			break; 

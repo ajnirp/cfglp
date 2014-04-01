@@ -80,7 +80,7 @@ goto	{
 			return Parser::GT; 
 		}
 "="		{
-			store_token_name("ASSIGN");
+			store_token_name("ASSIGN_OP");
 			return Parser::ASSIGN_OP;
 		}
 

@@ -186,7 +186,7 @@ then
 
 elif [ $1 == ast ]
 then
-	cd $TEST_DIR; x="$(ls *.cfg)"; y=x="$(ls *.ecfg)"; x=$x+$y
+	cd $TEST_DIR; x="$(ls *.cfg)";
 
 	cd ..
 	for file in $x
