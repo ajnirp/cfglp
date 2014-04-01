@@ -2,7 +2,7 @@
 
 TEST_DIR="test_files"
 REFERENCE_CFGLP="cfglp64_l0"
-TEST_CFGLP="cfglp64"
+TEST_CFGLP="cfglp"
 
 if [ $1 == c ]
 then
@@ -176,7 +176,7 @@ then
 	for file in $x
 	do
 		echo "testing $file"
-		./cfglp -d -tokens $TEST_DIR/"$file" 1> file2 2> file0
+		./$TEST_CFGLP -d -tokens $TEST_DIR/"$file" 1> file2 2> file0
 		./$REFERENCE_CFGLP -d -tokens -parse $TEST_DIR/"$file" 1> file3 2> file1
 		diff -b -B file0 file1
 		diff -b -B file2 file3
@@ -230,7 +230,7 @@ then
 	do
 		echo "testing $words"
 		./$REFERENCE_CFGLP -d -eval $TEST_DIR/$words > f1
-		./cfglp -d -eval $TEST_DIR/$words > f0
+		./$TEST_CFGLP -d -eval $TEST_DIR/$words > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;

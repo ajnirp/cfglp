@@ -10,8 +10,8 @@ cd ..
 for i in $x
 do
 	echo "testing $i"
-	./$REFERENCE_CFGLP -d -icode $TEST_DIR/$i > f0
-	./$TEST_CFGLP -d -icode $TEST_DIR/$i > f1
+	./$REFERENCE_CFGLP -d -compile $TEST_DIR/$i > f0
+	./$TEST_CFGLP -d -compile $TEST_DIR/$i > f1
 	diff -b -B f0 f1
 	rm f0 f1
 done

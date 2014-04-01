@@ -39,7 +39,7 @@ HEADERS = $(HEADERS_CORE) $(HEADERS_GEN)
 CPP = g++
 BISONCPP = bisonc++
 FLEXCPP = flexc++
-TGT = cfglp64
+TGT = cfglp
 
 CFLAGS = -g 
 
@@ -56,13 +56,13 @@ parser.cc parserbase.h: parser.yy parser.ih parser.h
 	$(BISONCPP) --verbose parser.yy
 
 clean :
-	rm -f *.o cfglp64 scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
+	rm -f *.o cfglp scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
 	rm -f cscope.out tags a.out
 
 ###########################################################################
 
 check_clean :
-	rm -f *.o cfglp64 cfgpp64 scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output plugin*.so
+	rm -f *.o cfglp cfgpp64 scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output plugin*.so
 	rm -f cscope.out tags a.out
 	rm Makefile*
 	rm -rf test_files test_files_output
@@ -96,54 +96,54 @@ check_no_print_dir:
 	
 	@# create .toks .ast .eval files	
 	@for file in `ls test_files/*.cs306.cfg`; do \
-		./cfglp64 $$file -tokens; \
+		./cfglp $$file -tokens; \
 		mv $$file.toks $$file.toks.new; \
-		./cfglp64 $$file -ast; \
+		./cfglp $$file -ast; \
 		mv $$file.ast $$file.ast.new; \
-		./cfglp64 $$file -eval; \
+		./cfglp $$file -eval; \
 		mv $$file.eval $$file.eval.new; \
-		./cfglp64 $$file -icode; \
+		./cfglp $$file -icode; \
 		mv $$file.ic $$file.ic.new; \
-		./cfglp64 $$file -program; \
+		./cfglp $$file -program; \
 		mv $$file.prog $$file.prog.new; \
-		./cfglp64 $$file -symtab; \
+		./cfglp $$file -symtab; \
 		mv $$file.sym $$file.sym.new; \
-		./cfglp64 $$file -lra -compile; \
+		./cfglp $$file -lra -compile; \
 		mv $$file.spim $$file.lra.new; \
-		./cfglp64 $$file -compile; \
+		./cfglp $$file -compile; \
 		mv $$file.spim $$file.spim.new; \
 	done
 	
 	@for file in `ls test_files/*.ecfg`; do \
-		./cfglp64 $$file -tokens; \
+		./cfglp $$file -tokens; \
 		if [ -f $$file.toks ]; then \
 			mv $$file.toks $$file.toks.new; \
 		fi; \
-		./cfglp64 $$file -ast; \
+		./cfglp $$file -ast; \
 		if [ -f $$file.ast ]; then \
 			mv $$file.ast $$file.ast.new; \
 		fi; \
-		./cfglp64 $$file -eval; \
+		./cfglp $$file -eval; \
 		if [ -f $$file.eval ]; then \
 			mv $$file.eval $$file.eval.new; \
 		fi; \
-		./cfglp64 $$file -icode; \
+		./cfglp $$file -icode; \
 		if [ -f $$file.ic ]; then \
 			mv $$file.ic $$file.ic.new; \
 		fi; \
-		./cfglp64 $$file -lra -compile; \
+		./cfglp $$file -lra -compile; \
 		if [ -f $$file.spim ]; then \
 			mv $$file.spim $$file.lra.new; \
 		fi; \
-		./cfglp64 $$file -compile; \
+		./cfglp $$file -compile; \
 		if [ -f $$file.spim ]; then \
 			mv $$file.spim $$file.spim.new; \
 		fi; \
-		./cfglp64 $$file -symtab; \
+		./cfglp $$file -symtab; \
 		if [ -f $$file.sym ]; then \
 			mv $$file.sym $$file.sym.new; \
 		fi; \
-		./cfglp64 $$file -program; \
+		./cfglp $$file -program; \
 		if [ -f $$file.prog ]; then \
 			mv $$file.prog $$file.prog.new; \
 		fi; \
