@@ -174,7 +174,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			"Source ast pointer cannot be NULL for m2m scenario in lra");
 
 		// typeid usage: http://stackoverflow.com/a/1986485/1504267
-		if (typeid(*destination_memory) == typeid(Number_Ast<int>))
+		if (typeid(*destination_memory) == typeid(Number_Ast<int>) || typeid(*destination_memory) == typeid(Number_Ast<float>))
 			destination_register = NULL;
 		else
 		{
@@ -182,7 +182,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			destination_register = destination_symbol_entry->get_register(); 
 		}
 
-		if (typeid(*source_memory) == typeid(Number_Ast<int>))
+		if (typeid(*source_memory) == typeid(Number_Ast<int>) || typeid(*source_memory) == typeid(Number_Ast<float>))
 			source_register = NULL;
 		else
 		{
@@ -200,6 +200,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		// is already holding the value for multiple symbol table entries
 		else if (destination_register != NULL and destination_register->get_lra_table_size() <= 1)
 		{
+
 			result_register = destination_register;
 			is_same_as_destination = true;
 			load_needed = true;
@@ -207,7 +208,13 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		else 
 		{
 			// change type
-			result_register = machine_dscr_object.get_new_register(0);
+			// cout<<"idhar aaya"<<endl;
+			if(destination_memory->get_data_type() == int_data_type){
+				result_register = machine_dscr_object.get_new_register(0);
+			}
+			else{
+				result_register = machine_dscr_object.get_new_register(1);	
+			}
 			is_a_new_register = true;
 			load_needed = true;
 		}
@@ -229,7 +236,12 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		else 
 		{
 			// change type
-			result_register = machine_dscr_object.get_new_register(0);
+			if(source_memory->get_data_type() == int_data_type){
+				result_register = machine_dscr_object.get_new_register(0);
+			}
+			else{
+				result_register = machine_dscr_object.get_new_register(1);	
+			}
 			is_a_new_register = true;
 			load_needed = true;
 		}
@@ -250,7 +262,12 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 	case c2r:
 		//change type
-		result_register = machine_dscr_object.get_new_register(0);
+		if(source_memory->get_data_type() == int_data_type){
+			result_register = machine_dscr_object.get_new_register(0);
+		}
+		else{
+			result_register = machine_dscr_object.get_new_register(1);	
+		}
 		is_a_new_register = true;
 		load_needed = true;
 
@@ -266,7 +283,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	CHECK_INVARIANT ((result_register != NULL), "Inconsistent information in lra");
 	register_description = result_register;
 
-	if (destination_register) {
+	if (destination_symbol_entry != NULL && destination_register != NULL) {
 		destination_symbol_entry->free_register(destination_register);
 	}
 
