@@ -124,3 +124,18 @@ symbol-table.cc
 ---------------
 
 1. Added support for floats in the print() and get_size_of_value_type() methods of Symbol Table.
+
+
+Submission 6b
+=============
+
+ast.cc and ast.hh
+-----------------
+
+1. Modified/added compile_and_optimize_ast() methods of the Assignment_Ast, Name_Ast, Number_Ast, Arithmetic_Ast, Typecast_Ast, UnaryMinus_Ast and Comparison_Ast classes to account for float numbers.
+
+reg-alloc.cc and reg-alloc.hh
+-----------------------------
+
+1. In the optimize_lra() method of Lra_Outcome, modified the if conditions in the various switch cases to account for float numbers.
+
