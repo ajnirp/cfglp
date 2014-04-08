@@ -431,13 +431,22 @@ Register_Descriptor * Machine_Description::get_new_register(int val_type)
 		{
 			reg_desc = i->second;
 
-			if (reg_desc->get_use_category() == gp_data and reg_desc->get_lra_table_size() == 1 && reg_desc->get_val_type() == val_type)
+			if (reg_desc->get_use_category() == gp_data and reg_desc->get_val_type() == val_type)
 			{
 				list<Symbol_Table_Entry *>::iterator it;
 				it = reg_desc->get_lra_table().begin();
 				(*it)->free_register(reg_desc);
-				return reg_desc;
+				// clearing all the registers
+				// return reg_desc;
 			}
+		}
+
+		for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+		{
+			reg_desc = i->second;
+
+			if (reg_desc->is_free() && reg_desc->get_val_type() == val_type)
+				return reg_desc;
 		}
 	}
 
