@@ -63,7 +63,6 @@ void Program::set_global_table(Symbol_Table & new_global_table)
 void Program::set_procedure_map(Procedure * proc, int line)
 {
 	CHECK_INVARIANT((proc != NULL), "Procedure cannot be null");
-
 	procedure_map[proc->get_proc_name()] = proc;
 }
 
@@ -77,7 +76,7 @@ Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 	return global_symbol_table.get_symbol_table_entry(variable_name);
 }
 
-bool Program::variable_in_proc_map_check(string symbol)
+bool Program::variable_in_proc_map_check(string symbol, int line)
 {
 	if (procedure_map.find(symbol) == procedure_map.end())
 		return false;
@@ -190,6 +189,14 @@ void Program::compile()
 	if (!((command_options.is_do_lra_selected() == true) && 
 		(command_options.is_do_compile_selected() == false)))
 		print_assembly();
+}
+
+Procedure * Program::get_procedure_map(string proc_name){
+	// cout<<"size is  "<<procedure_map.size()<<endl;
+	if(procedure_map.find(proc_name) != procedure_map.end()){
+		return procedure_map[proc_name];
+	}
+	else return NULL;
 }
 
 void Program::print_assembly()

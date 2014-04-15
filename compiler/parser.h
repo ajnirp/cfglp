@@ -81,7 +81,11 @@ class Parser: public ParserBase
 
     set<int> bb_made;
   	vector<int> bb_requested;
+  	set<string> function_call_set;
+  	bool return_statement_used_flag;
 	void bb_strictly_increasing_order_check(list<Basic_Block *> * bb_list, int bb_number); 
+	void check_undefined_functions();
+	void check_return_data_types(Data_Type d1, Data_Type d2);
         
 	void executeAction(int ruleNr);
         void errorRecovery();

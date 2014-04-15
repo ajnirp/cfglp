@@ -102,28 +102,27 @@ void Basic_Block::compile()
 	{
 		Ast * ast = *i;
 
-		if (typeid(*ast) != typeid(Return_Ast))
+		// if (typeid(*ast) != typeid(Return_Ast))
+		// {
+		if (command_options.is_do_lra_selected() == true)
 		{
-			if (command_options.is_do_lra_selected() == true)
-			{
-				Lra_Outcome lra;
-				ast_code = ast->compile_and_optimize_ast(lra);
-			}
-
-			else
-				ast_code = ast->compile();
-
-			list<Icode_Stmt *> & ast_icode_list = ast_code.get_icode_list();
-			if (ast_icode_list.empty() == false)
-			{
-				if (bb_icode_list.empty())
-					bb_icode_list = ast_icode_list;
-				else
-					bb_icode_list.splice(bb_icode_list.end(), ast_icode_list);
-			}
+			Lra_Outcome lra;
+			ast_code = ast->compile_and_optimize_ast(lra);
 		}
-	}
 
+		else
+			ast_code = ast->compile();
+
+		list<Icode_Stmt *> & ast_icode_list = ast_code.get_icode_list();
+		if (ast_icode_list.empty() == false)
+		{
+			if (bb_icode_list.empty())
+				bb_icode_list = ast_icode_list;
+			else
+				bb_icode_list.splice(bb_icode_list.end(), ast_icode_list);
+		}
+		// }
+	}
 	machine_dscr_object.clear_local_register_mappings();
 }
 

@@ -55,6 +55,10 @@ goto	{
 			store_token_name("GOTO");
 			return Parser::GOTO; 
 		}
+void	{
+			store_token_name("VOID");
+			return Parser::VOID;
+		}
 "<="	{
 			store_token_name("LE");
 			return Parser::LE; 
@@ -137,7 +141,7 @@ goto	{
 			return Parser::BBNUM;
 			}
 
-[<>:{}();=!]	{
+[<>:{}();=!,]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}

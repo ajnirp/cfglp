@@ -97,6 +97,45 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 		file_buffer << symbol_entry->get_variable_name();
 }
 
+/****************************** Class Mem_Addr_Opd *****************************/
+
+Stack_mem_Addr_Opd::Stack_mem_Addr_Opd(Symbol_Table_Entry & se, int offs) 
+{
+	symbol_entry = &se;
+	type = memory_addr;
+	offset = offs;
+}
+
+Stack_mem_Addr_Opd & Stack_mem_Addr_Opd::operator=(const Stack_mem_Addr_Opd & rhs)
+{
+	type = rhs.type;
+	symbol_entry = rhs.symbol_entry;
+	offset = rhs.offset;
+	return *this;
+}
+
+void Stack_mem_Addr_Opd::print_ics_opd(ostream & file_buffer) 
+{
+	string name = symbol_entry->get_variable_name();
+
+	file_buffer << name;
+}
+
+void Stack_mem_Addr_Opd::print_asm_opd(ostream & file_buffer) 
+{
+	Table_Scope symbol_scope = symbol_entry->get_symbol_scope();
+
+	CHECK_INVARIANT(((symbol_scope == local) || (symbol_scope == global)), 
+			"Wrong scope value");
+
+	if (symbol_scope == local)
+	{
+		file_buffer << offset << "($sp)";
+	}
+	else
+		file_buffer << symbol_entry->get_variable_name();
+}
+
 /****************************** Class Register_Addr_Opd *****************************/
 
 Register_Addr_Opd::Register_Addr_Opd(Register_Descriptor * reg) 
@@ -239,6 +278,7 @@ void Move_IC_Stmt::print_icode(ostream & file_buffer)
 	switch (ic_format)
 	{
 	case i_r_op_o1: 
+	case i_op_r_o1: 
 			file_buffer << "\t" << operation_name << ":\t\t";
 			result->print_ics_opd(file_buffer);
 			file_buffer << " <- ";
@@ -246,6 +286,8 @@ void Move_IC_Stmt::print_icode(ostream & file_buffer)
 			file_buffer << "\n";
 
 			break; 
+	case i_nsy:
+			break;
 
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 				"Intermediate code format not supported");
@@ -347,6 +389,8 @@ void Move_IC_Stmt_2::print_icode(ostream & file_buffer)
 			result->print_ics_opd(file_buffer);
 			file_buffer << "\n";
 
+			break;
+	case i_nsy:
 			break; 
 
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
@@ -417,11 +461,10 @@ Move_IC_Stmt_3& Move_IC_Stmt_3::operator=(const Move_IC_Stmt_3& rhs)
 
 void Move_IC_Stmt_3::print_icode(ostream & file_buffer)
 {
-	CHECK_INVARIANT (opd, "Opd cannot be NULL for a move IC Stmt");
-
 	string operation_name = op_desc.get_name();
 
 	Icode_Format ic_format = op_desc.get_ic_format();
+	CHECK_INVARIANT ((opd || ic_format==i_op) , "Opd cannot be NULL for a move IC Stmt");
 
 	switch (ic_format)
 	{
@@ -431,6 +474,9 @@ void Move_IC_Stmt_3::print_icode(ostream & file_buffer)
 			opd->print_ics_opd(file_buffer);
 			file_buffer << "\n";
 			break; 
+	case i_op:
+			file_buffer<<"\t"<<operation_name<<"\n";
+			break;
 
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 				"Intermediate code format not supported");
@@ -440,10 +486,12 @@ void Move_IC_Stmt_3::print_icode(ostream & file_buffer)
 
 void Move_IC_Stmt_3::print_assembly(ostream & file_buffer)
 {
-	CHECK_INVARIANT (opd, "Opd cannot be NULL for a move IC Stmt");
 	string op_name = op_desc.get_mnemonic();
 
 	Assembly_Format assem_format = op_desc.get_assembly_format();
+
+	CHECK_INVARIANT ((opd || assem_format == a_nsy), "Opd cannot be NULL for a move IC Stmt");
+	
 	switch (assem_format)
 	{
 	case a_op_o1: 
@@ -451,6 +499,8 @@ void Move_IC_Stmt_3::print_assembly(ostream & file_buffer)
 			file_buffer << " ";
 			opd->print_asm_opd(file_buffer);
 			file_buffer << "\n";
+			break;
+	case a_nsy:
 			break;
 
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Intermediate code format not supported");

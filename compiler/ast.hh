@@ -147,9 +147,10 @@ public:
 
 class Return_Ast:public Ast
 {
-
+	Ast * ret_ast;
+	string proc_name;
 public:
-	Return_Ast(int line);
+	Return_Ast(Ast* rAst, string pName, int line);
 	~Return_Ast();
 
 	void print(ostream & file_buffer);
@@ -263,6 +264,24 @@ class UnaryMinus_Ast:public Ast
 public:
 	UnaryMinus_Ast(Ast * a);
 	~UnaryMinus_Ast();
+
+	Data_Type get_data_type();
+
+	void print(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+	Code_For_Ast & compile();
+	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
+
+class function_call_Ast:public Ast
+{
+	string fn_name;
+	list<Ast *> argList;
+
+public:
+	function_call_Ast(string fName, list<Ast *> * AList);
+	~function_call_Ast();
 
 	Data_Type get_data_type();
 

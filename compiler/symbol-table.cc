@@ -78,7 +78,7 @@ void Symbol_Table::global_list_in_proc_map_check()
 	for (i = variable_table.begin(); i != variable_table.end(); i++)
 	{
 		string name = (*i)->get_variable_name();
-		CHECK_INPUT((program_object.variable_in_proc_map_check(name) == false),
+		CHECK_INPUT((program_object.variable_in_proc_map_check(name, -1) == false),
 			"Global variable should not match procedure name", NO_FILE_LINE);
 	}
 }
@@ -93,6 +93,10 @@ bool Symbol_Table::variable_in_symbol_list_check(string variable)
 	}
 
 	return false;
+}
+
+list<Symbol_Table_Entry *> & Symbol_Table::get_var_table(){
+	return variable_table;
 }
 
 Symbol_Table_Entry & Symbol_Table::get_symbol_table_entry(string variable_name)
@@ -160,6 +164,46 @@ void Symbol_Table::print(ostream & file_buffer)
 	}
 }
 
+void Symbol_Table::print_sp(ostream & file_buffer)
+{
+	list<Symbol_Table_Entry *>::iterator i;
+
+	for(i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		string name = (*i)->get_variable_name();
+		Data_Type dt = (*i)->get_data_type();
+		int start_off = (*i)->get_start_offset();
+		int end_off = (*i)->get_end_offset();
+
+		file_buffer << "   Name: " << name;
+
+		switch(dt)
+		{
+		case int_data_type: file_buffer << " Type: INT"; break;
+		case float_data_type: file_buffer << " Type: FLOAT"; break;
+		defualt: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable data type can only be int");
+		} 
+
+		file_buffer << " Entity Type: VAR";
+
+		if (start_off == end_off)
+			file_buffer << " (No offset assigned yet)\n";
+		else
+			file_buffer << " Start Offset: " << start_off << " End Offset: " << end_off << "\n";
+	}
+}
+
+
+
+void Symbol_Table::reverse_table(){
+	list<Symbol_Table_Entry *>::reverse_iterator i;
+	list<Symbol_Table_Entry *> new_table;
+	for(i = variable_table.rbegin(); i != variable_table.rend(); i++)
+	{
+		new_table.push_back(*i);
+	}
+	variable_table = new_table;
+}
 // Compile
 
 void Symbol_Table::set_start_offset_of_first_symbol(int n)
@@ -174,7 +218,7 @@ int Symbol_Table::get_start_offset_of_first_symbol()
 
 void Symbol_Table::set_size(int n)
 {
-	size_in_bytes;
+	size_in_bytes = n;
 }
 
 int Symbol_Table::get_size()
@@ -189,9 +233,23 @@ void Symbol_Table::assign_offsets()
 	{
 		int size = get_size_of_value_type((*i)->get_data_type());
 		(*i)->set_start_offset(size_in_bytes);
+		// cout<<size<<" YE DEKHO"<<endl;
 		size_in_bytes += size;
 		(*i)->set_end_offset(size_in_bytes);
 	}
+}
+
+int Symbol_Table::getTotalSize(){
+	int ans = 0;
+	list<Symbol_Table_Entry *>::iterator i;
+	for (i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		int size = get_size_of_value_type((*i)->get_data_type());
+		// (*i)->set_start_offset(size_in_bytes);
+		// cout<<size<<" YE DEKHO"<<endl;
+		ans -= size;
+	}
+	return ans;
 }
 
 int Symbol_Table::get_size_of_value_type(Data_Type dt)
@@ -212,6 +270,15 @@ void Symbol_Table::print_assembly(ostream & file_buffer)
 	{
 		if (scope == global)
 			file_buffer << (*i)->get_variable_name() << ":\t.word 0\n";
+	}
+}
+
+void Symbol_Table::append_table(Symbol_Table & arg_table){
+	list<Symbol_Table_Entry *>::iterator i;
+	list<Symbol_Table_Entry *> & arg_list = arg_table.get_var_table();
+	for (i = arg_list.begin(); i != arg_list.end(); i++)
+	{
+		variable_table.push_back(*i);
 	}
 }
 

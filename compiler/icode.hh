@@ -97,11 +97,15 @@ typedef enum
 	mtc1,
 	neg,
 	negd,
-
+	ret,
+	_move,moved,
 	add, addd,
+	add_s, sub_s,
 	sub, subd,
 	mul, muld,
-	_div, _divd
+	_div, _divd,
+	call,
+	move_ret,move_ret_d
 } Tgt_Op;
 
 ///////////////////////// Instruction Descriptor ///////////////////////////////////
@@ -170,6 +174,23 @@ public:
 	void print_asm_opd(ostream & file_buffer);
 
 	Mem_Addr_Opd & operator= (const Mem_Addr_Opd & rhs);
+};
+
+class Stack_mem_Addr_Opd:public Ics_Opd
+{
+	Symbol_Table_Entry * symbol_entry;
+	
+
+public:
+	int offset;
+
+	Stack_mem_Addr_Opd(Symbol_Table_Entry & se, int offs);
+	~Stack_mem_Addr_Opd() {}
+
+	void print_ics_opd(ostream & file_buffer);
+	void print_asm_opd(ostream & file_buffer);
+
+	Stack_mem_Addr_Opd & operator= (const Stack_mem_Addr_Opd & rhs);
 };
 
 class Register_Addr_Opd: public Ics_Opd

@@ -60,10 +60,13 @@ public:
 
 	bool is_empty();
 
+	void reverse_table();
 	Table_Scope get_table_scope();
 	void set_table_scope(Table_Scope list_scope);
 
 	void print(ostream & file_buffer);
+	void print_sp(ostream & file_buffer);
+	list<Symbol_Table_Entry *> & get_var_table();
 
 	void push_symbol(Symbol_Table_Entry * variable);
 
@@ -72,6 +75,8 @@ public:
 	void global_list_in_proc_map_check();
 
 	void create(Local_Environment & local_global_variables_table);
+	void append_table(Symbol_Table & arg_table);
+	int getTotalSize();
 
 	// compile
 private:
@@ -115,6 +120,7 @@ public:
 
 	Data_Type get_data_type();
 	string get_variable_name();
+
 
 	//compile
 	void set_start_offset(int num);

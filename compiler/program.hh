@@ -57,13 +57,14 @@ public:
 
 	Eval_Result & evaluate();
 
-	bool variable_in_proc_map_check(string symbol);
+	bool variable_in_proc_map_check(string symbol, int line);
 	bool variable_in_symbol_list_check(string variable);
 	void global_list_in_proc_map_check();
-
+	Procedure * get_procedure_map(string proc_name);
 	// compile
 	void compile();
 	void print_assembly();
+
 };
 
 #endif

@@ -139,3 +139,48 @@ reg-alloc.cc and reg-alloc.hh
 
 1. In the optimize_lra() method of Lra_Outcome, modified the if conditions in the various switch cases to account for float numbers.
 
+
+
+Submission 7a
+=============
+
+ast.cc and ast.hh
+-----------------
+1. Addition of required functions for function_call_ast and their implementation.
+
+reg-alloc.cc and reg-alloc.hh
+-----------------------------
+1. Few more instructions were added and their definitions as well.
+
+2. Modifications in existing functions to support the function call functionality.
+
+icode.cc and icode.hh
+----------------------------
+1. New class Stack_mem_Addr_Opd was added.
+
+2. New formats for printing assembly and icode for programs was added. Also their cases in the code section in icode.cc file added.
+
+Parser.yy and scanner.ll
+---------------------------
+1. Functionality to detect and parse function definitions and calls(with , without arguments) added and verified.
+
+Procedure.cc and Procedure.hh
+------------------------------
+
+1. Many new functions to detect errors and correctly compile and parse procedures added.
+
+2. Slight modification in existing code to correctly calculate and print the variable offsets.
+
+Parser.ih
+----------
+1. Supporting functions and data structures to detect parsing errors.
+
+Symbol_table.cc and Symbol_table.hh
+-----------------------------------
+1. New funcions to help other implementations in procedure.cc and ast.cc added.
+
+
+
+
+
+

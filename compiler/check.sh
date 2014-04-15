@@ -164,8 +164,8 @@ then
 	for words in $x
 	do
 	echo "testing $words"
-		./$REFERENCE_CFGLP -d -tokens $TEST_DIR/"$words" > f1
-		./$TEST_CFGLP -d -tokens $TEST_DIR/"$words" > f0
+		./$REFERENCE_CFGLP -d -tokens -parse $TEST_DIR/"$words" > f1
+		./$TEST_CFGLP -d -tokens -parse $TEST_DIR/"$words" > f0
 		diff -b -B f1 f0
 		rm f0 f1
 	done;
@@ -252,8 +252,8 @@ then
 else
 	./check.sh makecfgs
 	# ./check.sh c
-	./check.sh ast
-	./check.sh eval
+	# ./check.sh ast
+	# ./check.sh eval
 	./check.sh tokens
 	./check.sh icode
 	./check.sh icodelra

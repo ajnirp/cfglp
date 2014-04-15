@@ -41,6 +41,10 @@ class Procedure
 	string name;
 	Symbol_Table local_symbol_table;
 	list<Basic_Block *> basic_block_list;
+	Symbol_Table local_arg_table;
+	list<string> arg_string_list;
+	bool defined;
+	bool compiled;
 
 	int lineno;
 
@@ -51,23 +55,36 @@ public:
 	string get_proc_name();
 	void set_basic_block_list(list<Basic_Block *> & bb_list);
 	void set_local_list(Symbol_Table & new_list);
+	void set_arg_list(Symbol_Table & new_list);
+	void addArg(string arg_name);
+	void set_data_type(Data_Type r_type);
+	list<string> & get_arg_string_list();
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
+	Symbol_Table_Entry & get_arg_symbol_table_entry(string variable_name);
 
 	void print(ostream & file_buffer);
 
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
+	Basic_Block * get_jump_bb(int bb_num);
 	Basic_Block & get_start_basic_block();
 
 	Eval_Result & evaluate(ostream & file_buffer);
+	
 
 	bool variable_in_symbol_list_check(string variable);
-
+	bool variable_in_arg_list_check(string variable);
+	bool match_arg_types(list<Ast * > * argList);
+	void match_arg_list(Symbol_Table & arg_table, int line);
+	
+	void set_defined();
+	bool is_defined();
 	// compile
 	void compile();
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
-	Basic_Block * get_jump_bb(int bb_num);
+	Eval_Result & evaluate_in_env(ostream & file_buffer,Local_Environment & eval_env);
+	Local_Environment & get_local_env();
 
 private:
 	void print_prologue(ostream & file_buffer);

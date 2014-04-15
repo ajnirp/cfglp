@@ -87,4 +87,24 @@ inline void Parser::bb_strictly_increasing_order_check(list<Basic_Block *> * bb_
 
 ///////////////////////////////////////////////////////////////////
 
+inline void Parser::check_undefined_functions(){
+  set<string>::iterator it;
+  for(it = function_call_set.begin(); it!=function_call_set.end(); it++){
+    if(!program_object.get_procedure_map(*it)->is_defined()){
+      CHECK_INPUT(false,"Called procedure is not defined", -1);
+    }
+  }
+}
+
+///////////////////////////////////////////////////////////////////
+
+inline void Parser::check_return_data_types(Data_Type d1, Data_Type d2){
+  if(d2 == void_data_type && d1 != void_data_type){
+    CHECK_INPUT(false,"Last return statement type, of procedure, and its prototype should match", get_line_number());
+  }
+  if((d1 == int_data_type && d2 == float_data_type) || (d1 == float_data_type && d2 == int_data_type)){
+    CHECK_INPUT(false,"Two or more types of return values", get_line_number());
+  }
+}
+
 #endif
