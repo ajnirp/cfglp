@@ -442,7 +442,7 @@ Register_Descriptor * Machine_Description::get_new_register(int val_type)
 		{
 			reg_desc = i->second;
 
-			if (reg_desc->get_use_category() == gp_data and reg_desc->get_val_type() == val_type)
+			if (reg_desc->get_use_category() == gp_data and reg_desc->get_val_type() == val_type and !reg_desc->get_used_for_expr_result())
 			{
 				list<Symbol_Table_Entry *>::iterator it;
 				it = reg_desc->get_lra_table().begin();

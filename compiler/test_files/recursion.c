@@ -1,16 +1,14 @@
-int add(int);
-main()
-{
-	int f,b=1,n=5;
-	f=fact(n);
-
+float f(float);
+main(){
+	float x=10;
+	float i;
+	i=f(x);
 }
 
-int fact (int n1)
-{
-	if (n1==1||n1==0)
-		return 1;
-	else
-		return fact(n1-1);
-
+float f(float a){
+	float c;
+	if(a<=0) return 0;
+	c = f(a-2);
+	c = c + a/2;
+	return c;
 }

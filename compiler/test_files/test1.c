@@ -1,18 +1,23 @@
+int add(int, int);
+int sub(int, int);
 main()
 {
-	int a=1, b=2, c=3, e=4, f=5;
-	float d=0.3;
-	if(b>1)
-	{
-		d=d+c/a;
-		a+=b;
-	}
-	else if(a >= b + c > d > e * d / a)
-	{
-		a++;
-		b=-a+c;
-	}
-
-
+	int a=1, b=2, c;
+	c=add(a,b);
+	
+}
+int sub(int a, int b)
+{
+	int c;
+	c=a-b;
+	return c;
 }
 
+int add(int a,int b)
+{
+	int c,d;
+	c=a+b;
+	d=sub(c,b);
+	return (d+c); 
+	
+}
